@@ -1,10 +1,11 @@
-const { WAConnection, MessageOptions, MessageType, Mimetype, Presence} = require('@adiwajshing/baileys');
+const { WAConnection, MessageOptions, MessageType, Mimetype, Presence, ReconnectMode } = require('@adiwajshing/baileys');
 const { GreetingsDB, getMessage, deleteMessage, setMessage } = require("./db/greetings");
 const { deleteFilter, setFilter, getFilter, FiltersDB } = require("./db/filter");
 const { AFKDB, setAFK, getAFK, deleteAFK } = require("./db/afk");
 const openapis = require("@phaticusthiccy/open-apis");
 const { DataTypes } = require('sequelize');
 const ffmpeg = require('fluent-ffmpeg');
+const config = require('./config');
 const axios = require("axios");
 const util = require('util');
 const fs = require("fs");
@@ -12,6 +13,17 @@ const fs = require("fs");
 if (!Date.now) {
     Date.now = function() { return new Date().getTime(); }
 }
+
+const DB = config.DATABASE.define('userbot', {
+    info: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    value: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    }
+});
 util.inspect.defaultOptions.depth = null
 async function bot () {
     const Bot = new WAConnection();
@@ -19,6 +31,9 @@ async function bot () {
     Bot.version = [3, 3234, 9]
     Bot.loadAuthInfo(process.env.SESSION)
     Bot.setMaxListeners(0)
+    Bot.autoReconnect = ReconnectMode.onConnectionLost
+    await config.DATABASE.sync();
+
     Bot.on('open', async () => {
         console.log("✅ Login Information Updated!")
     })
@@ -31,6 +46,11 @@ async function bot () {
         await new Promise(r => setTimeout(r, 1300))
         await Bot.sendMessage(Bot.user.jid, "Start With ```.menu```")
     })
+    Bot.on('credentials-updated', () => {
+        const authInfo = Bot.base64EncodedAuthInfo()
+        fs.writeFileSync('./auth_info.json', JSON.stringify(authInfo, null, '\t'))
+    })
+    fs.existsSync('./auth_info.json') && Bot.loadAuthInfo ('./auth_info.json')
     await Bot.connect();
     Bot.on("chat-update", async (message) => {
         if (message.key && message.key.remoteJid == 'status@broadcast') return;
