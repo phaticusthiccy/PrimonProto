@@ -23,9 +23,10 @@
    },
    "homepage": "https://github.com/phaticusthiccy/WA-UserBot#readme",
    "dependencies": {
-      "@adiwajshing/baileys": "3.4.1",
       "@phaticusthiccy/open-apis": "latest",
+      "@adiwajshing/baileys": "3.4.1",
       "fluent-ffmpeg": "latest",
-      "sequelize": "6.5.1"
+      "sequelize": "6.5.1",
+      "sqlite3": "5.0.0"
    }
 }
