@@ -58,7 +58,7 @@ async function bot () {
     });
     var g = new StringSession()
     var s = g.deCrypt(config.SESSION)
-    Bot.loadAuthInfo(S); 
+    Bot.loadAuthInfo(s); 
 
     bot.on('open', async () => {
         console.log("✅ Connected to WhatsApp!")
