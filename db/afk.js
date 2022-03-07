@@ -1,4 +1,4 @@
-const config = require('../../config');
+const config = require('../config');
 const { DataTypes } = require('sequelize');
 
 const AFKDB = config.DATABASE.define('AFK', {

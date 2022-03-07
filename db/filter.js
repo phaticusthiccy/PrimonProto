@@ -1,6 +1,6 @@
 // https://github.com/phaticusthiccy/WhatsAsenaDuplicated/blob/master/plugins/sql/filters.js
 
-const config = require('../../config');
+const config = require('../config');
 const { DataTypes } = require('sequelize');
 
 const FiltersDB = config.DATABASE.define('filter', {
