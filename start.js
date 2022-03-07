@@ -14,17 +14,6 @@ if (!Date.now) {
     Date.now = function() { return new Date().getTime(); }
 }
 
-const DB = config.DATABASE.define('userbot', {
-    info: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    value: {
-        type: DataTypes.TEXT,
-        allowNull: false
-    }
-});
-
 class StringSession {
     constructor() {
     }
@@ -37,34 +26,50 @@ class StringSession {
                 string = fs.readFileSync(string, {encoding:'utf8', flag:'r'});
             }
         }
-        
-        var split = string.split(';;;');
-        if (split.length >= 2) {
-            return JSON.parse(Buffer.from(split[split.length - 1], 'base64').toString('utf-8'));
-        }
+        return JSON.parse(Buffer.from(string, 'base64').toString('utf-8'));
     }
-
     createStringSession(dict) {
         return Buffer.from(JSON.stringify(dict)).toString('base64');
     }
 }
+const DB = config.DATABASE.define('userbot', {
+    info: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    value: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    }
+});
+
 
 util.inspect.defaultOptions.depth = null
 async function bot () {
     const Bot = new WAConnection();
-    const Session = config.SESSION
     Bot.version = [3, 3234, 9]
     Bot.setMaxListeners(0)
     Bot.autoReconnect = ReconnectMode.onConnectionLost
     await config.DATABASE.sync();
-    Bot.on('credentials-updated', () => {
-        const authInfo = Bot.base64EncodedAuthInfo()
-        fs.writeFileSync('./auth_info.json', JSON.stringify(authInfo, null, '\t'))
-    })
-    fs.existsSync('./auth_info.json') && Bot.loadAuthInfo('./auth_info.json')
-    await Bot.connect();
-    Bot.on("chat-update", async (message) => {
+    var strs = await DB.findAll({
+        where: {
+          info: 'Session'
+        }
+    });
+    var g = new StringSession()
+    var s = g.deCrypt(config.SESSION)
+    Bot.loadAuthInfo(S); 
+
+    bot.on('open', async () => {
         console.log("✅ Connected to WhatsApp!")
+        const authInfo = Bot.base64EncodedAuthInfo();
+        await DB.create({ info: "Session", value: g.createStringSession(authInfo) });
+    })
+    Bot.on('connecting', async () => {
+        console.log("Connecting to Whatsapp..")
+    })
+    Bot.on("chat-update", async (message) => {
+        
         await Bot.sendMessage(Bot.user.jid, "Whatsapp User Bot Working ✅", MessageType.text)
         await new Promise(r => setTimeout(r, 1300))
         await Bot.sendMessage(Bot.user.jid, "Start With ```.menu```")
@@ -79,10 +84,6 @@ async function bot () {
             if (gb !== false) {
                 await Bot.sendMessage(message.key.remoteJid, gb.message, MessageType.text)
             }
-        }
-        if (process.env.BLOCKCHAT !== false) {     
-            var abc = process.env.BLOCKCHAT.split(',');                            
-            if(message.key.remoteJid.includes('-') ? abc.includes(message.key.remoteJid.split('@')[0]) : abc.includes(message.participant ? message.participant.split('@')[0] : message.key.remoteJid.split('@')[0])) return ;
         }
         var chat = Bot.chats.get(message.key.remoteJid)
         console.log(message)
