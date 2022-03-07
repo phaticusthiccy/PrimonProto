@@ -1,4 +1,4 @@
-const {WAConnection, MessageOptions, MessageType, Mimetype, Presence} = require('@adiwajshing/baileys');
+const { WAConnection, MessageOptions, MessageType, Mimetype, Presence} = require('@adiwajshing/baileys');
 const { GreetingsDB, getMessage, deleteMessage, setMessage } = require("./db/greetings");
 const { deleteFilter, setFilter, getFilter, FiltersDB } = require("./db/filter");
 const { AFKDB, setAFK, getAFK, deleteAFK } = require("./db/afk");
@@ -12,13 +12,7 @@ const fs = require("fs");
 if (!Date.now) {
     Date.now = function() { return new Date().getTime(); }
 }
-util.
-    inspect.
-        defaultOptions.
-            depth = null
-async function delay(ms) {
-    return await new Promise(r => setTimeout(r, ms));
-}
+util.inspect.defaultOptions.depth = null
 async function bot () {
     const Bot = new WAConnection();
     const Session = process.env.SESSION
@@ -33,7 +27,7 @@ async function bot () {
     Bot.on('open', async () => {
         console.log("✅ Connected to WhatsApp!")
         await Bot.sendMessage(Bot.user.jid, "Whatsapp User Bot Working ✅", MessageType.text)
-        await delay(1300)
+        await new Promise(r => setTimeout(r, 1300))
         await Bot.sendMessage(Bot.user.jid, "Start With ```.menu```")
     })
     Bot.on("chat-update", async (message) => {
