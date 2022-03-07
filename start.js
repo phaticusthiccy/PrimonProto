@@ -29,11 +29,13 @@ async function bot () {
     const Bot = new WAConnection();
     const Session = process.env.SESSION
     Bot.version = [3, 3234, 9]
-    Bot.loadAuthInfo(process.env.SESSION)
     Bot.setMaxListeners(0)
     Bot.autoReconnect = ReconnectMode.onConnectionLost
     await config.DATABASE.sync();
-
+    Bot.on('credentials-updated', () => {
+        const authInfo = Bot.base64EncodedAuthInfo()
+        fs.writeFileSync('./auth_info.json', JSON.stringify(authInfo, null, '\t'))
+    })
     Bot.on('open', async () => {
         console.log("✅ Login Information Updated!")
     })
@@ -46,10 +48,7 @@ async function bot () {
         await new Promise(r => setTimeout(r, 1300))
         await Bot.sendMessage(Bot.user.jid, "Start With ```.menu```")
     })
-    Bot.on('credentials-updated', () => {
-        const authInfo = Bot.base64EncodedAuthInfo()
-        fs.writeFileSync('./auth_info.json', JSON.stringify(authInfo, null, '\t'))
-    })
+   
     fs.existsSync('./auth_info.json') && Bot.loadAuthInfo ('./auth_info.json')
     await Bot.connect();
     Bot.on("chat-update", async (message) => {
