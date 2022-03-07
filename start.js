@@ -50,5 +50,6 @@ async function bot () {
         var chat = Bot.chats.get(message.key.remoteJid)
         console.log(message)
     })
+    await Bot.connect();
 }
 bot()
