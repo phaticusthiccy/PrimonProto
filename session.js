@@ -21,6 +21,9 @@ async function getQRSession() {
     await new Promise(r => setTimeout(r,500));
     await event.sendMessage(event.user.jid, Session, MessageType.text)
     log("\nOr Check Your WhatsApp!")
+    if (!fs.existsSync('config.env')) {
+      fs.writeFileSync('config.env', `SESSION="${Session}"`);
+    }
     process.exit(0);
   })
   await event.connect();

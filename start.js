@@ -24,10 +24,35 @@ const DB = config.DATABASE.define('userbot', {
         allowNull: false
     }
 });
+
+class StringSession {
+    constructor() {
+    }
+
+    deCrypt(string = undefined) {
+        if ('SESSION' in process.env && string === undefined) {
+            string = process.env.SESSION;
+        } else if (string !== undefined) {
+            if (fs.existsSync(string)) {
+                string = fs.readFileSync(string, {encoding:'utf8', flag:'r'});
+            }
+        }
+        
+        var split = string.split(';;;');
+        if (split.length >= 2) {
+            return JSON.parse(Buffer.from(split[split.length - 1], 'base64').toString('utf-8'));
+        }
+    }
+
+    createStringSession(dict) {
+        return Buffer.from(JSON.stringify(dict)).toString('base64');
+    }
+}
+
 util.inspect.defaultOptions.depth = null
 async function bot () {
     const Bot = new WAConnection();
-    const Session = process.env.SESSION
+    const Session = config.SESSION
     Bot.version = [3, 3234, 9]
     Bot.setMaxListeners(0)
     Bot.autoReconnect = ReconnectMode.onConnectionLost
@@ -36,14 +61,7 @@ async function bot () {
         const authInfo = Bot.base64EncodedAuthInfo()
         fs.writeFileSync('./auth_info.json', JSON.stringify(authInfo, null, '\t'))
     })
-    Bot.on('open', async () => {
-        console.log("✅ Login Information Updated!")
-    })
-    Bot.on('connecting', async () => {
-        console.log("🔁 Waiting For Connection..")
-    })
-   
-    fs.existsSync('./auth_info.json') && Bot.loadAuthInfo ('./auth_info.json')
+    fs.existsSync('./auth_info.json') && Bot.loadAuthInfo('./auth_info.json')
     await Bot.connect();
     Bot.on("chat-update", async (message) => {
         console.log("✅ Connected to WhatsApp!")
