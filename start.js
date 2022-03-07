@@ -42,16 +42,14 @@ async function bot () {
     Bot.on('connecting', async () => {
         console.log("🔁 Waiting For Connection..")
     })
-    Bot.on('open', async () => {
-        console.log("✅ Connected to WhatsApp!")
-        await Bot.sendMessage(Bot.user.jid, "Whatsapp User Bot Working ✅", MessageType.text)
-        await new Promise(r => setTimeout(r, 1300))
-        await Bot.sendMessage(Bot.user.jid, "Start With ```.menu```")
-    })
    
     fs.existsSync('./auth_info.json') && Bot.loadAuthInfo ('./auth_info.json')
     await Bot.connect();
     Bot.on("chat-update", async (message) => {
+        console.log("✅ Connected to WhatsApp!")
+        await Bot.sendMessage(Bot.user.jid, "Whatsapp User Bot Working ✅", MessageType.text)
+        await new Promise(r => setTimeout(r, 1300))
+        await Bot.sendMessage(Bot.user.jid, "Start With ```.menu```")
         if (message.key && message.key.remoteJid == 'status@broadcast') return;
         if (message.messageStubType === 32 || message.messageStubType === 28) {
             var gb = await getMessage(message.key.remoteJid, 'goodbye');
