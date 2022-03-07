@@ -4,7 +4,7 @@
    "description": "Lightweight Moduler WhatsApp Bot",
    "main": "start.js",
    "scripts": {
-      "start": "node start.js"
+      "start": "npm i -g sqlite3 && node start.js"
    },
    "repository": {
       "type": "git",
