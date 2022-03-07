@@ -17,6 +17,7 @@ async function bot () {
     const Bot = new WAConnection();
     const Session = process.env.SESSION
     Bot.version = [3, 3234, 9]
+    Bot.loadAuthInfo(process.env.SESSION)
     Bot.setMaxListeners(0)
     Bot.on('open', async () => {
         console.log("✅ Login Information Updated!")
@@ -30,6 +31,7 @@ async function bot () {
         await new Promise(r => setTimeout(r, 1300))
         await Bot.sendMessage(Bot.user.jid, "Start With ```.menu```")
     })
+    await Bot.connect();
     Bot.on("chat-update", async (message) => {
         if (message.key && message.key.remoteJid == 'status@broadcast') return;
         if (message.messageStubType === 32 || message.messageStubType === 28) {
@@ -50,6 +52,5 @@ async function bot () {
         var chat = Bot.chats.get(message.key.remoteJid)
         console.log(message)
     })
-    await Bot.connect();
 }
 bot()
