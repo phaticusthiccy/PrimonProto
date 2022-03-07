@@ -1,0 +1,21 @@
+{
+    "name": "Lightweight Bot",
+    "description": "Lightweight Moduler WhatsApp Bot",
+    "keywords": ["whatsapp", "userbot"],
+    "repository": "https://github.com/phaticusthiccy/WA-UserBot",
+    "website": "https://t.me/phaticusthiccy",
+    "success_url": "https://t.me/phaticusthiccy",
+    "stack": "container",
+    "env": {
+        "SESSION": {
+            "description": "Private Session Token.",
+            "required": true
+        }
+    },
+    "addons": [{
+      "plan": "heroku-postgresql"
+    }],
+    "buildpacks": [{
+      "url": "heroku-community/apt"
+      }]
+  }
