@@ -1,0 +1,33 @@
+{
+   "name": "Whatsapp-User-Bot",
+   "version": "1.0.0",
+   "description": "Lightweight Moduler WhatsApp Bot",
+   "main": "start.js",
+   "scripts": {
+      "start": "node start.js"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/phaticusthiccy/WA-UserBot.git"
+   },
+   "keywords": [
+      "bot",
+      "whatsapp",
+      "wa-bot",
+      "moduler",
+      "lightweight",
+      "api"
+   ],
+   "author": "Phaticusthiccy",
+   "license": "GPL-3.0",
+   "bugs": {
+      "url": "https://github.com/phaticusthiccy/WA-UserBot/issues"
+   },
+   "homepage": "https://github.com/phaticusthiccy/WA-UserBot#readme",
+   "dependencies": {
+      "@adiwajshing/baileys": "3.4.1",
+      "@phaticusthiccy/open-apis": "latest",
+      "fluent-ffmpeg": "latest",
+      "sequelize": "6.5.1"
+   }
+}
