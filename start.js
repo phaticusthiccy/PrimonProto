@@ -60,7 +60,7 @@ async function bot () {
     var s = g.deCrypt(config.SESSION)
     Bot.loadAuthInfo(s); 
 
-    bot.on('open', async () => {
+    Bot.on('open', async () => {
         console.log("✅ Connected to WhatsApp!")
         const authInfo = Bot.base64EncodedAuthInfo();
         await DB.create({ info: "Session", value: g.createStringSession(authInfo) });
