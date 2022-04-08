@@ -5,7 +5,6 @@
     "repository": "https://github.com/phaticusthiccy/WA-UserBot",
     "website": "https://t.me/phaticusthiccy",
     "success_url": "https://t.me/phaticusthiccy",
-    "stack": "container",
     "env": {
         "SESSION": {
             "description": "Private Session Token.",

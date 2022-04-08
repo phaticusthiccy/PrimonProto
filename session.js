@@ -1,4 +1,5 @@
 const { MessageType, WAConnection } = require("@adiwajshing/baileys");
+var fs = require("fs")
 const log = console.log
 async function getQRSession() {
   // Create New Class Work

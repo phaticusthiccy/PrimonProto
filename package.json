@@ -24,7 +24,6 @@
    "homepage": "https://github.com/phaticusthiccy/WA-UserBot#readme",
    "dependencies": {
       "@phaticusthiccy/open-apis": "latest",
-      "@adiwajshing/baileys": "3.4.1",
       "fluent-ffmpeg": "latest",
       "supervisor": "latest",
       "sequelize": "6.5.1",

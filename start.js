@@ -62,6 +62,11 @@ async function bot () {
     Bot.on('open', async () => {
         console.log("✅ Connected to WhatsApp!")
         const authInfo = Bot.base64EncodedAuthInfo();
+        if (strs.length < 1) {
+            await Bot.create({ info: "Session", value: g.createStringSession(authInfo) });
+        } else {
+            await strs[0].update({ value: g.createStringSession(authInfo) });
+        }
         await DB.create({ info: "Session", value: g.createStringSession(authInfo) });
     })
     Bot.on('connecting', async () => {
