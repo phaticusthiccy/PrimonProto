@@ -1,1 +1,0 @@
-web: npm i @adiwajshing/baileys@3.4.1 && npm start
