@@ -17,6 +17,7 @@
    "homepage": "https://github.com/phaticusthiccy/PrimonProto#readme",
    "dependencies": {
       "@phaticusthiccy/open-apis": "latest",
+      "@hapi/boom": "latest",
       "fluent-ffmpeg": "latest",
       "@adiwajshing/baileys": "latest"
    }
