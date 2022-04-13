@@ -18,6 +18,7 @@
    "dependencies": {
       "@phaticusthiccy/open-apis": "latest",
       "@hapi/boom": "latest",
+      "qrcode-terminal": "latest",
       "fluent-ffmpeg": "latest",
       "@adiwajshing/baileys": "latest"
    }
