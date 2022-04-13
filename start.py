@@ -3,8 +3,6 @@
 
 from asyncio import sleep
 from webwhatsapi import WhatsAPIDriver
-from webwhatsapi.objects.message import MMSMessage, MediaMessage
-
 
 def primonproto(Client):
     try:
