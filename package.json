@@ -4,7 +4,7 @@
    "description": "Lightweight Moduler WhatsApp Bot",
    "main": "start.js",
    "scripts": {
-      "start": "supervisor -s start.js"
+      "start": "node start.js"
    },
    "repository": {
       "type": "git",
@@ -25,8 +25,6 @@
    "dependencies": {
       "@phaticusthiccy/open-apis": "latest",
       "fluent-ffmpeg": "latest",
-      "supervisor": "latest",
-      "sequelize": "6.5.1",
-      "sqlite3": "5.0.0"
+      "sulla ": "latest"
    }
 }
