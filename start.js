@@ -25,8 +25,6 @@ const util = require("util");
 const pino = require("pino");
 const path = require("path");
 const { Boom } = require("@hapi/boom");
-var readline = require("readline");
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 const { state, saveState } = useSingleFileAuthState("proto.json");
 
 async function connectPrimon() {
@@ -43,25 +41,15 @@ async function connectPrimon() {
                 ? connectPrimon()
                 : console.log("Connection Logged Out..");
         }
-        exec("npm i -g @railway/cli", (err, stdout, stderr) => {
-            if (err) {
-                console.error(err);
-            } else {
-              exec("clear", (err, stdout, stderr) => {
-                if (err) {
-                    exec("cls", (err, stdout, stderr) => {});
-                } else {
-                  exec("railway up", (err, stdout, stderr) => {
-                    if (err) {
-                        console.error(err);
-                    } else {
-                        console.log(`stdout: ${stdout}`);
-                    }
-                  });
-                }
-              });
-            }
-        });
-    });
+    })
+    PrimonProto.ev.on("creds.update", (updatew) => {
+      console.log("Deploying App..")
+      exec("railway up", (err, stdout, stderr) => {
+        if (err) {
+          return console.error(err)
+        }
+        console.log("Deployed.")
+      })
+    })
 }
 connectPrimon();
