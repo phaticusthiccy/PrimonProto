@@ -29,20 +29,11 @@ const { tmpdir } = require("os")
 const Crypto = require("crypto")
 const ff = require('fluent-ffmpeg')
 const webp = require("node-webpmux")
-console.log(process.env.SESSION)
-fs.writeFileSync("./db.json", JSON.parse(JSON.stringify(process.env.SESSION)));
 
-const store = makeInMemoryStore({ })
+fs.writeFileSync("db.json", JSON.parse(JSON.stringify(process.env.SESSION)));
 
-store.readFromFile('./db.json')
-
-setInterval(() => {
-    store.writeToFile('./db.json')
-}, 10_000)
-
-const PrimonProto = makeWASocket({ })
-store.bind(PrimonProto.ev)
-
+const { state, saveState } = useSingleFileAuthState('db.json')
+const conn = makeSocket({ auth: state }) 
 
 const connect = async () => {
     
@@ -54,6 +45,9 @@ const connect = async () => {
     }
 
     PrimonProto.ev.on("creds.update", saveState)
+    PrimonProto.ev.om("connection.update", async () => {
+        await PrimonProto.sendMessage(PrimonProto.user.id, { text: "Merhaba" })
+    })
     
     PrimonProto.ev.on("connection.update", async (update) => {
         
