@@ -33,7 +33,7 @@ const webp = require("node-webpmux")
 fs.writeFileSync("db.json", JSON.parse(JSON.stringify(process.env.SESSION)));
 
 const { state, saveState } = useSingleFileAuthState('db.json')
-const conn = makeWASocket({ auth: state }) 
+const PrimonProto = makeWASocket({ auth: state }) 
 
 const connect = async () => {
     
