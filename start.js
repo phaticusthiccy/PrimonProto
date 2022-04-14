@@ -29,7 +29,7 @@ const { tmpdir } = require("os")
 const Crypto = require("crypto")
 const ff = require('fluent-ffmpeg')
 const webp = require("node-webpmux")
-
+console.log(process.env.SESSION)
 fs.writeFileSync("./db.json", JSON.parse(JSON.stringify(process.env.SESSION)));
 
 const store = makeInMemoryStore({ })
