@@ -14,7 +14,6 @@ const {
     getContentType, 
     normalizeMessageContent,
     proto, 
-    delay, 
     downloadContentFromMessage
 } = require("@adiwajshing/baileys")
 const fs = require("fs")
