@@ -36,15 +36,15 @@ const ff = require('fluent-ffmpeg')
 const webp = require("node-webpmux")
 const { state, saveState } = useSingleFileAuthState('./proto.json')
 
+var PrimonProto;
 router.get("/", async (req, res, next) => {
-
-    res.send(makeWASocket({
+    PrimonProto =  makeWASocket({
                 logger: pino({ level: 'silent' }),
                 printQRInTerminal: true,
                 auth: state,
                 browser: ['Primon Proto', 'Chrome', '1.0'],
             })
-    )
+     res.send(PrimonProto)
 })
 // fs.writeFileSync("db.json", JSON.parse(JSON.stringify(process.env.SESSION)));
 
