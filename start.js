@@ -36,13 +36,7 @@ const webp = require("node-webpmux")
 const PrimonProto = makeWASocket({ printQRInTerminal: true }) 
 
 const connect = async () => {
-    
-    var connOptions = {
-        printQRInTerminal: false,
-        logger: pino({ level: "silent" }),
-        auth: state,
-        version: [2, 2210, 9]
-    }
+   
      PrimonProto.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect } = update
         if(connection === 'close') {
