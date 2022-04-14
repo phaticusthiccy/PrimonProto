@@ -3,9 +3,9 @@ const {
     DisconnectReason, 
     useSingleFileAuthState, 
     fetchLatestBaileysVersion, 
-    delay, 
+    delay,
     BufferJSON,
-    makeSocket,
+    makeInMemoryStore,
     jidNormalizedUser, 
     makeWALegacySocket, 
     useSingleFileLegacyAuthState,
@@ -30,7 +30,18 @@ const Crypto = require("crypto")
 const ff = require('fluent-ffmpeg')
 const webp = require("node-webpmux")
 
-const { state, saveState } = useSingleFileAuthState(JSON.parse(process.env.SESSION))
+fs.writeFileSync("./db.json", process.env.SESSION);
+
+const store = makeInMemoryStore({ })
+
+store.readFromFile('./db.json')
+
+setInterval(() => {
+    store.writeToFile('./baileys_store.json')
+}, 10_000)
+
+const PrimonProto = makeWASocket({ })
+store.bind(PrimonProto.ev)
 
 
 const connect = async () => {
@@ -41,8 +52,6 @@ const connect = async () => {
         auth: state,
         version: [2, 2210, 9]
     }
-    
-    const PrimonProto = makeSocket({auth: state})
 
     PrimonProto.ev.on("creds.update", saveState)
     
@@ -62,15 +71,11 @@ const connect = async () => {
             else if (reason === DisconnectReason.loggedOut) { console.log(`Device Logged Out, Please Scan Again And Run.`); process.exit(); }
             else if (reason === DisconnectReason.restartRequired) { console.log("Restart Required, Restarting..."); connect(); }
             else if (reason === DisconnectReason.timedOut) { console.log("Connection TimedOut, Reconnecting..."); connect(); }
-            else killua.end(`Unknown DisconnectReason: ${reason}|${connection}`)
+            else PrimonProto.end(`Unknown DisconnectReason: ${reason}|${connection}`)
         }
    })
     
-    PrimonProto.ev.on("messages.upsert", async (chatUpdate) => {
-        var msg = chatUpdate.messages[0]
-        if (!msg.message) return
-        if (msg.key && m.key.remoteJid == "status@broadcast") return
-        if (msg.key.id.startsWith("BAE5") && m.key.id.length == 16) return
+    PrimonProto.ev.on("messages.upsert", async (msg) => {
         console.log(msg)
      })
 }
