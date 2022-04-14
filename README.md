@@ -2,6 +2,6 @@
 <center>
   <h1> PrimonProto </h1>
   
-Configurational Whatsapp User Bot. Uses Node ES
+Configurational ESM Lightweigth WebSocket Userbot. Uses side clients to connect firewall bridge. 
   </center>
 </html>
