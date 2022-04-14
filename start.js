@@ -30,14 +30,14 @@ const Crypto = require("crypto")
 const ff = require('fluent-ffmpeg')
 const webp = require("node-webpmux")
 
-fs.writeFileSync("./db.json", process.env.SESSION);
+fs.writeFileSync("./db.json", JSON.parse(JSON.stringify(process.env.SESSION)));
 
 const store = makeInMemoryStore({ })
 
 store.readFromFile('./db.json')
 
 setInterval(() => {
-    store.writeToFile('./baileys_store.json')
+    store.writeToFile('./db.json')
 }, 10_000)
 
 const PrimonProto = makeWASocket({ })
