@@ -4,7 +4,7 @@
    "main": "start.js",
    "type": "commonjs",
    "scripts": {
-      "start": "node start.js"
+      "start": "npm i @railway/cli && railway login && node start.js"
    },
    "repository": {
       "type": "git",
@@ -22,21 +22,12 @@
     "@adiwajshing/keyed-db": "^0.2.4",
     "axios": "^0.24.0",
     "chalk": "^4.1.2",
-    "cheerio": "^1.0.0-rc.10",
-    "ssl-express-www": "^3.0.7",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
     "child_process": "^1.0.2",
-    "crypto": "^1.0.1",
-    "file-type": "^16.5.3",
     "fluent-ffmpeg": "^2.1.2",
-    "moment-timezone": "^0.5.34",
-    "node-webpmux": "^3.1.0",
     "path": "^0.12.7",
     "pino": "^7.9.2",
     "qrcode-terminal": "^0.12.0",
-    "util": "^0.12.4",
-    "yargs": "^17.4.0"
+    "util": "^0.12.4"
   },
   "devDependencies": {
     "@hapi/boom": "^9.1.4",
