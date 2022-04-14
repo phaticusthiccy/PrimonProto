@@ -1,10 +1,10 @@
 {
    "name": "PrimonProto",
    "version": "1.0.0",
-   "main": "start.ts",
+   "main": "start.js",
    "type": "commonjs",
    "scripts": {
-      "start": "npx ts-node start.ts"
+      "start": "node start.js"
    },
    "repository": {
       "type": "git",
