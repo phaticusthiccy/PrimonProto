@@ -45,7 +45,7 @@ const connect = async () => {
     }
 
     PrimonProto.ev.on("creds.update", saveState)
-    PrimonProto.ev.om("connection.update", async () => {
+    PrimonProto.ev.on("connection.update", async () => {
         await PrimonProto.sendMessage(PrimonProto.user.id, { text: "Merhaba" })
     })
     
