@@ -18,6 +18,11 @@ const {
     proto, 
     downloadContentFromMessage
 } = require("@adiwajshing/baileys")
+__path = process.cwd()
+var express = require('express');
+var secure = require('ssl-express-www');
+var cors = require('cors');
+var router  = express.Router();
 const fs = require("fs")
 const util = require("util")
 const pino = require("pino")
@@ -31,15 +36,20 @@ const ff = require('fluent-ffmpeg')
 const webp = require("node-webpmux")
 const { state, saveState } = useSingleFileAuthState('./proto.json')
 
+router.get("/", async (req, res, next) => {
+
+    res.send(makeWASocket({
+                logger: pino({ level: 'silent' }),
+                printQRInTerminal: true,
+                auth: state,
+                browser: ['Primon Proto', 'Chrome', '1.0'],
+            })
+    )
+})
 // fs.writeFileSync("db.json", JSON.parse(JSON.stringify(process.env.SESSION)));
 
 async function connectPrimon()  {
-    const PrimonProto = makeWASocket({
-            logger: pino({ level: 'silent' }),
-            printQRInTerminal: true,
-            auth: state,
-            browser: ['Primon Proto', 'Chrome', '1.0'],
-    })
+    
     PrimonProto.ev.on('messages.upsert', async m => {
             if (!m.messages) return
              console.log(m)
