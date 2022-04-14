@@ -43,7 +43,7 @@ const connect = async () => {
         auth: state,
         version: [2, 2210, 9]
     }
-     PrimonProto.ev.on('connection.update', (update) => {
+     PrimonProto.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect } = update
         if(connection === 'close') {
             connect()
