@@ -2,6 +2,7 @@
    "name": "PrimonProto",
    "version": "1.0.0",
    "main": "start.ts",
+   "type": "commonjs",
    "scripts": {
       "start": "npx ts-node start.ts"
    },
