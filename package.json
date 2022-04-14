@@ -17,22 +17,23 @@
    },
    "homepage": "https://github.com/phaticusthiccy/PrimonProto#readme",
    "dependencies": {
-    "@phaticusthiccy/open-apis": "latest",
-    "@adiwajshing/baileys": "github:adiwajshing/baileys",
-    "@adiwajshing/keyed-db": "^0.2.4",
-    "axios": "^0.24.0",
-    "chalk": "^4.1.2",
-    "child_process": "^1.0.2",
-    "fluent-ffmpeg": "^2.1.2",
-    "path": "^0.12.7",
-    "pino": "^7.9.2",
-    "qrcode-terminal": "^0.12.0",
-    "util": "^0.12.4"
-  },
-  "devDependencies": {
-    "@hapi/boom": "^9.1.4",
-    "jimp": "^0.16.1",
-    "pino": "^7.6.5",
-    "qrcode-terminal": "^0.12.0"
-  }
+      "@adiwajshing/baileys": "github:adiwajshing/baileys",
+      "@adiwajshing/keyed-db": "^0.2.4",
+      "@phaticusthiccy/open-apis": "latest",
+      "@railway/cli": "^1.4.1",
+      "axios": "^0.24.0",
+      "chalk": "^4.1.2",
+      "child_process": "^1.0.2",
+      "fluent-ffmpeg": "^2.1.2",
+      "path": "^0.12.7",
+      "pino": "^7.9.2",
+      "qrcode-terminal": "^0.12.0",
+      "util": "^0.12.4"
+   },
+   "devDependencies": {
+      "@hapi/boom": "^9.1.4",
+      "jimp": "^0.16.1",
+      "pino": "^7.6.5",
+      "qrcode-terminal": "^0.12.0"
+   }
 }
