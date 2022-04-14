@@ -28,7 +28,7 @@ const Crypto = require("crypto")
 const ff = require('fluent-ffmpeg')
 const webp = require("node-webpmux")
 
-const { state, saveState } = useSingleFileAuthState("./db.json")
+const { state, saveState } = useSingleFileAuthState(proccess.env.SESSION)
 
 async function imageToWebp (media) {
 
