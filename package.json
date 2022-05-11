@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "main": "start.js",
    "scripts": {
-      "start": "npm i && apt install libnss && railway login && node start.js"
+      "start": "npm i && railway login && node start.js"
    },
    "repository": {
       "type": "git",
