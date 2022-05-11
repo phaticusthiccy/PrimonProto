@@ -1,10 +1,10 @@
 const { Client } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
 
 const Primon = new Client();
 
 Primon.on('qr', (qr) => {
-    // Generate and scan this code with your phone
-    console.log('QR RECEIVED', qr);
+    qrcode.generate(qr, {small: true});
 });
 
 Primon.on('ready', () => {
