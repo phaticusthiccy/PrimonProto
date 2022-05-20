@@ -16,7 +16,7 @@
    },
    "homepage": "https://github.com/phaticusthiccy/PrimonProto#readme",
    "dependencies": {
-      "whatsapp-web.js": "latest",
+      "@adiwajshing/baileys": "latest",
       "@phaticusthiccy/open-apis": "latest",
       "@railway/cli": "^1.4.1",
       "axios": "^0.24.0",
