@@ -4,7 +4,7 @@
    "main": "start.ts",
    "scripts": {
       "build": "tsc",
-      "start": "npm run build && node start.js"
+      "start": "node start.js"
    },
    "repository": {
       "type": "git",
