@@ -1,9 +1,9 @@
 {
    "name": "PrimonProto",
    "version": "1.0.0",
-   "main": "start.js",
+   "main": "start.ts",
    "scripts": {
-      "start": "node start.js"
+      "start": "npm install -g typescript && tsc start.ts && node start.js"
    },
    "repository": {
       "type": "git",
