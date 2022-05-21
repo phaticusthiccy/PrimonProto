@@ -1,7 +1,6 @@
 import { Boom } from '@hapi/boom'
 import P from 'pino'
 import makeWASocket, { AnyMessageContent, delay, DisconnectReason, makeInMemoryStore, useSingleFileAuthState } from '@adiwajshing/baileys'
-import OpenApı from "@phaticusthiccy/open-apis"
 
 const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
 store.readFromFile('./baileys_store_multi.json')
