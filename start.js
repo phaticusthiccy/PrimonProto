@@ -1,20 +1,20 @@
-const { Client } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
+import { Boom } from '@hapi/boom'
+import P from 'pino'
+import makeWASocket, { AnyMessageContent, delay, DisconnectReason, makeInMemoryStore, useSingleFileAuthState } from '@adiwajshing/baileys'
+import OpenApı from "@phaticusthiccy/open-apis"
 
-const Primon = new Client();
+const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+store.readFromFile('./baileys_store_multi.json')
+// save every 10s
+setInterval(() => {
+	store.writeToFile('./baileys_store_multi.json')
+}, 10_000)
 
-Primon.on('qr', (qr) => {
-    qrcode.generate(qr, {small: true});
-});
+const { state, saveState } = useSingleFileAuthState(atob(proccess.emv.SESSION))
 
-Primon.on('ready', () => {
-    console.log('Client is ready!');
-});
-
-Primon.on('message', msg => {
-    if (msg.body == '!ping') {
-        msg.reply('pong');
-    }
-});
-
-Primon.initialize();
+async function Primon () {
+  sock.ev.on('messages.upsert', async (m) => {
+      console.log(m)
+  })
+}
+Primon()
