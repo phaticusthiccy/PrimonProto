@@ -10,10 +10,12 @@ setInterval(() => {
 	store.writeToFile('./baileys_store_multi.json')
 }, 10_000)
 
-const { state, saveState } = useSingleFileAuthState(atob(proccess.emv.SESSION))
+const { state, saveState } = useSingleFileAuthState(atob(process.emv.SESSION))
+
+const Proto = makeWASocket({ })
 
 async function Primon () {
-  sock.ev.on('messages.upsert', async (m) => {
+  Proto.ev.on('messages.upsert', async (m) => {
       console.log(m)
   })
 }
