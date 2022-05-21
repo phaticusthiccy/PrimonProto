@@ -9,6 +9,12 @@ setInterval(() => {
 	store.writeToFile('./baileys_store_multi.json')
 }, 10_000)
 
+fs.writeFile("./session.json", atob(process.env.SESSION), (err) => {
+  if (err) {
+	  console.log("Error While Writing Session!")
+  }
+})
+
 const { state, saveState } = useSingleFileAuthState(atob(process.env.SESSION).toString())
 
 const Proto = makeWASocket({ })
