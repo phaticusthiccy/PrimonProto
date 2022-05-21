@@ -9,7 +9,7 @@ setInterval(() => {
 	store.writeToFile('./baileys_store_multi.json')
 }, 10_000)
 
-const { state, saveState } = useSingleFileAuthState(atob(process.env.SESSION))
+const { state, saveState } = useSingleFileAuthState(atob(process.env.SESSION).toString())
 
 const Proto = makeWASocket({ })
 
