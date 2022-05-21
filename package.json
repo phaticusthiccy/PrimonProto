@@ -3,7 +3,8 @@
    "version": "1.0.0",
    "main": "start.ts",
    "scripts": {
-      "start": "npm install -g typescript && tsc start.ts && node start.js"
+      "build": "tsc",
+      "start": "npm run build && node start.js"
    },
    "repository": {
       "type": "git",
@@ -15,6 +16,19 @@
       "url": "https://github.com/phaticusthiccy/PrimonProto/issues"
    },
    "homepage": "https://github.com/phaticusthiccy/PrimonProto#readme",
+   "devDependencies": {
+      "@types/node": "^17.0.34",
+      "@typescript-eslint/eslint-plugin": "^5.25.0",
+      "@typescript-eslint/parser": "^5.25.0",
+      "eslint": "^8.15.0",
+      "eslint-config-airbnb-base": "^15.0.0",
+      "eslint-config-airbnb-typescript": "^17.0.0",
+      "eslint-config-prettier": "^8.5.0",
+      "eslint-plugin-import": "^2.26.0",
+      "prettier": "^2.6.2",
+      "ts-node": "^10.7.0",
+      "typescript": "^4.6.4"
+   },
    "dependencies": {
       "@adiwajshing/baileys": "latest",
       "@adiwajshing/keyed-db": "latest",
