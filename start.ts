@@ -5,7 +5,7 @@ import * as fs from "fs"
 
 const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
 store.readFromFile('./baileys_store_multi.json')
-// save every 10s
+
 setInterval(() => {
 	store.writeToFile('./baileys_store_multi.json')
 }, 10_000)
@@ -16,7 +16,7 @@ fs.writeFile("./session.json", atob(process.env.SESSION), (err) => {
   }
 })
 
-const { state, saveState } = useSingleFileAuthState(atob(process.env.SESSION).toString())
+const { state, saveState } = useSingleFileAuthState("./session.json")
 
 const Proto = makeWASocket({ })
 
