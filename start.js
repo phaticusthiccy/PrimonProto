@@ -20,7 +20,7 @@ async function Primon() {
   var message, isreplied, repliedmsg;
   
   Proto.ev.on('messages.upsert', async (m) => {
-    
+    if (!m.messages[0].message) return;
     try {
       message = m.messages[0].message.conversation
     } catch {
@@ -60,7 +60,6 @@ async function Primon() {
     }
 	  
     if (m.type == "notify") {
-      console.log(m.messages[0])
       console.log(message)
       console.log(isreplied)
       console.log(repliedmsg)
