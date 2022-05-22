@@ -24,7 +24,7 @@ const { on } = require("events");
 require("util").inspect.defaultOptions.depth = null;
 const Language = require("./lang");
 const MenuLang = Language.getString("menu");
-const config = require("./config_proto")
+const config = require("./config_proto");
 
 const { state, saveState } = useSingleFileAuthState("./session.json");
 
@@ -51,23 +51,29 @@ async function Primon() {
   });
   Proto.ev.on("creds.update", saveState);
 
-  var message, isreplied, repliedmsg, jid, btnid, sudo1, sudo = [];
+  var message,
+    isreplied,
+    repliedmsg,
+    jid,
+    btnid,
+    sudo1,
+    sudo = [];
   if (process.env.SUDO !== false) {
-      if (process.env.SUDO.includes(",")) {
-        sudo1 = process.env.SUDO.split(",")
-        sudo1.map((Element) => {
-            sudo.push(Element + "@s.whatsapp.net")
-        })
-      } else {
-          sudo.push(process.env.SUDO)
-      }
+    if (process.env.SUDO.includes(",")) {
+      sudo1 = process.env.SUDO.split(",");
+      sudo1.map((Element) => {
+        sudo.push(Element + "@s.whatsapp.net");
+      });
+    } else {
+      sudo.push(process.env.SUDO);
+    }
   }
 
-  sudo.push(Proto.user.id)
+  sudo.push(Proto.user.id);
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
-    jid = m.messages[0].key.remoteJid
+    jid = m.messages[0].key.remoteJid;
     var once_msg = Object.keys(m.messages[0].message);
     try {
       var isreply = Object.keys(
@@ -82,12 +88,13 @@ async function Primon() {
       try {
         message = m.messages[0].message.extendedTextMessage.text;
       } catch {
-          try {
-            message = m.messages[0].message.buttonsResponseMessage.selectedDisplayText
-            btnid = m.messages[0].message.buttonsResponseMessage.selectedButtonId
-          } catch {
-            console.log(m.messages[0].message)
-          }
+        try {
+          message =
+            m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
+          btnid = m.messages[0].message.buttonsResponseMessage.selectedButtonId;
+        } catch {
+          console.log(m.messages[0].message);
+        }
       }
     }
     isreply.includes("quotedMessage") === true
@@ -98,23 +105,32 @@ async function Primon() {
     if (cmd.length > 1) {
       cmd = cmd[0];
     }
-    if (message.startsWith(cmd) && (process.env.SUDO !== false && sudo.length > 0) ) {
-        if (sudo.includes(m.messages[0].key.participant))
-        var command = message.split("")
-        var command2 = command.shift()
-        var attr = command.join("")
+    if (
+      message.startsWith(cmd) &&
+      process.env.SUDO !== false &&
+      sudo.length > 0
+    ) {
+      if (sudo.includes(m.messages[0].key.participant)) {
+        var command = message.split("");
+        var command2 = command.shift();
+        var attr = command.join("");
         try {
-            attr = attr.split(" ")[0]
+          attr = attr.split(" ")[0];
         } catch {
-            return;
+          return;
         }
-      if (attr == "menu") {
-          message = ""
-        return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
+        if (attr == "menu") {
+          message = "";
+          return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
+        }
       }
-    }
-    if (message == MenuLang.menu && btnid == "MENU") {
-        return await Proto.sendMessage(jid, { text: "Test"}, { quoted: m.messages[0] })
+      if (message == MenuLang.menu && btnid == "MENU") {
+        return await Proto.sendMessage(
+          jid,
+          { text: "Test" },
+          { quoted: m.messages[0] }
+        );
+      }
     }
 
     /*
