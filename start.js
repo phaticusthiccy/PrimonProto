@@ -102,7 +102,7 @@ async function Primon() {
       }
     }
     if (message == MenuLang.menu && btnid == "MENU") {
-        return await Proto.sendMessage(jid, { text: "Test"}, { quoted: m })
+        return await Proto.sendMessage(jid, { text: "Test"}, { quoted: m.messages[0] })
     }
 
     /*
