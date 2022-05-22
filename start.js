@@ -25,11 +25,12 @@ require("util").inspect.defaultOptions.depth = null;
 const Language = require("./lang");
 const MenuLang = Language.getString("menu");
 const sessionlang = Language.getString("session");
+const { dictEmojis } = require("./add");
 
 function react(client, emoji) {
   return (reactionMessage = {
     react: {
-      text: emoji,
+      text: emoji === false ? dictEmojis() : emoji,
       key: client.key,
     },
   });
@@ -115,12 +116,12 @@ async function Primon() {
               var args = "";
               if (attr.includes(" ")) {
                 attr = attr.split(" ")[0];
-                arg.a = message.split(" ")
+                arg.a = message.split(" ");
                 arg.a.map((e) => {
-                  arg.b.push(e)
-                })
-                arg.b.shift()
-                arg.c = arg.b.join(" ")
+                  arg.b.push(e);
+                });
+                arg.b.shift();
+                arg.c = arg.b.join(" ");
                 args = arg.c;
               } else {
                 args = "";
@@ -131,7 +132,7 @@ async function Primon() {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
                   var msg = await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
-                  return await Proto.sendMessage(jid, react(msg, "💌"));
+                  return await Proto.sendMessage(jid, react(msg));
                 } else {
                   if (args == "textpro") {
                     return await Proto.sendMessage(
@@ -144,11 +145,30 @@ async function Primon() {
               }
             }
             if (attr == "tagall") {
+              await Proto.sendMessage(jid, { delete: msgkey });
               if (args == "") {
-                const metadata = await Proto.groupMetadata(jid);
                 await Proto.sendMessage(jid, { delete: msgkey });
+                const metadata = await Proto.groupMetadata(jid);
+                var users = [];
+                var defaultMsg = "🔸 Bu Gruptaki Üyeler 🔸\n\n";
+                metadata.participant.map((user) => {
+                  users.push(user.id);
+                });
+                users.forEach((Element) => {
+                  defaultMsg += "🔹 @" + Element.split("@")[0] + "\n"
+                })
                 return await Proto.sendMessage(jid, {
-                  text: JSON.stringify(metadata),
+                  text: defaultMsg, mentions: users
+                });
+              } else {
+                await Proto.sendMessage(jid, { delete: msgkey });
+                const metadata = await Proto.groupMetadata(jid);
+                var users = [];
+                metadata.participant.map((user) => {
+                  users.push(user.id);
+                });
+                return await Proto.sendMessage(jid, {
+                  text: args, mentions: users
                 });
               }
             }
