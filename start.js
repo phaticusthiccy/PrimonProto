@@ -22,7 +22,7 @@ const fs = require("fs");
 var axios = require("axios");
 const { on } = require("events");
 require("util").inspect.defaultOptions.depth = null;
-const Language = require("../language");
+const Language = require("./langs");
 const MenuLang = Language.getString("menu");
 
 const { state, saveState } = useSingleFileAuthState("./session.json");
