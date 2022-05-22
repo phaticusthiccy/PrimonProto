@@ -27,10 +27,12 @@ async function Primon() {
       try {
         message = m.messages[0].message.extendedTextMessage.text
       } catch {
-        message = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+	      try {
+          message = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+        } catch {
+          console.log(m.messages[0].message)
       }
     }
-    if (typeof message == "undefined") console.log(m.messages[0].message)
     
     try {
       if (m.messages[0].message.quotedMessage) {
@@ -47,7 +49,10 @@ async function Primon() {
         try {
           repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.text
         } catch {
-          repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+          try {
+            repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+          } catch {
+            console.log(m.messages[0].message.quotedMessage)
         }
       }
     }
