@@ -1,6 +1,6 @@
-// Primon Proto 
+// Primon Proto
 // Headless WebSocket, type-safe Whatsapp UserBot
-// 
+//
 // Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
 // Multi-Device Lightweight ES5 Module (can ysable with mjs)
 //
@@ -33,20 +33,20 @@ require("util").inspect.defaultOptions.depth = null;
 const Language = require("./lang");
 const MenuLang = Language.getString("menu");
 const sessionlang = Language.getString("session");
-const taglang = Language.getString("tagall")
+const taglang = Language.getString("tagall");
 
 const { dictEmojis } = require("./add");
 
 function react(client, emoji) {
   var e;
-  if (!emoji) e = dictEmojis()
-  else e = emoji
-  return reactionMessage = {
+  if (!emoji) e = dictEmojis();
+  else e = emoji;
+  return (reactionMessage = {
     react: {
       text: e,
       key: client.key,
     },
-  };
+  });
 }
 
 const config = require("./config_proto");
@@ -96,6 +96,32 @@ async function Primon() {
     jid = m.messages[0].key.remoteJid;
     var once_msg = Object.keys(m.messages[0].message);
 
+    try {
+      var trs1 =
+        m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage;
+      isreplied = true;
+    } catch {
+      isreplied = false;
+    }
+
+    if (isreplied) {
+      var once_msg2 = Object.keys(
+        m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
+      );
+      if (once_msg2.includes("extendedTextMessage")) {
+        repliedmsg =
+          m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
+            .extendedTextMessage.text;
+      } else if (once_msg2.includes("conversation")) {
+        repliedmsg =
+          m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
+            .conversation;
+      } else {
+        repliedmsg = undefined;
+      }
+    } else {
+      repliedmsg = undefined;
+    }
     msgkey = m.messages[0].key;
     var message;
     if (once_msg.includes("conversation")) {
@@ -109,7 +135,7 @@ async function Primon() {
       console.log(m.messages[0].message);
       message = undefined;
     }
-    console.log(m.messages[0])
+    console.log(m.messages[0]);
     var cmd1 = process.env.HANDLER;
     var cmd;
     if (cmd1.length > 1) {
@@ -157,42 +183,60 @@ async function Primon() {
                   }
                 }
               }
-            }
-            if (attr == "tagall") {
-              await Proto.sendMessage(jid, { delete: msgkey });
-              if (args == "") {
-                await Proto.sendMessage(jid, { delete: msgkey });
-                const metadata = await Proto.groupMetadata(jid);
-                var users = [];
-                var defaultMsg = taglang.tag.replace("{%c}", metadata.subject);
-                metadata.participants.map((user) => {
-                  users.push(user.id);
-                });
-                users.forEach((Element) => {
-                  defaultMsg += "🔹 @" + Element.split("@")[0] + "\n"
-                })
-                return await Proto.sendMessage(jid, {
-                  text: defaultMsg, mentions: users
-                });
-              } else {
-                await Proto.sendMessage(jid, { delete: msgkey });
-                const metadata = await Proto.groupMetadata(jid);
-                var users = [];
-                metadata.participants.map((user) => {
-                  users.push(user.id);
-                });
-                return await Proto.sendMessage(jid, {
-                  text: args, mentions: users
-                });
+              if (attr == "tagall") {
+                if (isreplied) {
+                  await Proto.sendMessage(jid, { delete: msgkey });
+                  const metadata = await Proto.groupMetadata(jid);
+                  var users = [];
+                  metadata.participants.map((user) => {
+                    users.push(user.id);
+                  });
+                  return await Proto.sendMessage(jid, {
+                    text: repliedmsg,
+                    mentions: users,
+                  });
+                } else {
+                  await Proto.sendMessage(jid, { delete: msgkey });
+                  if (args == "") {
+                    await Proto.sendMessage(jid, { delete: msgkey });
+                    const metadata = await Proto.groupMetadata(jid);
+                    var users = [];
+                    var defaultMsg = taglang.tag.replace(
+                      "{%c}",
+                      metadata.subject
+                    );
+                    metadata.participants.map((user) => {
+                      users.push(user.id);
+                    });
+                    users.forEach((Element) => {
+                      defaultMsg += "🔹 @" + Element.split("@")[0] + "\n";
+                    });
+                    return await Proto.sendMessage(jid, {
+                      text: defaultMsg,
+                      mentions: users,
+                    });
+                  } else {
+                    await Proto.sendMessage(jid, { delete: msgkey });
+                    const metadata = await Proto.groupMetadata(jid);
+                    var users = [];
+                    metadata.participants.map((user) => {
+                      users.push(user.id);
+                    });
+                    return await Proto.sendMessage(jid, {
+                      text: args,
+                      mentions: users,
+                    });
+                  }
+                }
               }
-            }
-            // Buttons
-            if (message == MenuLang.menu) {
-              return await Proto.sendMessage(
-                jid,
-                { text: "Test" },
-                { quoted: m.messages[0] }
-              );
+              // Buttons
+              if (message == MenuLang.menu) {
+                return await Proto.sendMessage(
+                  jid,
+                  { text: "Test" },
+                  { quoted: m.messages[0] }
+                );
+              }
             }
           }
         }
