@@ -55,7 +55,7 @@ async function Primon() {
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
 
     var once_msg = Object.keys(m.messages[0].message);
-    console.log(m.messages[0]);
+    console.log(once_msg);
 
     /*
     if (m.type == "notify") {
