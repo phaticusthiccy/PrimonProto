@@ -74,10 +74,9 @@ async function Primon() {
     if (once_msg.includes("conversation")) {
       message = m.messages[0].message.conversation;
     } else if (once_msg.includes("extendedTextMessage")) {
-      var once_msg2 = m.messages[0].message.extendedTextMessage;
-      console.log(once_msg2);
       message = m.messages[0].message.extendedTextMessage.text;
     } else {
+      console.log(m.messages[0].message);
       message = undefined;
     }
     var cmd1 = process.env.HANDLER;
