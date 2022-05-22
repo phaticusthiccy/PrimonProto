@@ -16,20 +16,40 @@ setInterval(() => {
 async function Primon() {
   const Proto = makeWASocket({ auth: state, logger: P().child({ level: process.env.DEBUG === undefined ? 'silent' : process.env.DEBUG === true ? "trace" : "silent", stream: 'store' }) }) 
   Proto.ev.on('creds.update', saveState)
+  
   var message, isreplied, repliedmsg;
+  
   Proto.ev.on('messages.upsert', async (m) => {
     
-    if (m.messages[0].message.conversation !== undefined) message = m.messages[0].message.conversation
-    else if (m.messages[0].message.extendedTextMessage.text !== undefined) message = m.messages[0].message.extendedTextMessage.text
-    else if (m.messages[0].message.quotedMessage.extendedTextMessage.conversation !== undefined) message = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
-    else console.log(m.messages[0].message)
+    try {
+      message = m.messages[0].message.conversation
+    } catch {
+      try {
+        message = m.messages[0].message.extendedTextMessage.text
+      } catch {
+        message = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+      }
+    }
+    if (typeof message == "undefined") console.log(m.messages[0].message)
     
-    isreplied = m.messages[0].message.quotedMessage == undefined ? false : true
+    try {
+      if (m.messages[0].message.quotedMessage) {
+        isreplied = true
+      }
+    } catch {
+      isreplied = false
+    }
     
     if (isreplied) {
-      if (m.messages[0].message.quotedMessage.conversation !== undefined) repliedmsg = m.messages[0].message.quotedMessage.conversation
-      else if (m.messages[0].message.quotedMessage.extendedTextMessage.text !== undefined) repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.text
-      else if (m.messages[0].message.quotedMessage.extendedTextMessage.conversation !== undefined) repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+      try {
+        repliedmsg = m.messages[0].message.quotedMessage.conversation
+      } catch {
+        try {
+          repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.text
+        } catch {
+          repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+        }
+      }
     }
 	  
     if (m.type == "notify") {
