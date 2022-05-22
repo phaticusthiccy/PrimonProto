@@ -18,7 +18,6 @@ async function Primon() {
   Proto.ev.on('creds.update', saveState)
   var message, isreplied, repliedmsg;
   Proto.ev.on('messages.upsert', async (m) => {
-    if (!m.message) return;
     
     if (m.messages[0].message.conversation !== undefined) message = m.messages[0].message.conversation
     else if (m.messages[0].message.extendedTextMessage.text !== undefined) message = m.messages[0].message.extendedTextMessage.text
