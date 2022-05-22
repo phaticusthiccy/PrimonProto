@@ -119,7 +119,7 @@ async function Primon() {
                   arg.b.push(e)
                 })
                 arg.b.shift()
-                arg.c = d.join(" ")
+                arg.c = b.join(" ")
                 args = arg.c;
               } else {
                 args = "";
