@@ -90,7 +90,7 @@ async function Primon() {
             attr = attr.split(" ")[0]
         } catch {}
       if (attr == "menu") {
-        const sendMsg = await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
+        return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
       }
     }
 
