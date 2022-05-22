@@ -51,8 +51,14 @@ async function Primon() {
   });
   Proto.ev.on("creds.update", saveState);
 
-  var message, isreplied, repliedmsg, jid, btnid;
-
+  var message, isreplied, repliedmsg, jid, btnid, sudo1, sudo = [];
+  if (process.env.SUDO !== false) {
+      sudo1 = process.env.SUDO.split(",")
+      sudo1.map((Element) => {
+          sudo.push(Element + "@s.whatsapp.net")
+      })
+  }
+  console.log(Proto)
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
@@ -87,7 +93,8 @@ async function Primon() {
     if (cmd.length > 1) {
       cmd = cmd[0];
     }
-    if (message.startsWith(cmd)) {
+    if (message.startsWith(cmd) && (process.env.SUDO !== false && sudo.length > 0) ) {
+        if (sudo.includes(m.messages[0].key.participant))
         var command = message.split("")
         var command2 = command.shift()
         var attr = command.join("")
