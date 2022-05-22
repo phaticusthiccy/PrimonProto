@@ -14,7 +14,7 @@ setInterval(() => {
 }, 10000)
 
 async function Primon() {
-  const Proto = makeWASocket({ auth: state }) 
+  const Proto = makeWASocket({ auth: state, logger: P().child({ level: process.env.DEBUG === undefined ? 'silent' : process.env.DEBUG === true ? "trace" : "silent", stream: 'store' }) }) 
   Proto.ev.on('creds.update', saveState)
   Proto.ev.on('messages.upsert', async (m) => {
     if (m.type == "notify") {
