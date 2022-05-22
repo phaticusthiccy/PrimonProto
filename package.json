@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "main": "start.js",
    "scripts": {
-      "start": "node start.js"
+      "start": "node save.js && node start.js"
    },
    "repository": {
       "type": "git",
