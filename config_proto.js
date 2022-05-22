@@ -4,6 +4,25 @@ DATABASE_URL =
     ? "./primon.db"
     : process.env.DATABASE_URL;
 DEBUG = false;
+let btn = [
+  [
+    {
+      buttonId: "id1",
+      buttonText: { displayText: MenuLang.menu },
+      type: 1,
+    },
+    {
+      buttonId: "id2",
+      buttonText: { displayText: MenuLang.owner },
+      type: 1,
+    },
+    {
+      buttonId: "id3",
+      buttonText: { displayText: MenuLang.star },
+      type: 1,
+    },
+  ],
+];
 const Language = require("./lang");
 const MenuLang = Language.getString("menu");
 module.exports = {
@@ -32,22 +51,3 @@ module.exports = {
   },
 };
 
-let btn = [
-  [
-    {
-      buttonId: "id1",
-      buttonText: { displayText: MenuLang.menu },
-      type: 1,
-    },
-    {
-      buttonId: "id2",
-      buttonText: { displayText: MenuLang.owner },
-      type: 1,
-    },
-    {
-      buttonId: "id3",
-      buttonText: { displayText: MenuLang.star },
-      type: 1,
-    },
-  ],
-];
