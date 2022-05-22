@@ -1,5 +1,5 @@
 const fs = require("fs");
-const chalk = require("chalk");
+import chalk from "chalk"
 
 var lang = process.env.LANG.toUpperCase();
 var langname =
