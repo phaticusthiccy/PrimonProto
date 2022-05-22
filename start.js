@@ -24,6 +24,7 @@ const { on } = require("events");
 require("util").inspect.defaultOptions.depth = null;
 const Language = require("./lang");
 const MenuLang = Language.getString("menu");
+const config = require("./config_proto")
 
 const { state, saveState } = useSingleFileAuthState("./session.json");
 
@@ -70,7 +71,6 @@ async function Primon() {
       try {
         message = m.messages[0].message.extendedTextMessage.text;
       } catch {
-          console.log(m.messages[0])
       }
     }
     isreply.includes("quotedMessage") === true
@@ -89,31 +89,7 @@ async function Primon() {
             attr = attr.split(" ")[0]
         } catch {}
       if (attr == "menu") {
-        const buttons = [
-          {
-            buttonId: "id1",
-            buttonText: { displayText: MenuLang.menu },
-            type: 1,
-          },
-          {
-            buttonId: "id2",
-            buttonText: { displayText: MenuLang.owner },
-            type: 1,
-          },
-          {
-            buttonId: "id3",
-            buttonText: { displayText: MenuLang.star },
-            type: 1,
-          },
-        ];
-
-        const buttonMessage = {
-          text: "Primon Proto",
-          footer: "ES5 Lightweight Userbot",
-          buttons: buttons,
-          headerType: 1,
-        };
-        const sendMsg = await Proto.sendMessage(jid, buttonMessage);
+        const sendMsg = await Proto.sendMessage(jid, config.TEXTS.MENU[1]);
       }
     }
 
