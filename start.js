@@ -139,7 +139,7 @@ async function Primon() {
         console.log(sessionlang.bad);
         fs.unlinkSync("./session.json");
         fs.unlinkSync("./baileys_store_multi.json");
-        Primon.logout();
+        Proto.logout();
       } else if (reason === DisconnectReason.connectionClosed) {
         console.log(sessionlang.recon);
         Primon();
@@ -150,7 +150,7 @@ async function Primon() {
         console.log(sessionlang.out);
         fs.unlinkSync("./session.json");
         fs.unlinkSync("./baileys_store_multi.json");
-        Primon.logout();
+        Proto.logout();
       } else if (reason === DisconnectReason.restartRequired) {
         console.log(sessionlang.recon);
         Primon();
@@ -158,7 +158,7 @@ async function Primon() {
         console.log(sessionlang.recon);
         Primon();
       } else {
-          Primon.end(reason);
+        Proto.end(reason);
       }
     }
     console.log(sessionlang.run);
