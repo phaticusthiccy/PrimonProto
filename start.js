@@ -62,7 +62,8 @@ async function Primon() {
           sudo.push(process.env.SUDO)
       }
   }
-  console.log(Proto)
+
+  sudo.push(Proto.user.id)
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
