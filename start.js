@@ -106,31 +106,32 @@ async function Primon() {
     if (cmd.length > 1) {
       cmd = cmd[0];
     }
-    if (
-      message !== undefined &&
-      message.startsWith(cmd) &&
-      process.env.SUDO !== false &&
-      sudo.length > 0 &&
-    ) {
-      if (sudo.includes(m.messages[0].key.participant)) {
-        var command = message.split("");
-        var command2 = command.shift();
-        var attr = command.join("");
-        try {
-          attr = attr.split(" ")[0];
-        } catch {
-          return;
-        }
-        if (attr == "menu") {
-          message = "";
-          return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
-        }
-        if (message == MenuLang.menu && btnid == "MENU") {
-          return await Proto.sendMessage(
-            jid,
-            { text: "Test" },
-            { quoted: m.messages[0] }
-          );
+    if (message !== undefined) {
+      if (
+        message.startsWith(cmd) &&
+        process.env.SUDO !== false &&
+        sudo.length > 0
+      ) {
+        if (sudo.includes(m.messages[0].key.participant)) {
+          var command = message.split("");
+          var command2 = command.shift();
+          var attr = command.join("");
+          try {
+            attr = attr.split(" ")[0];
+          } catch {
+            return;
+          }
+          if (attr == "menu") {
+            message = "";
+            return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
+          }
+          if (message == MenuLang.menu && btnid == "MENU") {
+            return await Proto.sendMessage(
+              jid,
+              { text: "Test" },
+              { quoted: m.messages[0] }
+            );
+          }
         }
       }
     }
