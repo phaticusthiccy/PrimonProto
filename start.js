@@ -1,73 +1,98 @@
-const { default: makeWASocket, MessageType, MessageOptions, Mimetype, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto, AnyMediaMessageContent } = require("@adiwajshing/baileys")
-const P = require('pino')
-const { Boom } = require('@hapi/boom')
-const fs = require('fs')
-var axios = require("axios")
-require('util').inspect.defaultOptions.depth = null
+const {
+  default: makeWASocket,
+  MessageType,
+  MessageOptions,
+  Mimetype,
+  useSingleFileAuthState,
+  DisconnectReason,
+  fetchLatestBaileysVersion,
+  generateForwardMessageContent,
+  prepareWAMessageMedia,
+  generateWAMessageFromContent,
+  generateMessageID,
+  downloadContentFromMessage,
+  makeInMemoryStore,
+  jidDecode,
+  proto,
+  AnyMediaMessageContent,
+} = require("@adiwajshing/baileys");
+const P = require("pino");
+const { Boom } = require("@hapi/boom");
+const fs = require("fs");
+var axios = require("axios");
+const { on } = require("events");
+require("util").inspect.defaultOptions.depth = null;
 
-const { state, saveState } = useSingleFileAuthState("./session.json")
+const { state, saveState } = useSingleFileAuthState("./session.json");
 
-const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
+const store = makeInMemoryStore({
+  logger: P().child({ level: "silent", stream: "store" }),
+});
 
 setInterval(() => {
-	store.writeToFile('./baileys_store_multi.json')
-}, 10000)
+  store.writeToFile("./baileys_store_multi.json");
+}, 10000);
 
 async function Primon() {
-  const Proto = makeWASocket({ auth: state, logger: P().child({ level: process.env.DEBUG === undefined ? 'silent' : process.env.DEBUG === true ? "trace" : "silent", stream: 'store' }) }) 
-  Proto.ev.on('creds.update', saveState)
-  
+  const Proto = makeWASocket({
+    auth: state,
+    logger: P().child({
+      level:
+        process.env.DEBUG === undefined
+          ? "silent"
+          : process.env.DEBUG === true
+          ? "trace"
+          : "silent",
+      stream: "store",
+    }),
+  });
+  Proto.ev.on("creds.update", saveState);
+
   var message, isreplied, repliedmsg;
-  
-  Proto.ev.on('messages.upsert', async (m) => {
+
+  Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message) return;
-    try {
-      message = m.messages[0].message.conversation
-    } catch {
-      try {
-        message = m.messages[0].message.extendedTextMessage.text
-      } catch {
-        try {
-          message = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
-        } catch {
-          console.log(m.messages[0].message)
-	}
-      }
-    }
-    
+
+    var once_msg = Object.keys(m.messages[0].message);
+    if (once_msg[0] == "conversation")
+      message = m.messages[0].message.conversation;
+    else if (once_msg[0] == "extendedTextMessage")
+      message = m.messages[0].message.extendedTextMessage.text;
+    else console.log(m.messages[0]);
+
     try {
       if (m.messages[0].message.quotedMessage) {
-        isreplied = true
+        isreplied = true;
       }
     } catch {
-      isreplied = false
+      isreplied = false;
     }
-    
+
     if (isreplied) {
       try {
-        repliedmsg = m.messages[0].message.quotedMessage.conversation
+        repliedmsg = m.messages[0].message.quotedMessage.conversation;
       } catch {
         try {
-          repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.text
+          repliedmsg =
+            m.messages[0].message.quotedMessage.extendedTextMessage.text;
         } catch {
           try {
-            repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+            repliedmsg =
+              m.messages[0].message.quotedMessage.extendedTextMessage
+                .conversation;
           } catch {
-            console.log(m.messages[0].message.quotedMessage)
-	  }
+            console.log(m.messages[0].message.quotedMessage);
+          }
         }
       }
     }
-	  
+
     if (m.type == "notify") {
-      console.log(message)
-      console.log(isreplied)
-      console.log(repliedmsg)
-    } else {
-      console.log(message)
-      console.log(m.type)
+      console.log(message);
+      console.log(isreplied);
+      console.log(repliedmsg);
     }
-      /*
+    /*
       if (m.messages[0].key.fromMe) {
         if (m.messages[0].message.conversation.startsWith(".textpro")) {
 	  await Proto.sendMessage(m.messages[0].key.remoteJid, { delete: m.messages[0].key })
@@ -80,16 +105,13 @@ async function Primon() {
 	}
       }
       */
-  })
+  });
 }
 try {
-  Primon()
+  Primon();
 } catch {
-  Primon()
+  Primon();
 }
-
-
-
 
 /*
 import { Boom } from '@hapi/boom'
