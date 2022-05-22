@@ -93,6 +93,7 @@ async function Primon() {
             m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
           btnid = m.messages[0].message.buttonsResponseMessage.selectedButtonId;
         } catch {
+          message = undefined;
           console.log(m.messages[0].message);
         }
       }
@@ -108,7 +109,8 @@ async function Primon() {
     if (
       message.startsWith(cmd) &&
       process.env.SUDO !== false &&
-      sudo.length > 0
+      sudo.length > 0 &&
+      message !== undefined
     ) {
       if (sudo.includes(m.messages[0].key.participant)) {
         var command = message.split("");
@@ -123,13 +125,13 @@ async function Primon() {
           message = "";
           return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
         }
-      }
-      if (message == MenuLang.menu && btnid == "MENU") {
-        return await Proto.sendMessage(
-          jid,
-          { text: "Test" },
-          { quoted: m.messages[0] }
-        );
+        if (message == MenuLang.menu && btnid == "MENU") {
+          return await Proto.sendMessage(
+            jid,
+            { text: "Test" },
+            { quoted: m.messages[0] }
+          );
+        }
       }
     }
 
