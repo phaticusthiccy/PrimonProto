@@ -71,6 +71,7 @@ async function Primon() {
       try {
         message = m.messages[0].message.extendedTextMessage.text;
       } catch {
+          message = ""
       }
     }
     console.log(m.messages[0].message)
