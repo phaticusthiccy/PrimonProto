@@ -1,4 +1,6 @@
 const { Sequelize } = require("sequelize");
+const Language = require("./lang");
+const MenuLang = Language.getString("menu");
 DATABASE_URL =
   process.env.DATABASE_URL === undefined
     ? "./primon.db"
@@ -23,8 +25,6 @@ let btn = [
     },
   ],
 ];
-const Language = require("./lang");
-const MenuLang = Language.getString("menu");
 module.exports = {
   VERSION: "v1.0 Beta",
   DATABASE_URL: DATABASE_URL,
