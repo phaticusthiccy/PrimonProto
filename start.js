@@ -4,7 +4,8 @@ const { Boom } = require('@hapi/boom')
 const fs = require('fs')
 require('util').inspect.defaultOptions.depth = null
 var SESSION = process.env.SESSION
-fs.writeFile("./session.json", Buffer.from(SESSION, "base64").toString(), (err) => {
+SESSION = Buffer.from(SESSION, "base64").toString()
+fs.writeFile("./session.json", SESSION, (err) => {
   if (err) {
     console.log("Error While Generating Session Data!")
   }
