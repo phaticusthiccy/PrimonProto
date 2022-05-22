@@ -47,7 +47,13 @@ module.exports = {
         buttons: btn[0],
         headerType: 1,
       },
+      {
+        image: { url: "https://i.hizliresim.com/q6iejtp.jpg" },
+        caption: "Primon Proto",
+        footer: "ES5 Lightweight Userbot",
+        buttons: btn[0],
+        headerType: 4,
+      },
     ],
   },
 };
-

@@ -26,13 +26,13 @@ const Language = require("./lang");
 const MenuLang = Language.getString("menu");
 const sessionlang = Language.getString("session");
 
-function react(client) {
-  return reactionMessage = {
+function react(client, emoji) {
+  return (reactionMessage = {
     react: {
-      text: "💖",
+      text: emoji,
       key: client.key,
     },
-  };
+  });
 }
 
 const config = require("./config_proto");
@@ -62,7 +62,10 @@ async function Primon() {
     btnid,
     sudo1,
     sudo = [];
-  await Proto.sendMessage(Proto.user.id.split(":")[0] + "@s.whatsapp.net", {});
+  await Proto.sendMessage(
+    Proto.user.id.split(":")[0] + "@s.whatsapp.net",
+    config.TEXTS.MENU[1]
+  );
   if (process.env.SUDO !== false) {
     if (process.env.SUDO.includes(",")) {
       var sudo1 = process.env.SUDO.split(",");
@@ -110,20 +113,35 @@ async function Primon() {
               var command = message.split("");
               var command2 = command.shift();
               var attr = command.join("");
+              var args;
 
               if (attr.includes(" ")) {
                 attr = attr.split(" ")[0];
+                args = command.join("").split(" ").shift().join("");
               } else {
+                args = "";
               }
 
               // Commands
               if (attr == "menu") {
                 await Proto.sendMessage(jid, { delete: msgkey });
-                var msg = await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
-                return await sock.sendMessage(jid, react(msg));
+                if (args == "") {
+                  var msg = await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
+                  return await sock.sendMessage(jid, react(msg, "💌"));
+                } else {
+                  if (args == "textpro") {
+                    return await Proto.sendMessage(jid, { text: "Textoro Cİhazı İçin Açıklama"}, { quoted: m.messages[0] })
+                  }
+                }
               }
             }
-
+            if (attr == "tagall") {
+              if (args == "") {
+                const metadata = await Proto.groupMetadata(jid)
+                await Proto.sendMessage(jid, { delete: msgkey })
+                return await Proto.sendMessage(jid, { text: JSON.stringify(metadata)})
+              }
+            }
             // Buttons
             if (message == MenuLang.menu) {
               return await Proto.sendMessage(
