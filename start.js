@@ -3,6 +3,7 @@ const P = require('pino')
 const { Boom } = require('@hapi/boom')
 const fs = require('fs')
 
+console.log(process.env)
 fs.writeFile("./session.json", Buffer.from(process.env.SESSION, "base64").toString(), (err) => {
   if (err) {
     console.log("Error While Generating Session Data!")
