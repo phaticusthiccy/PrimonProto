@@ -2,8 +2,8 @@ const { default: Baileys, useSingleFileAuthState, DisconnectReason, fetchLatestB
 const P = require('pino')
 const { Boom } = require('@hapi/boom')
 const fs = require('fs')
-
-console.log(process.env)
+require('util').inspect.defaultOptions.depth = null
+console.log(process.env.SESSION)
 fs.writeFile("./session.json", Buffer.from(process.env.SESSION, "base64").toString(), (err) => {
   if (err) {
     console.log("Error While Generating Session Data!")
