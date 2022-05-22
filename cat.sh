@@ -1,2 +1,1 @@
 ls
-cat session.json
