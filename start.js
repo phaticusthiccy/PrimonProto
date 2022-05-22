@@ -1,15 +1,8 @@
-const { default: Baileys, MessageType, MessageOptions, Mimetype, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@adiwajshing/baileys")
+const { default: makeWASocket, MessageType, MessageOptions, Mimetype, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@adiwajshing/baileys")
 const P = require('pino')
 const { Boom } = require('@hapi/boom')
 const fs = require('fs')
 require('util').inspect.defaultOptions.depth = null
-var SESSION = process.env.SESSION
-SESSION = Buffer.from(SESSION, "base64").toString()
-fs.writeFile("./session.json", SESSION, (err) => {
-  if (err) {
-    console.log("Error While Generating Session Data!")
-  }
-})
 
 const { state, saveState } = useSingleFileAuthState("./session.json")
 
@@ -20,7 +13,8 @@ setInterval(() => {
 }, 10000)
 
 async function Primon() {
-  const Proto = Baileys({})
+  const Proto = makeWASocket({ auth: state }) 
+  Proto.ev.on('creds.update', saveState)
   Proto.ev.on('messages.upsert', async (m) => {
     fs.writeFileSync("a.txt", JSON.stringify(m))
     await Proto.sendMessage("905511384572@s.whatsapp.net", fs.readFileSync("a.txt"))
