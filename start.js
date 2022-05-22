@@ -1,7 +1,8 @@
-const { default: makeWASocket, MessageType, MessageOptions, Mimetype, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@adiwajshing/baileys")
+const { default: makeWASocket, MessageType, MessageOptions, Mimetype, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto, AnyMediaMessageContent } = require("@adiwajshing/baileys")
 const P = require('pino')
 const { Boom } = require('@hapi/boom')
 const fs = require('fs')
+var axios = require("axios")
 require('util').inspect.defaultOptions.depth = null
 
 const { state, saveState } = useSingleFileAuthState("./session.json")
@@ -16,8 +17,17 @@ async function Primon() {
   const Proto = makeWASocket({ auth: state }) 
   Proto.ev.on('creds.update', saveState)
   Proto.ev.on('messages.upsert', async (m) => {
-    fs.writeFileSync("a.txt", JSON.stringify(m))
-    await Proto.sendMessage("905511384572@s.whatsapp.net", { text: fs.readFileSync("a.txt").toString() })
+    if (m.type == "notify") {
+      if (m.messages[0].key.fromMe) {
+        if (m.messages[0].message.conversation.startsWith(".textpro")) {
+          var args = m.messages[0].message.conversation.split(" ")
+	  var api = await axios.get("https://open-apis-rest.up.railway.app/api/textpro?url=" +
+	    args[1] + "&text1=" + args[2], { responseType: "arraybuffer" }
+          ) 
+          await Proto.sendMessage("905511384572@s.whatsapp.net", { image: Buffer.from(api.data), caption: "By Primon Proto" })
+	}
+      }
+    }
   })
 }
 try {
