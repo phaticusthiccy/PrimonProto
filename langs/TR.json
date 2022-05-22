@@ -4,6 +4,12 @@
       "menu": "‎Komut Listesi",
       "owner": "‎Geliştirici",
       "star": "‎Yıldızla! 🌟"
+    },
+    "session": {
+        "bad": "Session Kodunuz Bozulmuş! Lütfen Yeniden QR Okutup Eskisi İle Değiştirin!",
+        "recon": "Yeniden Bağlanılıyor..",
+        "out": "Çıkış Yapıldı. Lütfen QR Kodu Yenileyin!",
+        "run": "Primon Proto Çalışıyor!"
     }
   }
 }

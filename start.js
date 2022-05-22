@@ -24,6 +24,8 @@ const { on } = require("events");
 require("util").inspect.defaultOptions.depth = null;
 const Language = require("./lang");
 const MenuLang = Language.getString("menu");
+const sessionlang = Language.getString("session");
+
 const config = require("./config_proto");
 
 const { state, saveState } = useSingleFileAuthState("./session.json");
@@ -39,7 +41,7 @@ setInterval(() => {
 async function Primon() {
   const Proto = makeWASocket({
     auth: state,
-    logger: P({ level: "silent" })
+    logger: P({ level: "silent" }),
   });
   Proto.ev.on("creds.update", saveState);
 
@@ -72,9 +74,9 @@ async function Primon() {
     if (once_msg.includes("conversation")) {
       message = m.messages[0].message.conversation;
     } else if (once_msg.includes("extendedTextMessage")) {
-        var once_msg2 = Object.keys(m.messages[0].message.extendedTextMessage);
-        console.log(once_msg2)
-         message = m.messages[0].message.extendedTextMessage.text;
+      var once_msg2 = m.messages[0].message.extendedTextMessage;
+      console.log(once_msg2);
+      message = m.messages[0].message.extendedTextMessage.text;
     } else {
       message = undefined;
     }
@@ -115,7 +117,6 @@ async function Primon() {
       }
     }
 
-    
     /*
       if (m.messages[0].key.fromMe) {
         if (m.messages[0].message.conversation.startsWith(".textpro")) {
@@ -130,21 +131,38 @@ async function Primon() {
       }
       */
   });
-  Proto.ev.on('connection.update', async (update) => {
-    const { connection, lastDisconnect } = update	    
-    if (connection === 'close') {
-    let reason = new Boom(lastDisconnect?.error)?.output.statusCode
-        if (reason === DisconnectReason.badSession) { console.log(`Bad Session File, Please Delete Session and Scan Again`); Primon.logout(); }
-        else if (reason === DisconnectReason.connectionClosed) { console.log("🐦Connection closed, reconnecting...."); Primon(); }
-        else if (reason === DisconnectReason.connectionLost) { console.log("🐦Connection Lost from Server, reconnecting..."); Primon(); }
-        else if (reason === DisconnectReason.connectionReplaced) { console.log("🐦Connection Replaced, Another New Session Opened, Please Close Current Session First"); Primon.logout(); }
-        else if (reason === DisconnectReason.loggedOut) { console.log(`🐦Device Logged Out, Please Scan Again And Run.`); Primon.logout(); }
-        else if (reason === DisconnectReason.restartRequired) { console.log("🐦Restart Required, Restarting..."); Primon(); }
-        else if (reason === DisconnectReason.timedOut) { console.log("🐦Connection TimedOut, Reconnecting..."); Primon(); }
-        else Primon.end(`🐦Unknown DisconnectReason: ${reason}|${connection}`)
+  Proto.ev.on("connection.update", async (update) => {
+    const { connection, lastDisconnect } = update;
+    if (connection === "close") {
+      let reason = new Boom(lastDisconnect?.error)?.output.statusCode;
+      if (reason === DisconnectReason.badSession) {
+        console.log(sessionlang.bad);
+        fs.unlinkSync("./session.json");
+        fs.unlinkSync("./baileys_store_multi.json");
+        Primon.logout();
+      } else if (reason === DisconnectReason.connectionClosed) {
+        console.log(sessionlang.recon);
+        Primon();
+      } else if (reason === DisconnectReason.connectionLost) {
+        console.log(sessionlang.recon);
+        Primon();
+      } else if (reason === DisconnectReason.loggedOut) {
+        console.log(sessionlang.out);
+        fs.unlinkSync("./session.json");
+        fs.unlinkSync("./baileys_store_multi.json");
+        Primon.logout();
+      } else if (reason === DisconnectReason.restartRequired) {
+        console.log(sessionlang.recon);
+        Primon();
+      } else if (reason === DisconnectReason.timedOut) {
+        console.log(sessionlang.recon);
+        Primon();
+      } else {
+          Primon.end(reason);
+      }
     }
-    console.log('Connected...', update)
-})
+    console.log(sessionlang.run);
+  });
 }
 try {
   Primon();

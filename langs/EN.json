@@ -4,6 +4,12 @@
         "menu": "‎Command List",
         "owner": "‎Developer",
         "star": "‎Star on Github! 🌟"
+      },
+      "session": {
+          "bad": "The Session Is No More Useful. Please Re-Scan The QR Code and Replace Old One.",
+          "recon": "Reconnecting..",
+          "out": "Logout! Please, Rescan the QR Code!",
+          "run": "Primon Proto Running!"
       }
     }
   }
