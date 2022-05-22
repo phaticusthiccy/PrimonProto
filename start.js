@@ -51,7 +51,6 @@ async function Primon() {
 	}
       }
       */
-    }
   })
 }
 try {
