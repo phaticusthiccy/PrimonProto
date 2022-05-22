@@ -49,6 +49,7 @@ async function Primon() {
     isreplied,
     repliedmsg,
     jid,
+    msgkey,
     btnid,
     sudo1,
     sudo = [];
@@ -70,13 +71,14 @@ async function Primon() {
     jid = m.messages[0].key.remoteJid;
     var once_msg = Object.keys(m.messages[0].message);
 
+    msgkey = m.messages[0].key
     var message;
     if (once_msg.includes("conversation")) {
       message = m.messages[0].message.conversation;
     } else if (once_msg.includes("extendedTextMessage")) {
       message = m.messages[0].message.extendedTextMessage.text;
     } else if (once_msg.includes("buttonsResponseMessage")) {
-        message = m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
+      message = m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
     } else {
       console.log(m.messages[0].message);
       message = undefined;
@@ -91,28 +93,36 @@ async function Primon() {
 
     if (message !== undefined) {
       if (m.type == "notify") {
-        if (cmd.includes(message[0])) {
+        if (sudo.includes(m.messages[0].key.participant)) {
           if (process.env.SUDO !== false && sudo.length > 0) {
-            if (sudo.includes(m.messages[0].key.participant)) {
+            if (cmd.includes(message[0])) {
               var command = message.split("");
               var command2 = command.shift();
               var attr = command.join("");
-              try {
+
+              if (attr.includes(" ")) {
                 attr = attr.split(" ")[0];
-              } catch {
-                return;
+              } else {
+
               }
+
+
+              // Commands
               if (attr == "menu") {
+                await Proto.sendMessage(jid, { delete: msgkey })
                 return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
               }
-              if (message == MenuLang.menu) {
-                return await Proto.sendMessage(
-                  jid,
-                  { text: "Test" },
-                  { quoted: m.messages[0] }
-                );
-              }
             }
+
+            // Buttons
+            if (message == MenuLang.menu) {
+              return await Proto.sendMessage(
+                jid,
+                { text: "Test" },
+                { quoted: m.messages[0] }
+              );
+            }
+
           }
         }
       }
