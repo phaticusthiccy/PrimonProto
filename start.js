@@ -60,6 +60,7 @@ async function Primon() {
     }
 	  
     if (m.type == "notify") {
+      console.log(m.messages[0])
       console.log(message)
       console.log(isreplied)
       console.log(repliedmsg)
