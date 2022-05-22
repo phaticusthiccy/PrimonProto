@@ -110,14 +110,16 @@ async function Primon() {
               var command = message.split("");
               var command2 = command.shift();
               var attr = command.join("");
-              var arg = { a: "", b: [], c: "" };
+              var arg = { a: [], b: [], c: "" };
               var args = "";
               if (attr.includes(" ")) {
                 attr = attr.split(" ")[0];
-                arg.a = command.join("");
-                arg.b.push(arg.a.split(" "));
-                var agrsh = arg.b.shift();
-                arg.c = arg.b.join("");
+                arg.a = message.split(" ")
+                arg.a.map((e) => {
+                  arg.b.push(e)
+                })
+                arg.b.shift()
+                arg.c = d.join(" ")
                 args = arg.c;
               } else {
                 args = "";
