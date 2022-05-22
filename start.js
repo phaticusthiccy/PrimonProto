@@ -31,7 +31,8 @@ async function Primon() {
       if (m.messages[0].message.quotedMessage.conversation !== undefined) repliedmsg = m.messages[0].message.quotedMessage.conversation
       else if (m.messages[0].message.quotedMessage.extendedTextMessage.text !== undefined) repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.text
       else if (m.messages[0].message.quotedMessage.extendedTextMessage.conversation !== undefined) repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
-	 
+    }
+	  
     if (m.type == "notify") {
       console.log(message)
       console.log(isreplied)
