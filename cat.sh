@@ -1,1 +1,2 @@
-cat session.js
+ls
+cat session.json
