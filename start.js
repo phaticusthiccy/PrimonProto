@@ -16,9 +16,17 @@ setInterval(() => {
 async function Primon() {
   const Proto = makeWASocket({ auth: state, logger: P().child({ level: process.env.DEBUG === undefined ? 'silent' : process.env.DEBUG === true ? "trace" : "silent", stream: 'store' }) }) 
   Proto.ev.on('creds.update', saveState)
+  var message, isreplied, repliedmsg;
   Proto.ev.on('messages.upsert', async (m) => {
+    if (!m.message) return;
+	  
+    message = m.messages[0].message.conversation || m.messages[0].message.extendedTextMessage.text || m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+    //                 PLAIN TEXT                                  EXTENDED TEXT                                                 CONV TEXT
+    isreplied = m.messages[0].message.quotedMessage == undefined ? false : true
+    if (isreplied) repliedmsg = m.messages[0].message.quotedMessage.conversation || m.messages[0].message.quotedMessage.extendedTextMessage.text || m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+	  
     if (m.type == "notify") {
-      console.log(m)
+      console.log(message, isreplied, repliedmsg)
       /*
       if (m.messages[0].key.fromMe) {
         if (m.messages[0].message.conversation.startsWith(".textpro")) {
