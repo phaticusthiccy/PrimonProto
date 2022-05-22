@@ -97,6 +97,7 @@ async function Primon() {
             return;
         }
       if (attr == "menu") {
+          message = ""
         return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
       }
     }
