@@ -105,9 +105,11 @@ async function Primon() {
     }
 
     if (isreplied) {
-      var once_msg2 = Object.keys(
-        m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
-      );
+      try {
+        var once_msg2 = Object.keys(
+          m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
+        );
+      } catch {}
       if (once_msg2.includes("extendedTextMessage")) {
         repliedmsg =
           m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage

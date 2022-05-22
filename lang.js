@@ -25,7 +25,7 @@ if (fs.existsSync(`./langs/${lang}.json`)) {
     )
   );
   var json = JSON.parse(fs.readFileSync("./langs/EN.json"));
-  console.log(chalk.green.bold("Loaded " + process.env.LANG.toLocaleLowerCase() + " Language!"))
+  console.log(chalk.green.bold("Loaded EN Language!"))
 }
 
 function getString(file) {
