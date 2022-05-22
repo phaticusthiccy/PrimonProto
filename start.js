@@ -62,10 +62,7 @@ async function Primon() {
     btnid,
     sudo1,
     sudo = [];
-  await Proto.sendMessage(
-    Proto.user.id.split(":")[0] + "@s.whatsapp.net",
-    config.TEXTS.MENU[1]
-  );
+
   if (process.env.SUDO !== false) {
     if (process.env.SUDO.includes(",")) {
       var sudo1 = process.env.SUDO.split(",");
