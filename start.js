@@ -79,7 +79,7 @@ async function Primon() {
     }
     if (message.startsWith(cmd)) {
         var command = message.split("")
-        command = command.shift()
+        var command2 = command.shift()
         var attr = command.join("")
         try {
             attr = attr.split(" ")[0]
