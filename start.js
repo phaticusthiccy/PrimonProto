@@ -51,7 +51,7 @@ async function Primon() {
   });
   Proto.ev.on("creds.update", saveState);
 
-  var message, isreplied, repliedmsg, jid;
+  var message, isreplied, repliedmsg, jid, btnid;
 
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message) return;
@@ -71,10 +71,14 @@ async function Primon() {
       try {
         message = m.messages[0].message.extendedTextMessage.text;
       } catch {
-          message = ""
+          try {
+            message = m.messages[0].message.buttonsResponseMessage.selectedDisplayText
+            btnid = m.messages[0].message.buttonsResponseMessage.selectedButtonId
+          } catch {
+            console.log(m.messages[0].message)
+          }
       }
     }
-    console.log(m.messages[0].message)
     isreply.includes("quotedMessage") === true
       ? (isreplied = true)
       : (isreplied = false);
@@ -96,7 +100,9 @@ async function Primon() {
         return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
       }
     }
-
+    if (message == MenuLang.menu && btnid == "MENU") {
+        return await Proto.sendMessage(jid, { text: "Test"}, { quoted: m })
+    }
 
     /*
     if (m.type == "notify") {

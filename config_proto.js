@@ -9,17 +9,17 @@ DEBUG = false;
 let btn = [
   [
     {
-      buttonId: "id1",
+      buttonId: "MENU",
       buttonText: { displayText: MenuLang.menu },
       type: 1,
     },
     {
-      buttonId: "id2",
+      buttonId: "OWNER",
       buttonText: { displayText: MenuLang.owner },
       type: 1,
     },
     {
-      buttonId: "id3",
+      buttonId: "STAR",
       buttonText: { displayText: MenuLang.star },
       type: 1,
     },
