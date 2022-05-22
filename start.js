@@ -75,6 +75,8 @@ async function Primon() {
       message = m.messages[0].message.conversation;
     } else if (once_msg.includes("extendedTextMessage")) {
       message = m.messages[0].message.extendedTextMessage.text;
+    } else if (once_msg.includes("buttonsResponseMessage")) {
+        message = m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
     } else {
       console.log(m.messages[0].message);
       message = undefined;
