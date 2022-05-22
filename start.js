@@ -107,10 +107,10 @@ async function Primon() {
       cmd = cmd[0];
     }
     if (
+      message !== undefined &&
       message.startsWith(cmd) &&
       process.env.SUDO !== false &&
       sudo.length > 0 &&
-      message !== undefined
     ) {
       if (sudo.includes(m.messages[0].key.participant)) {
         var command = message.split("");
