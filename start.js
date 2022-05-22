@@ -55,14 +55,9 @@ async function Primon() {
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
 
     var once_msg = Object.keys(m.messages[0].message);
-    if (once_msg.includes("conversation")) {
-        message = m.messages[0].message.conversation
-        console.log(message);
-    } else {
-        message = m.messages[0].message.extendedTextMessage.text
-        console.log(message)
-    }
-
+    if (once_msg.includes("conversation")) { message = m.messages[0].message.conversation } else { message = m.messages[0].message.extendedTextMessage.text }
+    console.log(m.messages[0])
+    
     /*
     if (m.type == "notify") {
       console.log(message);
