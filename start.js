@@ -19,14 +19,23 @@ async function Primon() {
   var message, isreplied, repliedmsg;
   Proto.ev.on('messages.upsert', async (m) => {
     if (!m.message) return;
-	  
-    message = m.messages[0].message.conversation || m.messages[0].message.extendedTextMessage.text || m.messages[0].message.quotedMessage.extendedTextMessage.conversation
-    //                 PLAIN TEXT                                  EXTENDED TEXT                                                 CONV TEXT
+    
+	  if (m.messages[0].message.conversation !== undefined) message = m.messages[0].message.conversation
+    else if (m.messages[0].message.extendedTextMessage.text !== undefined) message = m.messages[0].message.extendedTextMessage.text
+    else if (m.messages[0].message.quotedMessage.extendedTextMessage.conversation !== undefined) message = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+    else console.log(m.messages[0].message)
+    
     isreplied = m.messages[0].message.quotedMessage == undefined ? false : true
-    if (isreplied) repliedmsg = m.messages[0].message.quotedMessage.conversation || m.messages[0].message.quotedMessage.extendedTextMessage.text || m.messages[0].message.quotedMessage.extendedTextMessage.conversation
-	  
+    
+    if (isreplied) {
+      if (m.messages[0].message.quotedMessage.conversation !== undefined) repliedmsg = m.messages[0].message.quotedMessage.conversation
+      else if (m.messages[0].message.quotedMessage.extendedTextMessage.text !== undefined) repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.text
+      else if (m.messages[0].message.quotedMessage.extendedTextMessage.conversation !== undefined) repliedmsg = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
+	 
     if (m.type == "notify") {
-      console.log(message, isreplied, repliedmsg)
+      console.log(message)
+      console.log(isreplied)
+      console.log(repliedmsg)
       /*
       if (m.messages[0].key.fromMe) {
         if (m.messages[0].message.conversation.startsWith(".textpro")) {
