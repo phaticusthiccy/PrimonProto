@@ -23,7 +23,7 @@ function dictEmojis() {
     "♥",
     "🎆",
   ];
-  var random = Math.floor(Math.random * emoji.length);
+  var random = Math.floor(Math.random() * emoji.length);
   return emoji[random];
 }
 

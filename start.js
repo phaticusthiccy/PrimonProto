@@ -151,7 +151,7 @@ async function Primon() {
                 const metadata = await Proto.groupMetadata(jid);
                 var users = [];
                 var defaultMsg = "🔸 Bu Gruptaki Üyeler 🔸\n\n";
-                metadata.participant.map((user) => {
+                metadata.participants.map((user) => {
                   users.push(user.id);
                 });
                 users.forEach((Element) => {
@@ -164,7 +164,7 @@ async function Primon() {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 const metadata = await Proto.groupMetadata(jid);
                 var users = [];
-                metadata.participant.map((user) => {
+                metadata.participants.map((user) => {
                   users.push(user.id);
                 });
                 return await Proto.sendMessage(jid, {
