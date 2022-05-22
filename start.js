@@ -67,7 +67,11 @@ async function Primon() {
     if (once_msg.includes("conversation")) {
       message = m.messages[0].message.conversation;
     } else {
-      message = m.messages[0].message.extendedTextMessage.text;
+      try {
+        message = m.messages[0].message.extendedTextMessage.text;
+      } catch {
+          console.log(m.messages[0])
+      }
     }
     isreply.includes("quotedMessage") === true
       ? (isreplied = true)
