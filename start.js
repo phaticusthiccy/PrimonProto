@@ -203,10 +203,8 @@ async function Primon() {
                     await Proto.sendMessage(jid, { delete: msgkey });
                     const metadata = await Proto.groupMetadata(jid);
                     var users = [];
-                    var defaultMsg = taglang.tag.replace(
-                      "{%c}",
-                      metadata.subject
-                    );
+                    var defaultMsg = taglang.tag;
+                    defaultMsg = defaultMsg.replace("{%c}", metadata.subject);
                     metadata.participants.map((user) => {
                       users.push(user.id);
                     });
