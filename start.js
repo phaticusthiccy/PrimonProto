@@ -63,6 +63,9 @@ async function Primon() {
       console.log(message)
       console.log(isreplied)
       console.log(repliedmsg)
+    } else {
+      console.log(message)
+      console.log(m.type)
     }
       /*
       if (m.messages[0].key.fromMe) {
