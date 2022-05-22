@@ -59,7 +59,8 @@ async function Primon() {
         message = m.messages[0].message.conversation
         console.log(message);
     } else {
-        console.log(m.messages[0].message.extendedTextMessage)
+        message = m.messages[0].message.extendedTextMessage.text
+        console.log(message)
     }
 
     /*
