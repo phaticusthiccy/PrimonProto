@@ -26,6 +26,15 @@ const Language = require("./lang");
 const MenuLang = Language.getString("menu");
 const sessionlang = Language.getString("session");
 
+function react(client) {
+  return reactionMessage = {
+    react: {
+      text: "💖",
+      key: client.key,
+    },
+  };
+}
+
 const config = require("./config_proto");
 
 const { state, saveState } = useSingleFileAuthState("./session.json");
@@ -53,6 +62,7 @@ async function Primon() {
     btnid,
     sudo1,
     sudo = [];
+  await Proto.sendMessage(Proto.user.id.split(":")[0] + "@s.whatsapp.net", {});
   if (process.env.SUDO !== false) {
     if (process.env.SUDO.includes(",")) {
       var sudo1 = process.env.SUDO.split(",");
@@ -71,14 +81,15 @@ async function Primon() {
     jid = m.messages[0].key.remoteJid;
     var once_msg = Object.keys(m.messages[0].message);
 
-    msgkey = m.messages[0].key
+    msgkey = m.messages[0].key;
     var message;
     if (once_msg.includes("conversation")) {
       message = m.messages[0].message.conversation;
     } else if (once_msg.includes("extendedTextMessage")) {
       message = m.messages[0].message.extendedTextMessage.text;
     } else if (once_msg.includes("buttonsResponseMessage")) {
-      message = m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
+      message =
+        m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
     } else {
       console.log(m.messages[0].message);
       message = undefined;
@@ -103,14 +114,13 @@ async function Primon() {
               if (attr.includes(" ")) {
                 attr = attr.split(" ")[0];
               } else {
-
               }
-
 
               // Commands
               if (attr == "menu") {
-                await Proto.sendMessage(jid, { delete: msgkey })
-                return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
+                await Proto.sendMessage(jid, { delete: msgkey });
+                var msg = await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
+                return await sock.sendMessage(jid, react(msg));
               }
             }
 
@@ -122,7 +132,6 @@ async function Primon() {
                 { quoted: m.messages[0] }
               );
             }
-
           }
         }
       }
@@ -172,7 +181,7 @@ async function Primon() {
         Proto.end(reason);
       }
     }
-    console.log(sessionlang.run);
+    return console.log(sessionlang.run);
   });
 }
 try {
