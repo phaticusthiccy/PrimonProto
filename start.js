@@ -20,11 +20,13 @@ async function Primon() {
     if (m.type == "notify") {
       if (m.messages[0].key.fromMe) {
         if (m.messages[0].message.conversation.startsWith(".textpro")) {
+	  await Proto.sendMessage(m.messages[0].key.remoteJid, { delete: m.messages[0].key })
           var args = m.messages[0].message.conversation.split(" ")
 	  var api = await axios.get("https://open-apis-rest.up.railway.app/api/textpro?url=" +
-	    args[1] + "&text1=" + args[2], { responseType: "arraybuffer" }
+	    args[1] + "&text1=" + args[2]
           ) 
-          await Proto.sendMessage("905511384572@s.whatsapp.net", { image: Buffer.from(api.data), caption: "By Primon Proto" })
+	  var img = await axios.get(api.data.data, { responseType: "arraybuffer" })
+          await Proto.sendMessage(m.messages[0].key.remoteJid, { image: Buffer.from(img.data), caption: "By Primon Proto" })
 	}
       }
     }
