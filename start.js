@@ -88,12 +88,14 @@ async function Primon() {
         var attr = command.join("")
         try {
             attr = attr.split(" ")[0]
-        } catch {}
+        } catch {
+            return;
+        }
       if (attr == "menu") {
         return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
       }
     }
-    
+
 
     /*
     if (m.type == "notify") {
