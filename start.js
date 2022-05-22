@@ -54,9 +54,9 @@ async function Primon() {
     if (!m.messages[0].message) return;
 
     var once_msg = Object.keys(m.messages[0].message);
-    if (once_msg[0] == "conversation")
+    if (once_msg.includes("conversation"))
       message = m.messages[0].message.conversation;
-    else if (once_msg[0] == "extendedTextMessage")
+    else if (once_msg.includes("extendedTextMessage"))
       message = m.messages[0].message.extendedTextMessage.text;
     else console.log(m.messages[0]);
 
