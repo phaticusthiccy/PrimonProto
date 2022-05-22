@@ -22,6 +22,8 @@ const fs = require("fs");
 var axios = require("axios");
 const { on } = require("events");
 require("util").inspect.defaultOptions.depth = null;
+const Language = require("../language");
+const MenuLang = Language.getString("menu");
 
 const { state, saveState } = useSingleFileAuthState("./session.json");
 
@@ -48,16 +50,63 @@ async function Primon() {
   });
   Proto.ev.on("creds.update", saveState);
 
-  var message, isreplied, repliedmsg;
+  var message, isreplied, repliedmsg, jid;
 
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
-
+    jid = m.messages[0].key.remoteJid
     var once_msg = Object.keys(m.messages[0].message);
-    if (once_msg.includes("conversation")) { message = m.messages[0].message.conversation } else { message = m.messages[0].message.extendedTextMessage.text }
-    console.log(m.messages[0])
-    
+    try {
+      var isreply = Object.keys(
+        m.messages[0].message.extendedTextMessage.contextInfo
+      );
+    } catch {
+      var isreply = [0];
+    }
+    if (once_msg.includes("conversation")) {
+      message = m.messages[0].message.conversation;
+    } else {
+      message = m.messages[0].message.extendedTextMessage.text;
+    }
+    isreply.includes("quotedMessage") === true
+      ? (isreplied = true)
+      : (isreplied = false);
+    // if (isreplied && m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.conversation)
+    var cmd = process.env.HANDLER;
+    if (cmd.length > 1) {
+      cmd = cmd[0];
+    }
+    if (message.startsWith(cmd)) {
+      if (message.split("").shift().join("") == "menu") {
+        const buttons = [
+          {
+            buttonId: "id1",
+            buttonText: { displayText: MenuLang.menu },
+            type: 1,
+          },
+          {
+            buttonId: "id2",
+            buttonText: { displayText: MenuLang.owner },
+            type: 1,
+          },
+          {
+            buttonId: "id3",
+            buttonText: { displayText: MenuLang.star },
+            type: 1,
+          },
+        ];
+
+        const buttonMessage = {
+          text: "Primon Proto",
+          footer: "ES5 Lightweight Userbot",
+          buttons: buttons,
+          headerType: 1,
+        };
+        const sendMsg = await Proto.sendMessage(jid, buttonMessage);
+      }
+    }
+
     /*
     if (m.type == "notify") {
       console.log(message);
