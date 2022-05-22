@@ -109,6 +109,7 @@ async function Primon() {
       console.log(m.messages[0].message);
       message = undefined;
     }
+    console.log(m.messages[0])
     var cmd1 = process.env.HANDLER;
     var cmd;
     if (cmd1.length > 1) {

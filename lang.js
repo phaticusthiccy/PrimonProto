@@ -24,12 +24,6 @@ if (fs.existsSync(`./langs/${lang}.json`)) {
       "Invalid Language Selected! Primon Will Rebuild The Language Data"
     )
   );
-  console.log(
-    chalk.red.bold(
-      "This May Take A While. Please Wait For The Finish Message!"
-    )
-  );
-  new build(process.env.LANG.toLocaleLowerCase()).build_lang()
   var json = JSON.parse(fs.readFileSync("./langs/" + process.env.LANG.toLocaleLowerCase() + ".json"));
   console.log(chalk.green.bold("Loaded " + process.env.LANG.toLocaleLowerCase() + " Language!"))
 }
