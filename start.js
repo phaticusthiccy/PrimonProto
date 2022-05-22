@@ -93,6 +93,7 @@ async function Primon() {
         return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
       }
     }
+    
 
     /*
     if (m.type == "notify") {
