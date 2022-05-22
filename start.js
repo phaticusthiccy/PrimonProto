@@ -52,46 +52,18 @@ async function Primon() {
 
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message) return;
+    if (m.messages[0].key.remoteJid == "status@broadcast") return;
 
     var once_msg = Object.keys(m.messages[0].message);
-    if (once_msg.includes("conversation"))
-      message = m.messages[0].message.conversation;
-    else if (once_msg.includes("extendedTextMessage"))
-      message = m.messages[0].message.extendedTextMessage.text;
-    else console.log(m.messages[0]);
+    console.log(m.messages[0]);
 
-    try {
-      if (m.messages[0].message.quotedMessage) {
-        isreplied = true;
-      }
-    } catch {
-      isreplied = false;
-    }
-
-    if (isreplied) {
-      try {
-        repliedmsg = m.messages[0].message.quotedMessage.conversation;
-      } catch {
-        try {
-          repliedmsg =
-            m.messages[0].message.quotedMessage.extendedTextMessage.text;
-        } catch {
-          try {
-            repliedmsg =
-              m.messages[0].message.quotedMessage.extendedTextMessage
-                .conversation;
-          } catch {
-            console.log(m.messages[0].message.quotedMessage);
-          }
-        }
-      }
-    }
-
+    /*
     if (m.type == "notify") {
       console.log(message);
       console.log(isreplied);
       console.log(repliedmsg);
     }
+    */
     /*
       if (m.messages[0].key.fromMe) {
         if (m.messages[0].message.conversation.startsWith(".textpro")) {
@@ -112,31 +84,3 @@ try {
 } catch {
   Primon();
 }
-
-/*
-import { Boom } from '@hapi/boom'
-import P from 'pino'
-import makeWASocket, { AnyMessageContent, delay, DisconnectReason, makeInMemoryStore, useSingleFileAuthState } from '@adiwajshing/baileys'
-import * as fs from "fs"
-
-const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
-store.readFromFile('./baileys_store_multi.json')
-
-
-fs.writeFile("./session.json", atob(process.env.SESSION), (err) => {
-  if (err) {
-	  console.log("Error While Writing Session!")
-  }
-})
-
-const { state, saveState } = useSingleFileAuthState("./session.json")
-
-const Proto = makeWASocket({ })
-
-async function Primon () {
-  Proto.ev.on('messages.upsert', async (m) => {
-      console.log(m)
-  })
-}
-Primon()
-*/
