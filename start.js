@@ -60,7 +60,7 @@ async function Primon() {
     sudo = [];
   if (process.env.SUDO !== false) {
     if (process.env.SUDO.includes(",")) {
-      sudo1 = process.env.SUDO.split(",");
+      var sudo1 = process.env.SUDO.split(",");
       sudo1.map((Element) => {
         sudo.push(Element + "@s.whatsapp.net");
       });
@@ -75,62 +75,47 @@ async function Primon() {
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
     jid = m.messages[0].key.remoteJid;
     var once_msg = Object.keys(m.messages[0].message);
-    try {
-      var isreply = Object.keys(
-        m.messages[0].message.extendedTextMessage.contextInfo
-      );
-    } catch {
-      var isreply = [0];
-    }
+
+    var message;
     if (once_msg.includes("conversation")) {
       message = m.messages[0].message.conversation;
+    } else if (once_msg.includes("extendedTextMessage")) {
+      message = m.messages[0].message.extendedTextMessage.text;
     } else {
-      try {
-        message = m.messages[0].message.extendedTextMessage.text;
-      } catch {
-        try {
-          message =
-            m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
-          btnid = m.messages[0].message.buttonsResponseMessage.selectedButtonId;
-        } catch {
-          message = undefined;
-          console.log(m.messages[0].message);
-        }
-      }
+      message = undefined;
     }
-    isreply.includes("quotedMessage") === true
-      ? (isreplied = true)
-      : (isreplied = false);
-    // if (isreplied && m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.conversation)
-    var cmd = process.env.HANDLER;
-    if (cmd.length > 1) {
-      cmd = cmd[0];
+    var cmd1 = process.env.HANDLER;
+    var cmd;
+    if (cmd1.length > 1) {
+      cmd = cmd1.split("");
+    } else {
+      cmd = [cmd1];
     }
+
     if (message !== undefined) {
-      if (
-        message.startsWith(cmd) &&
-        process.env.SUDO !== false &&
-        sudo.length > 0
-      ) {
-        if (sudo.includes(m.messages[0].key.participant)) {
-          var command = message.split("");
-          var command2 = command.shift();
-          var attr = command.join("");
-          try {
-            attr = attr.split(" ")[0];
-          } catch {
-            return;
-          }
-          if (attr == "menu") {
-            message = "";
-            return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
-          }
-          if (message == MenuLang.menu && btnid == "MENU") {
-            return await Proto.sendMessage(
-              jid,
-              { text: "Test" },
-              { quoted: m.messages[0] }
-            );
+      if (m.type == "notify") {
+        if (cmd.includes(message[0])) {
+          if (process.env.SUDO !== false && sudo.length > 0) {
+            if (sudo.includes(m.messages[0].key.participant)) {
+              var command = message.split("");
+              var command2 = command.shift();
+              var attr = command.join("");
+              try {
+                attr = attr.split(" ")[0];
+              } catch {
+                return;
+              }
+              if (attr == "menu") {
+                return await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
+              }
+              if (message == MenuLang.menu) {
+                return await Proto.sendMessage(
+                  jid,
+                  { text: "Test" },
+                  { quoted: m.messages[0] }
+                );
+              }
+            }
           }
         }
       }
