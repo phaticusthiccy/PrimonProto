@@ -1,3 +1,11 @@
+// Primon Proto 
+// Headless WebSocket, type-safe Whatsapp UserBot
+// 
+// Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
+// Multi-Device Lightweight ES5 Module (can ysable with mjs)
+//
+// Phaticusthiccy - 2022
+
 const {
   default: makeWASocket,
   MessageType,
@@ -25,15 +33,20 @@ require("util").inspect.defaultOptions.depth = null;
 const Language = require("./lang");
 const MenuLang = Language.getString("menu");
 const sessionlang = Language.getString("session");
+const taglang = Language.getString("tagall")
+
 const { dictEmojis } = require("./add");
 
 function react(client, emoji) {
-  return (reactionMessage = {
+  var e;
+  if (!emoji) e = dictEmojis()
+  else e = emoji
+  return reactionMessage = {
     react: {
-      text: emoji === false ? dictEmojis() : emoji,
+      text: e,
       key: client.key,
     },
-  });
+  };
 }
 
 const config = require("./config_proto");
@@ -150,7 +163,7 @@ async function Primon() {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 const metadata = await Proto.groupMetadata(jid);
                 var users = [];
-                var defaultMsg = "🔸 Bu Gruptaki Üyeler 🔸\n\n";
+                var defaultMsg = taglang.tag.replace("{%c}", metadata.subject);
                 metadata.participants.map((user) => {
                   users.push(user.id);
                 });

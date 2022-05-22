@@ -1,6 +1,15 @@
+// Primon Proto 
+// Headless WebSocket, type-safe Whatsapp UserBot
+// 
+// Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
+// Multi-Device Lightweight ES5 Module (can ysable with mjs)
+//
+// Phaticusthiccy - 2022
+
 const { Sequelize } = require("sequelize");
 const Language = require("./lang");
 const MenuLang = Language.getString("menu");
+
 DATABASE_URL =
   process.env.DATABASE_URL === undefined
     ? "./primon.db"
