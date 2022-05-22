@@ -73,6 +73,7 @@ async function Primon() {
       } catch {
       }
     }
+    console.log(m.messages[0].message)
     isreply.includes("quotedMessage") === true
       ? (isreplied = true)
       : (isreplied = false);
