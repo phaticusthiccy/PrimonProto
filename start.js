@@ -78,7 +78,13 @@ async function Primon() {
       cmd = cmd[0];
     }
     if (message.startsWith(cmd)) {
-      if (message.split("").shift().join("") == "menu") {
+        var command = message.split("")
+        command = command.shift()
+        var attr = command.join("")
+        try {
+            attr = attr.split(" ")[0]
+        } catch {}
+      if (attr == "menu") {
         const buttons = [
           {
             buttonId: "id1",
