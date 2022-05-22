@@ -18,6 +18,8 @@ async function Primon() {
   Proto.ev.on('creds.update', saveState)
   Proto.ev.on('messages.upsert', async (m) => {
     if (m.type == "notify") {
+      console.log(m)
+      /*
       if (m.messages[0].key.fromMe) {
         if (m.messages[0].message.conversation.startsWith(".textpro")) {
 	  await Proto.sendMessage(m.messages[0].key.remoteJid, { delete: m.messages[0].key })
@@ -29,6 +31,7 @@ async function Primon() {
           await Proto.sendMessage(m.messages[0].key.remoteJid, { image: Buffer.from(img.data), caption: "By Primon Proto" })
 	}
       }
+      */
     }
   })
 }
