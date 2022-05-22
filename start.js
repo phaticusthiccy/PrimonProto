@@ -53,10 +53,14 @@ async function Primon() {
 
   var message, isreplied, repliedmsg, jid, btnid, sudo1, sudo = [];
   if (process.env.SUDO !== false) {
-      sudo1 = process.env.SUDO.split(",")
-      sudo1.map((Element) => {
-          sudo.push(Element + "@s.whatsapp.net")
-      })
+      if (process.env.SUDO.includes(",")) {
+        sudo1 = process.env.SUDO.split(",")
+        sudo1.map((Element) => {
+            sudo.push(Element + "@s.whatsapp.net")
+        })
+      } else {
+          sudo.push(process.env.SUDO)
+      }
   }
   console.log(Proto)
   Proto.ev.on("messages.upsert", async (m) => {
