@@ -110,15 +110,15 @@ async function Primon() {
               var command = message.split("");
               var command2 = command.shift();
               var attr = command.join("");
-              var arg = { a: "", b: [], c: ""}
-              var args = ""
+              var arg = { a: "", b: [], c: "" };
+              var args = "";
               if (attr.includes(" ")) {
                 attr = attr.split(" ")[0];
-                arg.a = command.join("")
-                arg.b.push(arg.a.split(" "))
-                var agrsh = arg.b.shift()
+                arg.a = command.join("");
+                arg.b.push(arg.a.split(" "));
+                var agrsh = arg.b.shift();
                 arg.c = arg.b.join("");
-                args = arg.c
+                args = arg.c;
               } else {
                 args = "";
               }
@@ -131,16 +131,22 @@ async function Primon() {
                   return await Proto.sendMessage(jid, react(msg, "💌"));
                 } else {
                   if (args == "textpro") {
-                    return await Proto.sendMessage(jid, { text: "Textoro Cİhazı İçin Açıklama"}, { quoted: m.messages[0] })
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: "Textoro Cİhazı İçin Açıklama" },
+                      { quoted: m.messages[0] }
+                    );
                   }
                 }
               }
             }
             if (attr == "tagall") {
               if (args == "") {
-                const metadata = await Proto.groupMetadata(jid)
-                await Proto.sendMessage(jid, { delete: msgkey })
-                return await Proto.sendMessage(jid, { text: JSON.stringify(metadata)})
+                const metadata = await Proto.groupMetadata(jid);
+                await Proto.sendMessage(jid, { delete: msgkey });
+                return await Proto.sendMessage(jid, {
+                  text: JSON.stringify(metadata),
+                });
               }
             }
             // Buttons
@@ -200,10 +206,6 @@ async function Primon() {
         Proto.end(reason);
       }
     }
-    await Proto.sendMessage(
-      Proto.user.id.split(":")[0] + "@s.whatsapp.net",
-      config.TEXTS.MENU[1]
-    );
     return console.log(sessionlang.run);
   });
 }
