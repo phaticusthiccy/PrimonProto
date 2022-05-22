@@ -69,7 +69,7 @@ async function Primon() {
     }
   }
 
-  sudo.push(Proto.user.id);
+  sudo.push(Proto.user.id.split(":")[0] + "@s.whatsapp.net");
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
