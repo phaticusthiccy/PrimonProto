@@ -2,7 +2,6 @@
    "name": "PrimonProto",
    "version": "1.0.0",
    "main": "start.js",
-   "type": "module",
    "scripts": {
       "start": "node save.js && node start.js"
    },
@@ -28,7 +27,7 @@
       "sqlite3": "5.0.0",
       "axios": "latest",
       "qrcode-terminal": "latest",
-      "chalk": "latest",
+      "chalk": "4.1.0",
       "child_process": "latest",
       "fluent-ffmpeg": "latest",
       "path": "latest"
