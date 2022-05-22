@@ -20,7 +20,7 @@ async function Primon() {
   Proto.ev.on('messages.upsert', async (m) => {
     if (!m.message) return;
     
-	  if (m.messages[0].message.conversation !== undefined) message = m.messages[0].message.conversation
+    if (m.messages[0].message.conversation !== undefined) message = m.messages[0].message.conversation
     else if (m.messages[0].message.extendedTextMessage.text !== undefined) message = m.messages[0].message.extendedTextMessage.text
     else if (m.messages[0].message.quotedMessage.extendedTextMessage.conversation !== undefined) message = m.messages[0].message.quotedMessage.extendedTextMessage.conversation
     else console.log(m.messages[0].message)
@@ -36,6 +36,7 @@ async function Primon() {
       console.log(message)
       console.log(isreplied)
       console.log(repliedmsg)
+    }
       /*
       if (m.messages[0].key.fromMe) {
         if (m.messages[0].message.conversation.startsWith(".textpro")) {
