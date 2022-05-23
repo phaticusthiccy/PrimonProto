@@ -6,7 +6,7 @@
 //
 // Phaticusthiccy - 2022
 
-function dictEmojis() {
+function dictEmojis () {
   var emoji = [
     "❤",
     "🧡",
@@ -35,7 +35,7 @@ function dictEmojis() {
   return emoji[random];
 }
 
-function bademojis() {
+function bademojis () {
   var emoji = ["😥", "😪", "😫", "😕", "😞", "😱", "💔", "⁉", "⚠", "❣"];
   var random = Math.floor(Math.random() * emoji.length);
   return emoji[random];

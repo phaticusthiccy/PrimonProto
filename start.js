@@ -45,11 +45,11 @@ const {
   argfinder,
   bademojis,
   afterarg,
-  String,
+  String
 } = require("./add");
 
 function react(client, type, emoji) {
-  var e;
+  var e = ""
   if (type) {
     if (type == "bad") {
       e = bademojis();
@@ -63,12 +63,12 @@ function react(client, type, emoji) {
       e = dictEmojis();
     }
   }
-  return (reactionMessage = {
+  return reactionMessage = {
     react: {
       text: e,
       key: client.key,
     },
-  });
+  };
 }
 
 function cmds(text, arguments = 3, cmd) {
