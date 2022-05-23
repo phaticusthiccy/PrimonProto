@@ -34,13 +34,29 @@ const Language = require("./lang");
 const MenuLang = Language.getString("menu");
 const sessionlang = Language.getString("session");
 const taglang = Language.getString("tagall");
+const modulelang = Language.getString("module");
+const cmdlang = Language.getString("cmd")
+const pinglang = Language.getString("ping")
+const openapi = require("@phaticusthiccy/open-apis");
 
-const { dictEmojis } = require("./add");
+const { dictEmojis, textpro_links , argfinder, bademojis, afterarg, String} = require("./add");
 
-function react(client, emoji) {
+
+function react(client, type, emoji) {
   var e;
-  if (!emoji) e = dictEmojis();
-  else e = emoji;
+  if (type) {
+    if (type == "bad") {
+      e = bademojis()
+    } else if (type == "love") {
+      e = dictEmojis()
+    }
+  } else {
+    if (emoji) {
+      e = emoji
+    } else {
+      e = dictEmojis()
+    }
+  }
   return (reactionMessage = {
     react: {
       text: e,
@@ -49,7 +65,21 @@ function react(client, emoji) {
   });
 }
 
+function cmds(text, arguments = 3, cmd) {
+  let payload;
+  if (arguments == 3) {
+    payload = text.replace("{%d1}", cmdlang.command).replace("{%d1}", cmdlang.info).replace("{%d1}", cmdlang.example).replace(/{%c}/gi, cmd)
+  } else if (arguments == 4) {
+    payload = text.replace("{%d1}", cmdlang.command).replace("{%d1}", cmdlang.info).replace("{%d1}", cmdlang.example).replace("{%d1}", cmdlang.danger).replace(/{%c}/gi, cmd)
+  } else {
+    payload = text.replace("{%d1}", cmdlang.command).replace("{%d1}", cmdlang.info).replace("{%d1}", cmdlang.example).replace(/{%c}/gi, cmd)
+  }
+  return payload;
+}
+
+
 const config = require("./config_proto");
+const { fail } = require("assert");
 
 const { state, saveState } = useSingleFileAuthState("./session.json");
 
@@ -61,6 +91,9 @@ setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
 }, 10000);
 
+var command_list = ["textpro", "tagall", "ping"],
+ diff = []
+
 async function Primon() {
   const Proto = makeWASocket({
     auth: state,
@@ -68,14 +101,8 @@ async function Primon() {
   });
   Proto.ev.on("creds.update", saveState);
 
-  var message,
-    isreplied,
-    repliedmsg,
-    jid,
-    msgkey,
-    btnid,
-    sudo1,
-    sudo = [];
+  var message, isreplied, repliedmsg, jid, isbutton;
+  msgkey, btnid, sudo1, (sudo = []);
 
   if (process.env.SUDO !== false) {
     if (process.env.SUDO.includes(",")) {
@@ -128,16 +155,19 @@ async function Primon() {
     var message;
     if (once_msg.includes("conversation")) {
       message = m.messages[0].message.conversation;
+      isbutton = false;
     } else if (once_msg.includes("extendedTextMessage")) {
+      isbutton = false;
       message = m.messages[0].message.extendedTextMessage.text;
     } else if (once_msg.includes("buttonsResponseMessage")) {
       message =
         m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
+      isbutton = true;
     } else {
       console.log(m.messages[0].message);
+      isbutton = false;
       message = undefined;
     }
-    console.log(m.messages[0]);
     var cmd1 = process.env.HANDLER;
     var cmd;
     if (cmd1.length > 1) {
@@ -169,22 +199,74 @@ async function Primon() {
                 args = "";
               }
 
-              // Commands
+              // Menu
               if (attr == "menu") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
                   var msg = await Proto.sendMessage(jid, config.TEXTS.MENU[0]);
-                  return await Proto.sendMessage(jid, react(msg));
+                  return await Proto.sendMessage(jid, react(msg, "love"));
                 } else {
-                  if (args == "textpro") {
+                  if (
+                    args == "textpro" ||
+                    args == "TEXTPRO" ||
+                    args == "Textpro"
+                  ) {
                     return await Proto.sendMessage(
                       jid,
-                      { text: "Textoro Cİhazı İçin Açıklama" },
+                      { text: cmds(modulelang.textpro, 3, cmd[0]) },
                       { quoted: m.messages[0] }
                     );
+                  } else if (
+                    args == "tagall" ||
+                    args == "TAGALL" ||
+                    args == "Tagall"
+                  ) {
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: cmds(modulelang.tagall, 3, cmd[0]) },
+                      { quoted: m.messages[0] }
+                    );
+                  } else if (
+                    args == "ping" ||
+                    args == "Ping" ||
+                    args == "PING"
+                  ) {
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: cmds(modulelang.ping, 2, cmd[0]) },
+                      { quoted: m.messages[0] }
+                    );
+                  } else {
+                    command_list.map((Element) => {
+                      var { similarity } = await openapi.similarity(args, Element)
+                      diff.push(similarity)
+                    })
+                    var filt = diff.filter(mum => mum > 0.8)
+                    if (filt[0] == undefined) {
+                      return await Proto.sendMessage(
+                        jid,
+                        { text: modulelang.null },
+                        { quoted: m.messages[0] }
+                      );
+                    } else {
+                      var msg = await Proto.sendMessage(
+                        jid,
+                        { text: modulelang.null },
+                        { quoted: m.messages[0] }
+                      );
+                      await Proto.sendMessage(jid, react(msg, "bad"));
+                      await Primon.sendMessage(
+                        jid,
+                        { text: modulelang.pron + command_list[diff.indexOf(filt[0])] }
+                      )
+                      diff = []
+                      return 0;
+                    }
                   }
                 }
               }
+
+              // Tagall
               if (attr == "tagall") {
                 if (isreplied) {
                   await Proto.sendMessage(jid, { delete: msgkey });
@@ -203,7 +285,10 @@ async function Primon() {
                     await Proto.sendMessage(jid, { delete: msgkey });
                     const metadata = await Proto.groupMetadata(jid);
                     var users = [];
-                    var defaultMsg = taglang.msg.replace("{%c}", metadata.subject);
+                    var defaultMsg = taglang.msg.replace(
+                      "{%c}",
+                      metadata.subject
+                    );
                     metadata.participants.map((user) => {
                       users.push(user.id);
                     });
@@ -228,8 +313,65 @@ async function Primon() {
                   }
                 }
               }
+
+              // Textpro
+              if (attr == "textpro") {
+                if (isreplied) {
+                  await Proto.sendMessage(jid, { delete: msgkey });
+                  var style = textpro_links(args)
+                  if (style !== "") {
+                    var { img } = await openapi.textpro(style, repliedmsg)
+                    var img2 = await axios.get(img, { responseType: "arraybuffer" })
+                    return await Proto.sendMessage(jid, { image: Buffer.from(img2.data), caption: "By Primon Proto" })
+                  } else {
+                    var msg = await Proto.sendMessage(jid, {
+                      text: modulelang.textpro_null
+                    }, { quoted: m.messages[0] });
+                    return await Proto.sendMessage(jid, react(msg, "bad"));
+                  }
+                } else {
+                  await Proto.sendMessage(jid, { delete: msgkey });
+                  try {
+                    var type = argfinder(args)
+                  } catch {
+                    var msg = await Proto.sendMessage(jid, {
+                      text: modulelang.textpro_null
+                    }, { quoted: m.messages[0] });
+                    return await Proto.sendMessage(jid, react(msg, "bad"));
+                  }
+                  var url = textpro_links(type)
+                  if (url == "") {
+                    var msg = await Proto.sendMessage(jid, {
+                      text: modulelang.textpro_null
+                    }, { quoted: m.messages[0] });
+                    return await Proto.sendMessage(jid, react(msg, "bad"));
+                  } else {
+                    var type = argfinder(args)
+                    var url = textpro_links(type)
+                    var text = afterarg(args)
+                    var { img } = await openapi.textpro(url, text)
+                    var img2 = await axios.get(img, { responseType: "arraybuffer" })
+                    return await Proto.sendMessage(jid, { image: Buffer.from(img2.data), caption: "By Primon Proto" })
+                  }
+                }
+              }
+
+              // Ping
+              if (attr == "ping") {
+                var d1 = new Date().getTime()
+                var msg = await Primon.sendMessage(jid, { text: "__Ping, Pong!__"})
+                var d2 = new Date().getTime()
+                await Proto.sendMessage(jid, { delete: msg.key });
+                var timestep = Number(d2) - Number(d1)
+                if (timestep > 120) {
+                  return await Proto.sendMessage(jid, { text: pinglang.ping + String(timestep) + pinglang.badping })
+                } else {
+                  return await Proto.sendMessage(jid, { text: pinglang.ping + String(timestep)})
+                }
+              }
+              
               // Buttons
-              if (message == MenuLang.menu) {
+              if (message == MenuLang.menu && isbutton) {
                 return await Proto.sendMessage(
                   jid,
                   { text: "Test" },

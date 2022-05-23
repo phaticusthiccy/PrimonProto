@@ -33,6 +33,23 @@ let btn = [
       type: 1,
     },
   ],
+  [
+    {
+      buttonId: "ALIVE",
+      buttonText: { displayText: "Alive" },
+      type: 1,
+    },
+    {
+      buttonId: "PİNG",
+      buttonText: { displayText: "Ping" },
+      type: 1,
+    },
+    {
+      buttonId: "TAGALL",
+      buttonText: { displayText: "Tagall" },
+      type: 1,
+    },
+  ]
 ];
 module.exports = {
   VERSION: "v1.0 Beta",
@@ -57,12 +74,11 @@ module.exports = {
         headerType: 1,
       },
       {
-        image: { url: "https://i.hizliresim.com/q6iejtp.jpg" },
-        caption: "Primon Proto",
+        text: MenuLang.pp,
         footer: "ES5 Lightweight Userbot",
-        buttons: btn[0],
-        headerType: 4,
-      },
-    ],
-  },
+        buttons: btn[1],
+        headerType: 1,
+      }
+    ]
+  }
 };

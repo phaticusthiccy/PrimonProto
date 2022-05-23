@@ -1,9 +1,24 @@
 {
+  "PRIMON": {
+    "github": "https://www.github.com/phaticusthiccy/PrimonProto",
+    "author": "https://www.github.com/phaticusthiccy"
+  },
   "STRINGS": {
     "menu": {
-      "menu": "‎Command List",
-      "owner": "‎Developer",
-      "star": "‎Star on Github! 🌟"
+      "menu": "Command List",
+      "owner": "Developer",
+      "star": "Star on Github! 🌟",
+      "pp": "Primon Command List"
+    },
+    "cmd": {
+      "command": "**⌨ Command:** ",
+      "info": "**ℹ Information:** ",
+      "example": "**📋 Example:** ",
+      "danger": "**⚠ Danger:** "
+    },
+    "ping": {
+      "ping": "Primon's Ping: ",
+      "badping": "\nIf commands are being detected slowly, try refreshing the QR code!"
     },
     "session": {
       "bad": "The Session Is No More Useful. Please Re-Scan The QR Code and Replace Old One.",
@@ -13,6 +28,14 @@
     },
     "tagall": {
       "msg": "🔸 Members of {%c} 🔸\n\n"
+    },
+    "module": {
+      "null": "__Sorry, Cannot Find Any Module Like That..__",
+      "pron": "__Did you mean:__ ",
+      "tagall": "{%d1}{%c}tagall``` \n{%d1}__Tag all group members!__ \n{%d1} \n\n🔹 ```{%c}tagall``` \n🔹 ```{%c}tagall Hello Everyone```",
+      "textpro": "{%d1}```{%c}textpro``` \n{%d1}__Create different images or banners!__ \n {%d1} \n\n🔹 ```{%c}textpro {type} {text}``` \n🔹 {%c}textpro neon Atticus \n🔹 {%c}textpro {type} <reply a message>\n\n**Types:** __neon, neon2__",
+      "textpro_null": "__Sorry, Cannot Find Any Style Like This..__",
+      "ping": "{%d1}```{%c}ping``` \n{%d1}__Measure the bot's ping!__"
     }
   }
 }

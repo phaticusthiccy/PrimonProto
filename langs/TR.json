@@ -1,9 +1,24 @@
 {
+  "PRIMON": {
+    "github": "https://www.github.com/phaticusthiccy/PrimonProto",
+    "author": "https://www.github.com/phaticusthiccy"
+  },
   "STRINGS": {
     "menu": {
-      "menu": "‎Komut Listesi",
-      "owner": "‎Geliştirici",
-      "star": "‎Yıldızla! 🌟"
+      "menu": "Komut Listesi",
+      "owner": "Geliştirici",
+      "star": "Yıldızla! 🌟",
+      "pp": "Primon Komut Listesi"
+    },
+    "cmd": {
+      "command": "**⌨ Komut:** ",
+      "info": "**ℹ Açıklama:** ",
+      "example": "**📋 Örnek:** ",
+      "danger": "**⚠ Dikkat:** "
+    },
+    "ping": {
+      "ping": "Bot Çalışma Hızı: ",
+      "badping": "\nEğer komutlar yavaş algılanıyor ise QR kodu yenilemeyi deneyin!"
     },
     "session": {
       "bad": "Session Kodunuz Bozulmuş! Lütfen Yeniden QR Okutup Eskisi İle Değiştirin!",
@@ -12,7 +27,15 @@
       "run": "Primon Proto Çalışıyor!"
     },
     "tagall": {
-      "msg": "🔸 {%c} Grubunun Üyeleri 🔸\n\n"
+      "msg": "🔸 {%c} **Grubunun Üyeleri** 🔸\n\n"
+    },
+    "module": {
+      "null": "__Böyle Bir Komut Bulamadım..__",
+      "pron": "__Şunu mu demek istedin:__ ",
+      "tagall": "{%d1}```{%c}tagall``` \n{%d1}__Gruptaki tüm üyeleri etiketleyin!__ \n{%d1} \n\n🔹 ```{%c}tagall``` \n🔹 ```{%c}tagall Herkese Merhaba```",
+      "textpro": "{%d1}```{%c}textpro``` \n{%d1}__Birbirinden farklı resimler veya afişler oluşturun!__ \n {%d1} \n\n🔹 ```{%c}textpro {stil} {yazı}``` \n🔹 {%c}textpro neon Atticus \n🔹 {%c}textpro {stil} <mesaja yanıt ver>\n\n**Stiller:** __neon, neon2__",
+      "textpro_null": "__Böyle Bir Stil Bulamadım..__",
+      "ping": "{%d1}```{%c}ping``` \n{%d1}__Bot'un pingini ölçün!__"
     }
   }
 }
