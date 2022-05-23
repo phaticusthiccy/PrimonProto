@@ -84,6 +84,29 @@ function argfinder(text) {
   return text.split(" ")[0];
 }
 
+function react(client, type, emoji) {
+  var e = "";
+  if (type) {
+    if (type == "bad") {
+      e = bademojis();
+    } else if (type == "love") {
+      e = dictEmojis();
+    }
+  } else {
+    if (emoji) {
+      e = emoji;
+    } else {
+      e = dictEmojis();
+    }
+  }
+  return reactionMessage = {
+    react: {
+      text: e,
+      key: client.key,
+    },
+  };
+}
+
 function afterarg(text) {
   var payload = "";
   var od = text.split(" ");
@@ -111,4 +134,5 @@ module.exports = {
   bademojis: bademojis,
   afterarg: afterarg,
   String: String,
+  react: react
 };

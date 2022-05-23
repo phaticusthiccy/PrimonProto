@@ -45,31 +45,10 @@ const {
   argfinder,
   bademojis,
   afterarg,
-  String
+  String,
+  react
 } = require("./add");
 
-function react(client, type, emoji) {
-  var e = ""
-  if (type) {
-    if (type == "bad") {
-      e = bademojis();
-    } else if (type == "love") {
-      e = dictEmojis();
-    }
-  } else {
-    if (emoji) {
-      e = emoji;
-    } else {
-      e = dictEmojis();
-    }
-  }
-  return reactionMessage = {
-    react: {
-      text: e,
-      key: client.key,
-    },
-  };
-}
 
 function cmds(text, arguments = 3, cmd) {
   let payload;
@@ -142,9 +121,10 @@ async function Primon() {
 
   sudo.push(Proto.user.id.split(":")[0] + "@s.whatsapp.net");
   Proto.ev.on("messages.upsert", async (m) => {
+    console.log(m.messages[0])
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
-    if (Object.keys(m.messages[0].message).includes("protocolMessage")) return;
+    if (Object.keys(m.messages[0].message).includes("protocolMessage") || Object.keys(m.messages[0].message).includes("buttonsMessage") || Object.keys(m.messages[0].message).includes("reactionMessage")) return;
     jid = m.messages[0].key.remoteJid;
     var once_msg = Object.keys(m.messages[0].message);
 
@@ -223,7 +203,6 @@ async function Primon() {
               } else {
                 args = "";
               }
-
               // Menu
               if (attr == "menu") {
                 await Proto.sendMessage(jid, { delete: msgkey });
@@ -408,25 +387,23 @@ async function Primon() {
 
               // Ping
               if (attr == "ping") {
+                await Proto.sendMessage(jid, { delete: msgkey });
                 var d1 = new Date().getTime();
                 var msg = await Proto.sendMessage(jid, {
                   text: "__Ping, Pong!__",
                 });
                 var d2 = new Date().getTime();
-                await Proto.sendMessage(jid, { delete: msg.key });
                 var timestep = Number(d2) - Number(d1);
-                if (timestep > 120) {
+                if (timestep > 600) {
                   return await Proto.sendMessage(jid, {
-                    text: pinglang.ping + String(timestep) + pinglang.badping,
-                  });
+                    text: pinglang.ping + String(timestep) + "ms" + pinglang.badping,
+                  }, { quoted: msg });
                 } else {
                   return await Proto.sendMessage(jid, {
                     text: pinglang.ping + String(timestep),
                   });
                 }
               }
-              console.log(message)
-              console.log(isbutton)
               // Buttons
               if (message == MenuLang.menu && isbutton) {
                 return await Proto.sendMessage(
