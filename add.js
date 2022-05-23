@@ -6,7 +6,7 @@
 //
 // Phaticusthiccy - 2022
 
-function dictEmojis () {
+function dictEmojis() {
   var emoji = [
     "❤",
     "🧡",
@@ -35,7 +35,7 @@ function dictEmojis () {
   return emoji[random];
 }
 
-function bademojis () {
+function bademojis() {
   var emoji = ["😥", "😪", "😫", "😕", "😞", "😱", "💔", "⁉", "⚠", "❣"];
   var random = Math.floor(Math.random() * emoji.length);
   return emoji[random];
@@ -83,6 +83,7 @@ function textpro_links(type) {
 function argfinder(text) {
   return text.split(" ")[0];
 }
+
 function afterarg(text) {
   var payload = "";
   var od = text.split(" ");
@@ -103,12 +104,11 @@ function String(text) {
   return text.toString();
 }
 
-module.exp;
-orts = {
+module.exports = {
   dictEmojis: dictEmojis,
   textpro_links: textpro_links,
   argfinder: argfinder,
   bademojis: bademojis,
   afterarg: afterarg,
-  String: String
+  String: String,
 };
