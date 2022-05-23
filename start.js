@@ -35,26 +35,32 @@ const MenuLang = Language.getString("menu");
 const sessionlang = Language.getString("session");
 const taglang = Language.getString("tagall");
 const modulelang = Language.getString("module");
-const cmdlang = Language.getString("cmd")
-const pinglang = Language.getString("ping")
+const cmdlang = Language.getString("cmd");
+const pinglang = Language.getString("ping");
 const openapi = require("@phaticusthiccy/open-apis");
 
-const { dictEmojis, textpro_links , argfinder, bademojis, afterarg, String} = require("./add");
-
+const {
+  dictEmojis,
+  textpro_links,
+  argfinder,
+  bademojis,
+  afterarg,
+  String,
+} = require("./add");
 
 function react(client, type, emoji) {
   var e;
   if (type) {
     if (type == "bad") {
-      e = bademojis()
+      e = bademojis();
     } else if (type == "love") {
-      e = dictEmojis()
+      e = dictEmojis();
     }
   } else {
     if (emoji) {
-      e = emoji
+      e = emoji;
     } else {
-      e = dictEmojis()
+      e = dictEmojis();
     }
   }
   return (reactionMessage = {
@@ -68,15 +74,27 @@ function react(client, type, emoji) {
 function cmds(text, arguments = 3, cmd) {
   let payload;
   if (arguments == 3) {
-    payload = text.replace("{%d1}", cmdlang.command).replace("{%d1}", cmdlang.info).replace("{%d1}", cmdlang.example).replace(/{%c}/gi, cmd)
+    payload = text
+      .replace("{%d1}", cmdlang.command)
+      .replace("{%d1}", cmdlang.info)
+      .replace("{%d1}", cmdlang.example)
+      .replace(/{%c}/gi, cmd);
   } else if (arguments == 4) {
-    payload = text.replace("{%d1}", cmdlang.command).replace("{%d1}", cmdlang.info).replace("{%d1}", cmdlang.example).replace("{%d1}", cmdlang.danger).replace(/{%c}/gi, cmd)
+    payload = text
+      .replace("{%d1}", cmdlang.command)
+      .replace("{%d1}", cmdlang.info)
+      .replace("{%d1}", cmdlang.example)
+      .replace("{%d1}", cmdlang.danger)
+      .replace(/{%c}/gi, cmd);
   } else {
-    payload = text.replace("{%d1}", cmdlang.command).replace("{%d1}", cmdlang.info).replace("{%d1}", cmdlang.example).replace(/{%c}/gi, cmd)
+    payload = text
+      .replace("{%d1}", cmdlang.command)
+      .replace("{%d1}", cmdlang.info)
+      .replace("{%d1}", cmdlang.example)
+      .replace(/{%c}/gi, cmd);
   }
   return payload;
 }
-
 
 const config = require("./config_proto");
 const { fail } = require("assert");
@@ -92,7 +110,7 @@ setInterval(() => {
 }, 10000);
 
 var command_list = ["textpro", "tagall", "ping"],
- diff = []
+  diff = [];
 
 async function Primon() {
   const Proto = makeWASocket({
@@ -101,8 +119,15 @@ async function Primon() {
   });
   Proto.ev.on("creds.update", saveState);
 
-  var message, isreplied, repliedmsg, jid, isbutton;
-  msgkey, btnid, sudo1, (sudo = []);
+  var message,
+    isreplied,
+    repliedmsg,
+    jid,
+    isbutton,
+    msgkey,
+    btnid,
+    sudo1,
+    sudo = [];
 
   if (process.env.SUDO !== false) {
     if (process.env.SUDO.includes(",")) {
@@ -238,10 +263,13 @@ async function Primon() {
                     );
                   } else {
                     command_list.map(async (Element) => {
-                      var { similarity } = await openapi.similarity(args, Element)
-                      diff.push(similarity)
-                    })
-                    var filt = diff.filter(mum => mum > 0.8)
+                      var { similarity } = await openapi.similarity(
+                        args,
+                        Element
+                      );
+                      diff.push(similarity);
+                    });
+                    var filt = diff.filter((mum) => mum > 0.8);
                     if (filt[0] == undefined) {
                       return await Proto.sendMessage(
                         jid,
@@ -255,11 +283,11 @@ async function Primon() {
                         { quoted: m.messages[0] }
                       );
                       await Proto.sendMessage(jid, react(msg, "bad"));
-                      await Primon.sendMessage(
-                        jid,
-                        { text: modulelang.pron + command_list[diff.indexOf(filt[0])] }
-                      )
-                      diff = []
+                      await Primon.sendMessage(jid, {
+                        text:
+                          modulelang.pron + command_list[diff.indexOf(filt[0])],
+                      });
+                      diff = [];
                       return 0;
                     }
                   }
@@ -318,55 +346,83 @@ async function Primon() {
               if (attr == "textpro") {
                 if (isreplied) {
                   await Proto.sendMessage(jid, { delete: msgkey });
-                  var style = textpro_links(args)
+                  var style = textpro_links(args);
                   if (style !== "") {
-                    var { img } = await openapi.textpro(style, repliedmsg)
-                    var img2 = await axios.get(img, { responseType: "arraybuffer" })
-                    return await Proto.sendMessage(jid, { image: Buffer.from(img2.data), caption: "By Primon Proto" })
+                    var { img } = await openapi.textpro(style, repliedmsg);
+                    var img2 = await axios.get(img, {
+                      responseType: "arraybuffer",
+                    });
+                    return await Proto.sendMessage(jid, {
+                      image: Buffer.from(img2.data),
+                      caption: "By Primon Proto",
+                    });
                   } else {
-                    var msg = await Proto.sendMessage(jid, {
-                      text: modulelang.textpro_null
-                    }, { quoted: m.messages[0] });
+                    var msg = await Proto.sendMessage(
+                      jid,
+                      {
+                        text: modulelang.textpro_null,
+                      },
+                      { quoted: m.messages[0] }
+                    );
                     return await Proto.sendMessage(jid, react(msg, "bad"));
                   }
                 } else {
                   await Proto.sendMessage(jid, { delete: msgkey });
                   try {
-                    var type = argfinder(args)
+                    var type = argfinder(args);
                   } catch {
-                    var msg = await Proto.sendMessage(jid, {
-                      text: modulelang.textpro_null
-                    }, { quoted: m.messages[0] });
+                    var msg = await Proto.sendMessage(
+                      jid,
+                      {
+                        text: modulelang.textpro_null,
+                      },
+                      { quoted: m.messages[0] }
+                    );
                     return await Proto.sendMessage(jid, react(msg, "bad"));
                   }
-                  var url = textpro_links(type)
+                  var url = textpro_links(type);
                   if (url == "") {
-                    var msg = await Proto.sendMessage(jid, {
-                      text: modulelang.textpro_null
-                    }, { quoted: m.messages[0] });
+                    var msg = await Proto.sendMessage(
+                      jid,
+                      {
+                        text: modulelang.textpro_null,
+                      },
+                      { quoted: m.messages[0] }
+                    );
                     return await Proto.sendMessage(jid, react(msg, "bad"));
                   } else {
-                    var type = argfinder(args)
-                    var url = textpro_links(type)
-                    var text = afterarg(args)
-                    var { img } = await openapi.textpro(url, text)
-                    var img2 = await axios.get(img, { responseType: "arraybuffer" })
-                    return await Proto.sendMessage(jid, { image: Buffer.from(img2.data), caption: "By Primon Proto" })
+                    var type = argfinder(args);
+                    var url = textpro_links(type);
+                    var text = afterarg(args);
+                    var { img } = await openapi.textpro(url, text);
+                    var img2 = await axios.get(img, {
+                      responseType: "arraybuffer",
+                    });
+                    return await Proto.sendMessage(jid, {
+                      image: Buffer.from(img2.data),
+                      caption: "By Primon Proto",
+                    });
                   }
                 }
               }
 
               // Ping
               if (attr == "ping") {
-                var d1 = new Date().getTime()
-                var msg = await Primon.sendMessage(jid, { text: "__Ping, Pong!__"})
-                var d2 = new Date().getTime()
+                var d1 = new Date().getTime();
+                var msg = await Primon.sendMessage(jid, {
+                  text: "__Ping, Pong!__",
+                });
+                var d2 = new Date().getTime();
                 await Proto.sendMessage(jid, { delete: msg.key });
-                var timestep = Number(d2) - Number(d1)
+                var timestep = Number(d2) - Number(d1);
                 if (timestep > 120) {
-                  return await Proto.sendMessage(jid, { text: pinglang.ping + String(timestep) + pinglang.badping })
+                  return await Proto.sendMessage(jid, {
+                    text: pinglang.ping + String(timestep) + pinglang.badping,
+                  });
                 } else {
-                  return await Proto.sendMessage(jid, { text: pinglang.ping + String(timestep)})
+                  return await Proto.sendMessage(jid, {
+                    text: pinglang.ping + String(timestep),
+                  });
                 }
               }
 
