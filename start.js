@@ -283,7 +283,7 @@ async function Primon() {
                         { quoted: m.messages[0] }
                       );
                       await Proto.sendMessage(jid, react(msg, "bad"));
-                      await Primon.sendMessage(jid, {
+                      await Proto.sendMessage(jid, {
                         text:
                           modulelang.pron + command_list[diff.indexOf(filt[0])],
                       });
@@ -348,7 +348,7 @@ async function Primon() {
                   await Proto.sendMessage(jid, { delete: msgkey });
                   var style = textpro_links(args);
                   if (style !== "") {
-                    var { img } = await openapi.textpro(style, repliedmsg);
+                    var img = await openapi.textpro(style, repliedmsg);
                     var img2 = await axios.get(img, {
                       responseType: "arraybuffer",
                     });
@@ -394,7 +394,7 @@ async function Primon() {
                     var type = argfinder(args);
                     var url = textpro_links(type);
                     var text = afterarg(args);
-                    var { img } = await openapi.textpro(url, text);
+                    var img = await openapi.textpro(url, text);
                     var img2 = await axios.get(img, {
                       responseType: "arraybuffer",
                     });
@@ -409,7 +409,7 @@ async function Primon() {
               // Ping
               if (attr == "ping") {
                 var d1 = new Date().getTime();
-                var msg = await Primon.sendMessage(jid, {
+                var msg = await Proto.sendMessage(jid, {
                   text: "__Ping, Pong!__",
                 });
                 var d2 = new Date().getTime();
@@ -425,7 +425,8 @@ async function Primon() {
                   });
                 }
               }
-
+              console.log(message)
+              console.log(isbutton)
               // Buttons
               if (message == MenuLang.menu && isbutton) {
                 return await Proto.sendMessage(
