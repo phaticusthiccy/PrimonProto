@@ -237,7 +237,7 @@ async function Primon() {
                       { quoted: m.messages[0] }
                     );
                   } else {
-                    command_list.map((Element) => {
+                    command_list.map(async (Element) => {
                       var { similarity } = await openapi.similarity(args, Element)
                       diff.push(similarity)
                     })
@@ -369,7 +369,7 @@ async function Primon() {
                   return await Proto.sendMessage(jid, { text: pinglang.ping + String(timestep)})
                 }
               }
-              
+
               // Buttons
               if (message == MenuLang.menu && isbutton) {
                 return await Proto.sendMessage(
