@@ -11,10 +11,10 @@
       "pp": "Primon Komut Listesi"
     },
     "cmd": {
-      "command": "**⌨ Komut:** ",
-      "info": "**ℹ Açıklama:** ",
-      "example": "**📋 Örnek:** ",
-      "danger": "**⚠ Dikkat:** "
+      "command": "*⌨ Komut:* ",
+      "info": "*ℹ Açıklama:* ",
+      "example": "*📋 Örnek:* ",
+      "danger": "*⚠ Dikkat:* "
     },
     "ping": {
       "ping": "Bot Çalışma Hızı: ",
@@ -27,15 +27,15 @@
       "run": "Primon Proto Çalışıyor!"
     },
     "tagall": {
-      "msg": "🔸 {%c} **Grubunun Üyeleri** 🔸\n\n"
+      "msg": "🔸 {%c} *Grubunun Üyeleri* 🔸\n\n"
     },
     "module": {
-      "null": "__Böyle Bir Komut Bulamadım..__",
-      "pron": "__Şunu mu demek istedin:__ ",
-      "tagall": "{%d1}```{%c}tagall``` \n{%d1}__Gruptaki tüm üyeleri etiketleyin!__ \n{%d1} \n\n🔹 ```{%c}tagall``` \n🔹 ```{%c}tagall Herkese Merhaba```",
-      "textpro": "{%d1}```{%c}textpro``` \n{%d1}__Birbirinden farklı resimler veya afişler oluşturun!__ \n {%d1} \n\n🔹 ```{%c}textpro {stil} {yazı}``` \n🔹 {%c}textpro neon Atticus \n🔹 {%c}textpro {stil} <mesaja yanıt ver>\n\n**Stiller:** __neon, neon2__",
-      "textpro_null": "__Böyle Bir Stil Bulamadım..__",
-      "ping": "{%d1}```{%c}ping``` \n{%d1}__Bot'un pingini ölçün!__"
+      "null": "_Böyle Bir Komut Bulamadım.._",
+      "pron": "_Şunu mu demek istedin:_ ",
+      "tagall": "{%d1}```{%c}tagall``` \n{%d1}_Gruptaki tüm üyeleri etiketleyin!_ \n{%d1} \n\n🔹 ```{%c}tagall``` \n🔹 ```{%c}tagall Herkese Merhaba```",
+      "textpro": "{%d1}```{%c}textpro``` \n{%d1}_Birbirinden farklı resimler veya afişler oluşturun!_ \n {%d1} \n\n🔹 ```{%c}textpro {stil} {yazı}``` \n🔹 ```{%c}textpro neon Atticus``` \n🔹 ```{%c}textpro {stil} <mesaja yanıt ver>```\n\n*Stiller:* _neon, neon2, neon3, batman, love, love2, sea, led, devil, glitch, summer, robot_",
+      "textpro_null": "_Böyle Bir Stil Bulamadım.._",
+      "ping": "{%d1}```{%c}ping``` \n{%d1}_Bot'un pingini ölçün!_"
     }
   }
 }

@@ -11,10 +11,10 @@
       "pp": "Primon Command List"
     },
     "cmd": {
-      "command": "**⌨ Command:** ",
-      "info": "**ℹ Information:** ",
-      "example": "**📋 Example:** ",
-      "danger": "**⚠ Danger:** "
+      "command": "*⌨ Command:* ",
+      "info": "*ℹ Information:* ",
+      "example": "*📋 Example:* ",
+      "danger": "*⚠ Danger:* "
     },
     "ping": {
       "ping": "Primon's Ping: ",
@@ -30,12 +30,12 @@
       "msg": "🔸 Members of {%c} 🔸\n\n"
     },
     "module": {
-      "null": "__Sorry, Cannot Find Any Module Like That..__",
-      "pron": "__Did you mean:__ ",
-      "tagall": "{%d1}{%c}tagall``` \n{%d1}__Tag all group members!__ \n{%d1} \n\n🔹 ```{%c}tagall``` \n🔹 ```{%c}tagall Hello Everyone```",
-      "textpro": "{%d1}```{%c}textpro``` \n{%d1}__Create different images or banners!__ \n {%d1} \n\n🔹 ```{%c}textpro {type} {text}``` \n🔹 {%c}textpro neon Atticus \n🔹 {%c}textpro {type} <reply a message>\n\n**Types:** __neon, neon2__",
-      "textpro_null": "__Sorry, Cannot Find Any Style Like This..__",
-      "ping": "{%d1}```{%c}ping``` \n{%d1}__Measure the bot's ping!__"
+      "null": "_Sorry, Cannot Find Any Module Like That.._",
+      "pron": "_Did you mean:_ ",
+      "tagall": "{%d1}{%c}tagall``` \n{%d1}_Tag all group members!_ \n{%d1} \n\n🔹 ```{%c}tagall``` \n🔹 ```{%c}tagall Hello Everyone```",
+      "textpro": "{%d1}```{%c}textpro``` \n{%d1}_Create different images or banners!_ \n {%d1} \n\n🔹 ```{%c}textpro {type} {text}``` \n🔹 ```{%c}textpro neon Atticus``` \n🔹 ```{%c}textpro {type} <reply a message>```\n\n*Types:* _neon, neon2, neon3, batman, love, love2, sea, led, devil, glitch, summer, robot_",
+      "textpro_null": "_Sorry, Cannot Find Any Style Like This.._",
+      "ping": "{%d1}```{%c}ping``` \n{%d1}_Measure the bot's ping!_"
     }
   }
 }

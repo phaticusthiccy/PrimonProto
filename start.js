@@ -121,10 +121,9 @@ async function Primon() {
 
   sudo.push(Proto.user.id.split(":")[0] + "@s.whatsapp.net");
   Proto.ev.on("messages.upsert", async (m) => {
-    console.log(m.messages[0])
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
-    if (Object.keys(m.messages[0].message).includes("protocolMessage") || Object.keys(m.messages[0].message).includes("buttonsMessage") || Object.keys(m.messages[0].message).includes("reactionMessage")) return;
+    if (Object.keys(m.messages[0].message).includes("protocolMessage") || Object.keys(m.messages[0].message).includes("reactionMessage")) return;
     jid = m.messages[0].key.remoteJid;
     var once_msg = Object.keys(m.messages[0].message);
 
@@ -242,12 +241,13 @@ async function Primon() {
                     );
                   } else {
                     command_list.map(async (Element) => {
-                      var { similarity } = await openapi.similarity(
+                      var similarity = await openapi.similarity(
                         args,
                         Element
                       );
-                      diff.push(similarity);
+                      diff.push(similarity.similarity);
                     });
+                    console.log(diff)
                     var filt = diff.filter((mum) => mum > 0.8);
                     if (filt[0] == undefined) {
                       return await Proto.sendMessage(
