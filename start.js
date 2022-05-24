@@ -141,17 +141,24 @@ async function Primon() {
         var once_msg2 = Object.keys(
           m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
         );
-      } catch {}
-      if (once_msg2.includes("extendedTextMessage")) {
-        repliedmsg =
-          m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
-            .extendedTextMessage.text;
-      } else if (once_msg2.includes("conversation")) {
-        repliedmsg =
-          m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
-            .conversation;
+        var nort = true
+      } catch {
+        var nort = false
+      }
+      if (nort) {
+        if (once_msg2.includes("extendedTextMessage")) {
+          repliedmsg =
+            m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
+              .extendedTextMessage.text;
+        } else if (once_msg2.includes("conversation")) {
+          repliedmsg =
+            m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
+              .conversation;
+        } else {
+          repliedmsg = undefined;
+        }
       } else {
-        repliedmsg = undefined;
+        repliedmsg = undefined
       }
     } else {
       repliedmsg = undefined;
@@ -180,10 +187,25 @@ async function Primon() {
     } else {
       cmd = [cmd1];
     }
-
+    var ispm;
+    if (m.messages[0].key.participant == undefined) {
+      if (m.messages[0].key.remoteJid.includes("@s")) {
+        ispm = true
+      } else {
+        ispm = false
+      }
+    } else {
+      ispm = false
+    }
+    var g_participant;
+    if (ispm) {
+      g_participant = m.messages[0].key.remoteJid.split("@")[0]
+    } else {
+      g_participant = sudo
+    }
     if (message !== undefined) {
       if (m.type == "notify") {
-        if (sudo.includes(m.messages[0].key.participant)) {
+        if (sudo.includes(g_participant)) {
           if (process.env.SUDO !== false && sudo.length > 0) {
             if (cmd.includes(message[0])) {
               var command = message.split("");
