@@ -118,8 +118,11 @@ async function Primon() {
       sudo.push(process.env.SUDO);
     }
   }
-
-  sudo.push(Proto.user.id.split(":")[0] + "@s.whatsapp.net");
+  try {
+    sudo.push(Proto.user.id.split(":")[0] + "@s.whatsapp.net");
+  } catch {
+    sudo.push(Proto.user.id.split("@")[0] + "@s.whatsapp.net");
+  }
   Proto.ev.on("messages.upsert", async (m) => {
     console.log(m)
     if (!m.messages[0].message) return;
@@ -199,13 +202,22 @@ async function Primon() {
     }
     var g_participant;
     if (ispm) {
-      g_participant = m.messages[0].key.remoteJid.split("@")[0]
+      if (m.messages[0].key.fromMe) {
+        try {
+          g_participant = Proto.user.id.split(":")[0]
+        } catch {
+          g_participant = Proto.user.id.split("@")[0]
+        }
+      } else {
+        g_participant = m.messages[0].key.remoteJid.split("@")[0]
+      }
     } else {
       g_participant = sudo
     }
     console.log(sudo)
     console.log(g_participant)
     console.log(ispm)
+    console.log(message)
     if (message !== undefined) {
       if (m.type == "notify") {
         if (sudo.includes(g_participant)) {
