@@ -121,6 +121,7 @@ async function Primon() {
 
   sudo.push(Proto.user.id.split(":")[0] + "@s.whatsapp.net");
   Proto.ev.on("messages.upsert", async (m) => {
+    console.log(m)
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
     if (Object.keys(m.messages[0].message).includes("protocolMessage") || Object.keys(m.messages[0].message).includes("reactionMessage")) return;
