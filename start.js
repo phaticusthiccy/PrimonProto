@@ -204,15 +204,15 @@ async function Primon() {
     if (ispm) {
       if (m.messages[0].key.fromMe) {
         try {
-          g_participant = Proto.user.id.split(":")[0]
+          g_participant = Proto.user.id.split(":")[0] + "@s.whatsapp.net"
         } catch {
-          g_participant = Proto.user.id.split("@")[0]
+          g_participant = Proto.user.id.split("@")[0] + "@s.whatsapp.net"
         }
       } else {
-        g_participant = m.messages[0].key.remoteJid.split("@")[0]
+        g_participant = m.messages[0].key.remoteJid.split("@")[0] + "@s.whatsapp.net"
       }
     } else {
-      g_participant = sudo
+      g_participant = m.messages[0].key.participant.split("@")[0] + "@s.whatsapp.net"
     }
     console.log(sudo)
     console.log(g_participant)
