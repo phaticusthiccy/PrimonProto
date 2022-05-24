@@ -203,6 +203,9 @@ async function Primon() {
     } else {
       g_participant = sudo
     }
+    console.log(sudo)
+    console.log(g_participant)
+    console.log(ispm)
     if (message !== undefined) {
       if (m.type == "notify") {
         if (sudo.includes(g_participant)) {
