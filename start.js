@@ -147,13 +147,8 @@ async function Primon() {
   }
   Proto.ev.on("messages.upsert", async (m) => {
     console.log(m)
-    if (!m.messages[0].message) return;
+    if (!m.messages[0].message && !Object.keys(m.messages[0]).includes("WebMessageInfo")) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
-    if (
-      Object.keys(m.messages[0].message).includes("protocolMessage") ||
-      Object.keys(m.messages[0].message).includes("reactionMessage")
-    )
-      return;
     jid = m.messages[0].key.remoteJid;
     var once_msg = Object.keys(m.messages[0].message);
 
@@ -417,8 +412,8 @@ async function Primon() {
                   });
                 }
               }
+              return await Proto.sendMessage(jid, { text: gb.message})
             }
-            return await Proto.sendMessage(jid, { text: gb.message})
           }
         }
       }
