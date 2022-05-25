@@ -868,7 +868,7 @@ async function Primon() {
         console.log(sessionlang.recon);
         Primon();
       } else {
-        Proto.end(reason);
+        // Proto.end(reason);
       }
     }
     return console.log(sessionlang.run);
