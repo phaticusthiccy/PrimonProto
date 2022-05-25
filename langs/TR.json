@@ -36,6 +36,18 @@
     "tagall": {
       "msg": "🔸 {%c} *Grubunun Üyeleri* 🔸\n\n"
     },
+    "goodbye": {
+      "not_set_goodbye": "_Bu sohbet için herhangi bir görüşürüz mesajı ayarlanmamış._",
+      "alr_set_goodbye": "_Bu sohbette görüşürüz mesajı ayarlanmış. Mesaj_ \n\n",
+      "suc_set_goodbye": "_Görüşürüz mesajı başarıyla ayarlandı!_ ✅",
+      "suc_del_goodbye": "_Görüşürüz mesajı başarıyla silindi!_ ✅"
+    },
+    "welcome": {
+      "not_set_welcome": "_Bu sohbet için herhangi bir hoşgeldin mesajı ayarlanmamış!_",
+      "alr_set_welcome": "_Bu sohbette hoşgeldin mesajı ayarlanmış. Mesaj:_ \n\n",
+      "suc_set_welcome": "_Hoşgeldin mesajı başarıyla ayarlandı!_ ✅",
+      "suc_del_welcome": "_Hoşgeldin mesajı başarıyla silindi!_ ✅"
+    },
     "module": {
       "null": "_Böyle Bir Komut Bulamadım.._",
       "pron": "_Şunu mu demek istedin:_ ",
@@ -45,14 +57,6 @@
       "ping": "{%d1}```{%c}ping``` \n{%d1}_Bot'un pingini ölçün!_",
       "welcome": "{%d1}```{%c}welcome``` \n{%d1}_Gruba yeni katılan üyelere otomatik mesaj gönderir._ \n{%d1} \n\n🔹 ```{%c}welcome``` \n🔹 ```{%c}welcome Hoşgeldin``` \n🔹 ```{%c}welcome delete``` (Mesajı Kaldırır) \n 🔹 ```{%c}welcome <mesaja yanıt ver>``` \n\n*Ek Özellikler:* \n\n{gpp}: _Hoşgeldin mesajı grup profil fotoğrafı ile gönderilir._ \n{img}: _Hoşgeldin mesajı herhangi bir resim ile gönderilir._\nÖrnek: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _Hoşgeldin mesajı video ile gönderilir._\nÖrnek: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
       "goodbye": "{%d1}```{%c}goodbye``` \n{%d1}_Gruptan ayrılan üyelere otomatik mesaj gönderir._ \n{%d1} \n\n🔹 ```{%c}goodbye``` \n🔹 ```{%c}goodbye Güle Güle..``` \n🔹 ```{%c}goodbye delete``` (Mesajı Kaldırır) \n 🔹 ```{%c}goodbye <mesaja yanıt ver>``` \n\n*Ek Özellikler:* \n\n{gpp}: _Görüşürüz mesajı grup profil fotoğrafı ile gönderilir._ \n{img}: _Görüşürüz mesajı herhangi bir resim ile gönderilir._\nÖrnek: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _Görüşürüz mesajı video ile gönderilir._\nÖrnek: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
-      "not_set_welcome": "_Bu sohbet için herhangi bir hoşgeldin mesajı ayarlanmamış!_",
-      "alr_set_welcome": "_Bu sohbette hoşgeldin mesajı ayarlanmış. Mesaj:_ \n\n",
-      "suc_set_welcome": "_Hoşgeldin mesajı başarıyla ayarlandı!_ ✅",
-      "suc_del_welcome": "_Hoşgeldin mesajı başarıyla silindi!_ ✅",
-      "not_set_goodbye": "_Bu sohbet için herhangi bir görüşürüz mesajı ayarlanmamış._",
-      "alr_set_goodbye": "_Bu sohbette görüşürüz mesajı ayarlanmış. Mesaj_ \n\n",
-      "suc_set_goodbye": "_Görüşürüz mesajı başarıyla ayarlandı!_ ✅",
-      "suc_del_goodbye": "_Görüşürüz mesajı başarıyla silindi!_ ✅",
       "no_pfp": "*Grup resmi mevcut değil. Bu yüzden hoşgeldin mesajı gönderilemedi. Lütfen bir grup fotoğrafı belirleyin!*",
       "error_img": "*Girilen {img: ..} içindeki resim geçerli değil. Lütfen* ```.menu welcome``` *yazarak kullanım taliamatına bakın. Ek bir boşluk olmamalı ve resim link .png veya .jpg uzantılı olmalıdır.*",
       "error_vid": "*Girilen {vid: ..} içindeki youtube bağlantısı geçerli değil. Lütfen* ```.menu welcome``` *yazarak kullanım taliamatına bakın. Ek bir boşluk olmamalı ve video youtube bağlantısı olmalıdır.*"

@@ -38,6 +38,9 @@ const taglang = Language.getString("tagall");
 const modulelang = Language.getString("module");
 const cmdlang = Language.getString("cmd");
 const pinglang = Language.getString("ping");
+const goodbyelang = Language.getString("goodbye")
+const welcomelang = Language.getString("welcome")
+
 const { DataTypes } = require("sequelize");
 const {
   GreetingsDB,
@@ -103,6 +106,46 @@ const PrimonDB = config.DATABASE.define("PrimonProto", {
     allowNull: false,
   },
 });
+
+function editDistance(s1, s2) {
+  s1 = s1.toLowerCase();
+  s2 = s2.toLowerCase();
+  var costs = new Array();
+  for (var i = 0; i <= s1.length; i++) {
+    var lastValue = i;
+    for (var j = 0; j <= s2.length; j++) {
+      if (i == 0)
+        costs[j] = j;
+      else {
+        if (j > 0) {
+          var newValue = costs[j - 1];
+          if (s1.charAt(i - 1) != s2.charAt(j - 1))
+            newValue = Math.min(Math.min(newValue, lastValue),
+              costs[j]) + 1;
+          costs[j - 1] = lastValue;
+          lastValue = newValue;
+        }
+      }
+    }
+    if (i > 0)
+      costs[s2.length] = lastValue;
+  }
+  return costs[s2.length];
+}
+
+function test_diff(s1, s2) {
+  var longer = s1;
+  var shorter = s2;
+  if (s1.length < s2.length) {
+    longer = s2;
+    shorter = s1;
+  }
+  var longerLength = longer.length;
+  if (longerLength == 0) {
+    return 1.0;
+  }
+  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+}
 
 const ytdl = async (link, downloadFolder) => {
   try {
@@ -543,13 +586,9 @@ async function Primon() {
                     );
                   } else {
                     command_list.map((Element) => {
-                      openapi
-                        .similarity(args, Element)
-                        .then(async (similarity) => {
-                          diff.push(similarity.similarity);
-                        });
+                      var similarity = test_diff(args, Element)
+                      diff.push(similarity);
                     });
-                    do {} while (diff.length !== command_list.length);
                     console.log(diff);
                     var filt = diff.filter((mum) => mum > 0.8);
                     if (filt[0] == undefined) {
@@ -643,17 +682,17 @@ async function Primon() {
                   );
                 }
                 if (args == "" && isreplied == false) {
-                  var hg = await getMessage(jid);
-                  if (hg === false) {
+                  var hgw = await getMessage(jid);
+                  if (hgw == false) {
                     return await Proto.sendMessage(
                       jid,
-                      { text: modulelang.not_set_welcome },
+                      { text: welcomelang.not_set_welcome },
                       { quoted: m.messages[0] }
                     );
                   } else {
                     return await Proto.sendMessage(
                       jid,
-                      { text: modulelang.alr_set_welcome + hg.message },
+                      { text: welcomelang.alr_set_welcome + hgw.message },
                       { quoted: m.messages[0] }
                     );
                   }
@@ -661,7 +700,7 @@ async function Primon() {
                 if (args == "delete") {
                   await Proto.sendMessage(
                     jid,
-                    { text: modulelang.suc_del_welcome },
+                    { text: welcomelang.suc_del_welcome },
                     { quoted: m.messages[0] }
                   );
                   return await deleteMessage(jid, "welcome");
@@ -670,7 +709,7 @@ async function Primon() {
                   if (repliedmsg == "delete") {
                     await Proto.sendMessage(
                       jid,
-                      { text: modulelang.suc_del_welcome },
+                      { text: welcomelang.suc_del_welcome },
                       { quoted: m.messages[0] }
                     );
                     return await deleteMessage(jid, "welcome");
@@ -678,7 +717,7 @@ async function Primon() {
                     await setMessage(jid, "welcome", repliedmsg);
                     return await Proto.sendMessage(
                       jid,
-                      { text: modulelang.suc_set_welcome },
+                      { text: welcomelang.suc_set_welcome },
                       { quoted: m.messages[0] }
                     );
                   }
@@ -690,7 +729,7 @@ async function Primon() {
                 );
                 return await Proto.sendMessage(
                   jid,
-                  { text: modulelang.suc_set_welcome },
+                  { text: welcomelang.suc_set_welcome },
                   { quoted: m.messages[0] }
                 );
               }
@@ -706,17 +745,17 @@ async function Primon() {
                   );
                 }
                 if (args == "" && isreplied == false) {
-                  var hg = await getMessage(jid, "goodbye");
-                  if (hg === false) {
+                  var hgg = await getMessage(jid, "goodbye");
+                  if (hgg === false) {
                     return await Proto.sendMessage(
                       jid,
-                      { text: modulelang.not_set_goodbye },
+                      { text: goodbyelang.not_set_goodbye },
                       { quoted: m.messages[0] }
                     );
                   } else {
                     return await Proto.sendMessage(
                       jid,
-                      { text: modulelang.alr_set_goodbye + hg.message },
+                      { text: goodbyelang.alr_set_goodbye + hgg.message },
                       { quoted: m.messages[0] }
                     );
                   }
@@ -724,7 +763,7 @@ async function Primon() {
                 if (args == "delete") {
                   await Proto.sendMessage(
                     jid,
-                    { text: modulelang.suc_del_goodbye },
+                    { text: goodbyelang.suc_del_goodbye },
                     { quoted: m.messages[0] }
                   );
                   return await deleteMessage(jid, "goodbye");
@@ -733,7 +772,7 @@ async function Primon() {
                   if (repliedmsg == "delete") {
                     await Proto.sendMessage(
                       jid,
-                      { text: modulelang.suc_del_goodbye },
+                      { text: goodbyelang.suc_del_goodbye },
                       { quoted: m.messages[0] }
                     );
                     return await deleteMessage(jid, "goodbye");
@@ -741,7 +780,7 @@ async function Primon() {
                     await setMessage(jid, "goodbye", repliedmsg);
                     return await Proto.sendMessage(
                       jid,
-                      { text: modulelang.suc_set_goodbye },
+                      { text: goodbyelang.suc_set_goodbye },
                       { quoted: m.messages[0] }
                     );
                   }
@@ -753,7 +792,7 @@ async function Primon() {
                 );
                 return await Proto.sendMessage(
                   jid,
-                  { text: modulelang.suc_set_goodbye },
+                  { text: goodbyelang.suc_set_goodbye },
                   { quoted: m.messages[0] }
                 );
               }
