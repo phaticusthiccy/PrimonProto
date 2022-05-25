@@ -46,7 +46,7 @@
       "welcome": "{%d1}```{%c}welcome``` \n{%d1}_Automatically sends messages to new members who join the group._ \n{%d1} \n\n🔹 ```{%c}welcome``` \n🔹 ```{%c}welcome Welcome The Group``` \n🔹 ```{%c}welcome delete``` (Removes the Message) \n 🔹 ```{%c}welcome <reply a message>``` \n\n*Additional Features:* \n\n{gpp}: _Welcome message is sent with group profile photo._ \n{img}: _Welcome message is sent with any picture._\nExample: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _The welcome message is sent via video._\nExample: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
       "goodbye": "{%d1}```{%c}goodbye``` \n{%d1}_Automatically sends messages to new members who leave the group._ \n{%d1} \n\n🔹 ```{%c}goodbye``` \n🔹 ```{%c}goodbye Goodbye Mate..``` \n🔹 ```{%c}goodbye delete``` (Removes the Message) \n 🔹 ```{%c}goodbye <reply a message>``` \n\n*Additional Features:* \n\n{gpp}: _Goodbye message is sent with group profile photo._ \n{img}: _Goodbye message is sent with any picture._\nExample: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _The goodbye message is sent via video._\nExample: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
       "not_set_welcome": "_No welcome messages are set for this chat!_",
-      "alr_set_welcome": "_Welcome message is set in this chat. Message: \n\n",
+      "alr_set_welcome": "_Welcome message is set in this chat. Message:_ \n\n",
       "suc_set_welcome": "_Welcome message set successfully!_ ✅",
       "suc_del_welcome": "_Welcome message deleted successfully!_ ✅",
       "not_set_goodbye": "_No goodbye messages are set for this chat._",
