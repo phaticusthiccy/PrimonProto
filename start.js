@@ -905,6 +905,7 @@ async function Primon() {
       }
     }
 
+    
     /*
       if (m.messages[0].key.fromMe) {
         if (m.messages[0].message.conversation.startsWith(".textpro")) {
