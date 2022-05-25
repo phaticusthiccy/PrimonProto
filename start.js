@@ -505,6 +505,18 @@ async function Primon() {
     if (g_participant == "@s.whatsapp.net") {
       g_participant = "0";
     }
+
+    // Buttons
+    if (message == MenuLang.menu && isbutton) {
+      if (sudo.includes(g_participant)) {
+        return await Proto.sendMessage(
+          jid,
+          { text: "Test" },
+          { quoted: m.messages[0] }
+        );
+      }
+    }
+
     if (message !== undefined) {
       if (m.type == "notify") {
         if (sudo.includes(g_participant)) {
@@ -765,14 +777,7 @@ async function Primon() {
                   });
                 }
               }
-              // Buttons
-              if (message == MenuLang.menu && isbutton) {
-                return await Proto.sendMessage(
-                  jid,
-                  { text: "Test" },
-                  { quoted: m.messages[0] }
-                );
-              }
+              
             }
           }
         }
