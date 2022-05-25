@@ -6,6 +6,9 @@
 //
 // Phaticusthiccy - 2022
 
+var axios = require("axios");
+var fs = require("fs");
+
 function dictEmojis() {
   var emoji = [
     "❤",
@@ -122,7 +125,21 @@ function afterarg(text) {
   }
   return payload;
 }
-
+function ytdl(url, path) {
+  axios({
+    url: "https://api.onlinevideoconverter.pro/api/convert",
+    method: "post",
+    data: {
+      url: url,
+    },
+  }).then(async (h) => {
+    var ss = await axios.get(h.data.url[0].url, { responseType: "stream" });
+    const w = ss.data.pipe(fs.createWriteStream(path + ".mp4"));
+    w.on("finish", () => {
+      return true;
+    });
+  });
+}
 function String(text) {
   return text.toString();
 }
@@ -134,5 +151,6 @@ module.exports = {
   bademojis: bademojis,
   afterarg: afterarg,
   String: String,
-  react: react
+  react: react,
+  ytdl: ytdl
 };

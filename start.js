@@ -24,10 +24,10 @@ const {
   proto,
   AnyMediaMessageContent,
 } = require("@adiwajshing/baileys");
+const ffmpeg = require("fluent-ffmpeg");
 const P = require("pino");
 const { Boom } = require("@hapi/boom");
 const fs = require("fs");
-const ytdl = require('ytdl-core');
 var axios = require("axios");
 const { on } = require("events");
 require("util").inspect.defaultOptions.depth = null;
@@ -55,6 +55,7 @@ const {
   afterarg,
   String,
   react,
+  ytdl
 } = require("./add");
 
 function cmds(text, arguments = 3, cmd) {
@@ -320,14 +321,14 @@ async function Primon() {
                 }
                 try {
                   var vid_link = gb.message.split("{vid: ")[1].split("}")[0] + "}"
-                  ytdl(gb.message.split("{vid: ")[1].split("}")[0]).pipe(fs.createWriteStream('./video.mp4'));
+                  ytdl(gb.message.split("{vid: ")[1].split("}")[0], "./goodbye")
                 } catch {
                   return await Proto.sendMessage(jid, {
                     text: modulelang.error_vid
                   });
                 }
                 try {
-                  return await Proto.sendMessage(jid, { video: fs.readFileSync("./video.mp4"), caption: gb.message.replace("{vid: ", "").replace(vid_link, ""), mimetype: Mimetype.mp4})
+                  return await Proto.sendMessage(jid, { video: fs.readFileSync("./goodbye.mp4"), caption: gb.message.replace("{vid: ", "").replace(vid_link, ""), mimetype: Mimetype.mp4})
                 } catch {
                   return await Proto.sendMessage(jid, {
                     text: modulelang.error_vid
@@ -404,14 +405,14 @@ async function Primon() {
                 }
                 try {
                   var vid_link = gb.message.split("{vid: ")[1].split("}")[0] + "}"
-                  ytdl(gb.message.split("{vid: ")[1].split("}")[0]).pipe(fs.createWriteStream('./video.mp4'));
+                  ytdl(gb.message.split("{vid: ")[1].split("}")[0], "./welcome")
                 } catch {
                   return await Proto.sendMessage(jid, {
                     text: modulelang.error_vid
                   });
                 }
                 try {
-                  return await Proto.sendMessage(jid, { video: fs.readFileSync("./video.mp4"), caption: gb.message.replace("{vid: ", "").replace(vid_link, ""), mimetype: Mimetype.mp4})
+                  return await Proto.sendMessage(jid, { video: fs.readFileSync("./welcome.mp4"), caption: gb.message.replace("{vid: ", "").replace(vid_link, ""), mimetype: Mimetype.mp4})
                 } catch {
                   return await Proto.sendMessage(jid, {
                     text: modulelang.error_vid
