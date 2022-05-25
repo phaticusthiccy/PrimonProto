@@ -83,8 +83,6 @@ function cmds(text, arguments = 3, cmd) {
   return payload;
 }
 
-const config = require("./config_proto");
-const { fail } = require("assert");
 
 const { state, saveState } = useSingleFileAuthState("./session.json");
 
