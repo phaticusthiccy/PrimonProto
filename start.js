@@ -512,6 +512,7 @@ async function Primon() {
             if (cmd.includes(message[0])) {
               var command = message.split("");
               var command2 = command.shift();
+              if (message.length == 1) return;
               var attr = command.join("");
               var arg = { a: [], b: [], c: "" };
               var args = "";
