@@ -53,7 +53,7 @@
       "alr_set_goodbye": "_Bu sohbette görüşürüz mesajı ayarlanmış. Mesaj_ \n\n",
       "suc_set_goodbye": "_Görüşürüz mesajı başarıyla ayarlandı!_ ✅",
       "suc_del_goodbye": "_Görüşürüz mesajı başarıyla silindi!_ ✅",
-      "no_pfp": "*Grup resmi mevcurt değil. Bu yüzden hoşgeldin mesajı gönderilemedi. Lütfen bir grup fotoğrafı belirleyin!*",
+      "no_pfp": "*Grup resmi mevcut değil. Bu yüzden hoşgeldin mesajı gönderilemedi. Lütfen bir grup fotoğrafı belirleyin!*",
       "error_img": "*Girilen {img: ..} içindeki resim geçerli değil. Lütfen* ```.menu welcome``` *yazarak kullanım taliamatına bakın. Ek bir boşluk olmamalı ve resim link .png veya .jpg uzantılı olmalıdır.*",
       "error_vid": "*Girilen {vid: ..} içindeki youtube bağlantısı geçerli değil. Lütfen* ```.menu welcome``` *yazarak kullanım taliamatına bakın. Ek bir boşluk olmamalı ve video youtube bağlantısı olmalıdır.*"
     }

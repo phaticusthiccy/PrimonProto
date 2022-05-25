@@ -55,8 +55,7 @@ const {
   bademojis,
   afterarg,
   String,
-  react,
-  ytdl,
+  react
 } = require("./add");
 
 function cmds(text, arguments = 3, cmd) {
@@ -104,6 +103,29 @@ const PrimonDB = config.DATABASE.define("PrimonProto", {
     allowNull: false,
   },
 });
+
+const ytdl = async (link, downloadFolder) => {
+  try {
+    var h = await axios({
+      url: "https://api.onlinevideoconverter.pro/api/convert",
+      method: "post",
+      data: {
+        url: link
+      }
+    })
+    const response = await axios({
+      method: 'GET',
+      url: h.data.url[0].url,
+      responseType: 'stream',
+    });
+
+    const w = response.data.pipe(fs.createWriteStream(downloadFolder));
+    w.on('finish', () => {
+    });
+  } catch  { 
+    ytdl(link, downloadFolder);
+  }
+}; 
 
 setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
@@ -195,7 +217,7 @@ async function Primon() {
             }
             try {
               var vid_link = gb.message.split("{vid: ")[1].split("}")[0] + "}";
-              ytdl(gb.message.split("{vid: ")[1].split("}")[0], "./goodbye");
+              ytdl(gb.message.split("{vid: ")[1].split("}")[0], "./goodbye.mp4");
             } catch {
               return await Proto.sendMessage(jid, {
                 text: modulelang.error_vid,
@@ -292,7 +314,7 @@ async function Primon() {
             }
             try {
               var vid_link = gb.message.split("{vid: ")[1].split("}")[0] + "}";
-              ytdl(gb.message.split("{vid: ")[1].split("}")[0], "./welcome");
+              ytdl(gb.message.split("{vid: ")[1].split("}")[0], "./welcome.mp4");
             } catch {
               return await Proto.sendMessage(jid, {
                 text: modulelang.error_vid,
@@ -611,7 +633,7 @@ async function Primon() {
               }
 
               // Welcome
-              if ((attr = "welcome")) {
+              if (attr = "welcome") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (ispm) {
                   return await Proto.sendMessage(
@@ -674,7 +696,7 @@ async function Primon() {
               }
 
               // Goodbye
-              if ((attr = "goodbye")) {
+              if (attr = "goodbye") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (ispm) {
                   return await Proto.sendMessage(
