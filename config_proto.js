@@ -14,7 +14,7 @@ DATABASE_URL =
   process.env.DATABASE_URL === undefined
     ? "./primon.db"
     : process.env.DATABASE_URL;
-DEBUG = false;
+DEBUG = process.env.DEBUG == true ? true : false;
 let btn = [
   [
     {
@@ -52,6 +52,7 @@ let btn = [
   ]
 ];
 module.exports = {
+  DEBUG: this.DEBUG,
   VERSION: "v1.0 Beta",
   DATABASE_URL: DATABASE_URL,
   DATABASE:

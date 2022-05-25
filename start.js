@@ -119,7 +119,7 @@ async function Primon() {
     logger: P({ level: "silent" }),
   });
   Proto.ev.on("creds.update", saveState);
-
+  await config.DATABASE.sync();
   var message,
     isreplied,
     repliedmsg,
