@@ -38,16 +38,11 @@ const taglang = Language.getString("tagall");
 const modulelang = Language.getString("module");
 const cmdlang = Language.getString("cmd");
 const pinglang = Language.getString("ping");
-const goodbyelang = Language.getString("goodbye")
-const welcomelang = Language.getString("welcome")
+const goodbyelang = Language.getString("goodbye");
+const welcomelang = Language.getString("welcome");
 
 const { DataTypes } = require("sequelize");
-const {
-  GreetingsDB,
-  getMessage,
-  deleteMessage,
-  setMessage,
-} = require("./sql/greetings");
+const greetingDB = require("./sql/greetings"); // GreetingsDB, getMessage, deleteMessage, setMessage
 const openapi = require("@phaticusthiccy/open-apis");
 const config = require("./config_proto");
 
@@ -58,8 +53,9 @@ const {
   bademojis,
   afterarg,
   String,
-  react
+  react,
 } = require("./add");
+const { getMessage } = require("./sql/greetings");
 
 function cmds(text, arguments = 3, cmd) {
   let payload;
@@ -114,21 +110,18 @@ function editDistance(s1, s2) {
   for (var i = 0; i <= s1.length; i++) {
     var lastValue = i;
     for (var j = 0; j <= s2.length; j++) {
-      if (i == 0)
-        costs[j] = j;
+      if (i == 0) costs[j] = j;
       else {
         if (j > 0) {
           var newValue = costs[j - 1];
           if (s1.charAt(i - 1) != s2.charAt(j - 1))
-            newValue = Math.min(Math.min(newValue, lastValue),
-              costs[j]) + 1;
+            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
           costs[j - 1] = lastValue;
           lastValue = newValue;
         }
       }
     }
-    if (i > 0)
-      costs[s2.length] = lastValue;
+    if (i > 0) costs[s2.length] = lastValue;
   }
   return costs[s2.length];
 }
@@ -144,7 +137,9 @@ function test_diff(s1, s2) {
   if (longerLength == 0) {
     return 1.0;
   }
-  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+  return (
+    (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength)
+  );
 }
 
 const ytdl = async (link, downloadFolder) => {
@@ -153,22 +148,21 @@ const ytdl = async (link, downloadFolder) => {
       url: "https://api.onlinevideoconverter.pro/api/convert",
       method: "post",
       data: {
-        url: link
-      }
-    })
+        url: link,
+      },
+    });
     const response = await axios({
-      method: 'GET',
+      method: "GET",
       url: h.data.url[0].url,
-      responseType: 'stream',
+      responseType: "stream",
     });
 
     const w = response.data.pipe(fs.createWriteStream(downloadFolder));
-    w.on('finish', () => {
-    });
-  } catch  { 
+    w.on("finish", () => {});
+  } catch {
     ytdl(link, downloadFolder);
   }
-}; 
+};
 
 setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
@@ -184,7 +178,7 @@ async function Primon() {
   });
 
   Proto.ev.on("group-participants.update", async (st) => {
-    console.log(st)
+    console.log(st);
     if (st.action == "remove") {
       var gb = await getMessage(jid, "goodbye");
       if (gb !== false) {
@@ -260,7 +254,10 @@ async function Primon() {
             }
             try {
               var vid_link = gb.message.split("{vid: ")[1].split("}")[0] + "}";
-              ytdl(gb.message.split("{vid: ")[1].split("}")[0], "./goodbye.mp4");
+              ytdl(
+                gb.message.split("{vid: ")[1].split("}")[0],
+                "./goodbye.mp4"
+              );
             } catch {
               return await Proto.sendMessage(jid, {
                 text: modulelang.error_vid,
@@ -357,7 +354,10 @@ async function Primon() {
             }
             try {
               var vid_link = gb.message.split("{vid: ")[1].split("}")[0] + "}";
-              ytdl(gb.message.split("{vid: ")[1].split("}")[0], "./welcome.mp4");
+              ytdl(
+                gb.message.split("{vid: ")[1].split("}")[0],
+                "./welcome.mp4"
+              );
             } catch {
               return await Proto.sendMessage(jid, {
                 text: modulelang.error_vid,
@@ -599,7 +599,7 @@ async function Primon() {
                     );
                   } else {
                     command_list.map((Element) => {
-                      var similarity = test_diff(args, Element)
+                      var similarity = test_diff(args, Element);
                       diff.push(similarity);
                     });
                     console.log(diff);
@@ -629,7 +629,7 @@ async function Primon() {
               }
 
               // Tagall
-              if (attr == "tagall") {
+              else if (attr == "tagall") {
                 if (ispm) {
                   await Proto.sendMessage(jid, { delete: msgkey });
                   return await Proto.sendMessage(
@@ -685,7 +685,7 @@ async function Primon() {
               }
 
               // Textpro
-              if (attr == "textpro") {
+              else if (attr == "textpro") {
                 if (isreplied) {
                   await Proto.sendMessage(jid, { delete: msgkey });
                   var style = textpro_links(args);
@@ -751,7 +751,7 @@ async function Primon() {
               }
 
               // Ping
-              if (attr == "ping") {
+              else if (attr == "ping") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 var d1 = new Date().getTime();
                 var msg = await Proto.sendMessage(jid, {
@@ -777,7 +777,128 @@ async function Primon() {
                   });
                 }
               }
-              
+            } 
+            
+            // Welcome
+            else if (attr == "welcome") {
+              await Proto.sendMessage(jid, { delete: msgkey });
+              if (ispm) {
+                return await Proto.sendMessage(
+                  jid,
+                  { text: cmdlang.onlyGroup },
+                  { quoted: m.messages[0] }
+                );
+              } else {
+                if (isreplied) {
+                  if (repliedmsg == "delete") {
+                    await greetingDB.deleteMessage(jid, "welcome")
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: welcomelang.suc_del_welcome },
+                      { quoted: m.messages[0] }
+                    );
+                  } else {
+                    await greetingDB.setMessage(jid, "welcome", repliedmsg)
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: welcomelang.suc_set_welcome },
+                      { quoted: m.messages[0] }
+                    );
+                  }
+                } else {
+                  if (args == "delete") {
+                    await greetingDB.deleteMessage(jid, "welcome")
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: welcomelang.suc_del_welcome },
+                      { quoted: m.messages[0] }
+                    );
+                  } else if (arg == "") {
+                    var wmsg = await getMessage(jid, "welcome")
+                    if (wmsg == false) {
+                      return await Proto.sendMessage(
+                        jid,
+                        { text: welcomelang.not_set_welcome },
+                        { quoted: m.messages[0] }
+                      );
+                    } else {
+                      return await Proto.sendMessage(
+                        jid,
+                        { text: welcomelang.alr_set_welcome + wmsg.message},
+                        { quoted: m.messages[0] }
+                      );
+                    }
+                  } else {
+                    await greetingDB.setMessage(jid, "welcome", args)
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: welcomelang.suc_set_welcome },
+                      { quoted: m.messages[0] }
+                    );
+                  }
+                }
+              }
+            } 
+            
+            // Goodbye
+            else if (attr == "goodbye") {
+              await Proto.sendMessage(jid, { delete: msgkey });
+              if (ispm) {
+                return await Proto.sendMessage(
+                  jid,
+                  { text: cmdlang.onlyGroup },
+                  { quoted: m.messages[0] }
+                );
+              } else {
+                if (isreplied) {
+                  if (repliedmsg == "delete") {
+                    await greetingDB.deleteMessage(jid, "goodbye")
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: goodbyelang.suc_del_goodbye },
+                      { quoted: m.messages[0] }
+                    );
+                  } else {
+                    await greetingDB.setMessage(jid, "goodbye", repliedmsg)
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: goodbyelang.suc_set_goodbye },
+                      { quoted: m.messages[0] }
+                    );
+                  }
+                } else {
+                  if (args == "delete") {
+                    await greetingDB.deleteMessage(jid, "goodbye")
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: goodbyelang.suc_del_goodbye },
+                      { quoted: m.messages[0] }
+                    );
+                  } else if (arg == "") {
+                    var wmsg = await getMessage(jid, "goodbye")
+                    if (wmsg == false) {
+                      return await Proto.sendMessage(
+                        jid,
+                        { text: goodbyelang.not_set_goodbye },
+                        { quoted: m.messages[0] }
+                      );
+                    } else {
+                      return await Proto.sendMessage(
+                        jid,
+                        { text: goodbyelang.alr_set_goodbye + wmsg.message},
+                        { quoted: m.messages[0] }
+                      );
+                    }
+                  } else {
+                    await greetingDB.setMessage(jid, "goodbye", args)
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: goodbyelang.suc_set_goodbye },
+                      { quoted: m.messages[0] }
+                    );
+                  }
+                }
+              }
             }
           }
         }
