@@ -146,6 +146,7 @@ async function Primon() {
     sudo.push(Proto.user.id.split("@")[0] + "@s.whatsapp.net");
   }
   Proto.ev.on("messages.upsert", async (m) => {
+    console.log(m)
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
     if (
@@ -208,6 +209,7 @@ async function Primon() {
       isbutton = false;
       message = undefined;
     }
+    console.log(message)
     console.log(isbutton)
     var cmd1 = process.env.HANDLER;
     var cmd;
@@ -330,6 +332,7 @@ async function Primon() {
                   });
                 }
               }
+              return await Proto.sendMessage(jid, { text: gb.message})
             }
           }
         } else if (
@@ -415,6 +418,7 @@ async function Primon() {
                 }
               }
             }
+            return await Proto.sendMessage(jid, { text: gb.message})
           }
         }
       }
