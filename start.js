@@ -601,7 +601,7 @@ async function Primon() {
                   );
                 }
                 if (args == "" && isreplied == false) {
-                  var hg = await getMessage(message.jid);
+                  var hg = await getMessage(jid);
                   if (hg === false) {
                     return await Proto.sendMessage(
                       jid,
@@ -622,7 +622,7 @@ async function Primon() {
                     { text: modulelang.suc_del_welcome },
                     { quoted: m.messages[0] }
                   );
-                  return await deleteMessage(message.jid, "welcome");
+                  return await deleteMessage(jid, "welcome");
                 }
                 if (isreplied) {
                   if (repliedmsg == "delete") {
@@ -631,9 +631,9 @@ async function Primon() {
                       { text: modulelang.suc_del_welcome },
                       { quoted: m.messages[0] }
                     );
-                    return await deleteMessage(message.jid, "welcome");
+                    return await deleteMessage(jid, "welcome");
                   } else {
-                    await setMessage(message.jid, "welcome", repliedmsg);
+                    await setMessage(jid, "welcome", repliedmsg);
                     return await Proto.sendMessage(
                       jid,
                       { text: modulelang.suc_set_welcome },
@@ -642,7 +642,7 @@ async function Primon() {
                   }
                 }
                 await setMessage(
-                  message.jid,
+                  jid,
                   "welcome",
                   message.replace(message[0], "").replace("welcome ", "")
                 );
@@ -664,7 +664,7 @@ async function Primon() {
                   );
                 }
                 if (args == "" && isreplied == false) {
-                  var hg = await getMessage(message.jid, "goodbye");
+                  var hg = await getMessage(jid, "goodbye");
                   if (hg === false) {
                     return await Proto.sendMessage(
                       jid,
@@ -685,7 +685,7 @@ async function Primon() {
                     { text: modulelang.suc_del_goodbye },
                     { quoted: m.messages[0] }
                   );
-                  return await deleteMessage(message.jid, "goodbye");
+                  return await deleteMessage(jid, "goodbye");
                 }
                 if (isreplied) {
                   if (repliedmsg == "delete") {
@@ -694,9 +694,9 @@ async function Primon() {
                       { text: modulelang.suc_del_goodbye },
                       { quoted: m.messages[0] }
                     );
-                    return await deleteMessage(message.jid, "goodbye");
+                    return await deleteMessage(jid, "goodbye");
                   } else {
-                    await setMessage(message.jid, "goodbye", repliedmsg);
+                    await setMessage(jid, "goodbye", repliedmsg);
                     return await Proto.sendMessage(
                       jid,
                       { text: modulelang.suc_set_goodbye },
@@ -705,7 +705,7 @@ async function Primon() {
                   }
                 }
                 await setMessage(
-                  message.jid,
+                  jid,
                   "goodbye",
                   message.replace(message[0], "").replace("goodbye ", "")
                 );
