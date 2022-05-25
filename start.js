@@ -38,6 +38,7 @@ const taglang = Language.getString("tagall");
 const modulelang = Language.getString("module");
 const cmdlang = Language.getString("cmd");
 const pinglang = Language.getString("ping");
+const { DataTypes } = require('sequelize');
 const {
   GreetingsDB,
   getMessage,
