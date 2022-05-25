@@ -27,6 +27,7 @@ const {
 const P = require("pino");
 const { Boom } = require("@hapi/boom");
 const fs = require("fs");
+const ytdl = require('ytdl-core');
 var axios = require("axios");
 const { on } = require("events");
 require("util").inspect.defaultOptions.depth = null;
@@ -37,7 +38,14 @@ const taglang = Language.getString("tagall");
 const modulelang = Language.getString("module");
 const cmdlang = Language.getString("cmd");
 const pinglang = Language.getString("ping");
+const {
+  GreetingsDB,
+  getMessage,
+  deleteMessage,
+  setMessage,
+} = require("./sql/greetings");
 const openapi = require("@phaticusthiccy/open-apis");
+const config = require("./config_proto");
 
 const {
   dictEmojis,
@@ -46,9 +54,8 @@ const {
   bademojis,
   afterarg,
   String,
-  react
+  react,
 } = require("./add");
-
 
 function cmds(text, arguments = 3, cmd) {
   let payload;
@@ -81,7 +88,22 @@ const { fail } = require("assert");
 const { state, saveState } = useSingleFileAuthState("./session.json");
 
 const store = makeInMemoryStore({
-  logger: P().child({ level: "silent", stream: "store" }),
+  logger: P().child({
+    level:
+      String(process.env.DEBUG).toLowerCase() === "true" ? "trace" : "silent",
+    stream: "store",
+  }),
+});
+
+const PrimonDB = config.DATABASE.define("PrimonProto", {
+  info: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  value: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
 });
 
 setInterval(() => {
@@ -124,10 +146,14 @@ async function Primon() {
     sudo.push(Proto.user.id.split("@")[0] + "@s.whatsapp.net");
   }
   Proto.ev.on("messages.upsert", async (m) => {
-    console.log(m)
+    console.log(m);
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
-    if (Object.keys(m.messages[0].message).includes("protocolMessage") || Object.keys(m.messages[0].message).includes("reactionMessage")) return;
+    if (
+      Object.keys(m.messages[0].message).includes("protocolMessage") ||
+      Object.keys(m.messages[0].message).includes("reactionMessage")
+    )
+      return;
     jid = m.messages[0].key.remoteJid;
     var once_msg = Object.keys(m.messages[0].message);
 
@@ -144,9 +170,9 @@ async function Primon() {
         var once_msg2 = Object.keys(
           m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
         );
-        var nort = true
+        var nort = true;
       } catch {
-        var nort = false
+        var nort = false;
       }
       if (nort) {
         if (once_msg2.includes("extendedTextMessage")) {
@@ -161,7 +187,7 @@ async function Primon() {
           repliedmsg = undefined;
         }
       } else {
-        repliedmsg = undefined
+        repliedmsg = undefined;
       }
     } else {
       repliedmsg = undefined;
@@ -193,31 +219,210 @@ async function Primon() {
     var ispm;
     if (m.messages[0].key.participant == undefined) {
       if (m.messages[0].key.remoteJid.includes("@s")) {
-        ispm = true
+        ispm = true;
       } else {
-        ispm = false
+        ispm = false;
       }
     } else {
-      ispm = false
+      ispm = false;
     }
     var g_participant;
     if (ispm) {
       if (m.messages[0].key.fromMe) {
         try {
-          g_participant = Proto.user.id.split(":")[0] + "@s.whatsapp.net"
+          g_participant = Proto.user.id.split(":")[0] + "@s.whatsapp.net";
         } catch {
-          g_participant = Proto.user.id.split("@")[0] + "@s.whatsapp.net"
+          g_participant = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
         }
       } else {
-        g_participant = m.messages[0].key.remoteJid.split("@")[0] + "@s.whatsapp.net"
+        g_participant =
+          m.messages[0].key.remoteJid.split("@")[0] + "@s.whatsapp.net";
       }
     } else {
-      g_participant = m.messages[0].key.participant.split("@")[0] + "@s.whatsapp.net"
+      g_participant =
+        m.messages[0].key.participant.split("@")[0] + "@s.whatsapp.net";
     }
-    console.log(sudo)
-    console.log(g_participant)
-    console.log(ispm)
-    console.log(message)
+    if (g_participant == "@s.whatsapp.net") {
+      g_participant = "0";
+    }
+    console.log(sudo);
+    console.log(g_participant);
+    console.log(ispm);
+    console.log(message);
+    if (m.type == "append") {
+      if (Object.keys(m.messages[0]).includes("WebMessageInfo")) {
+        // Goodbye
+        if (
+          m.messages[0].WebMessageInfo.messageStubType == 32 ||
+          m.messages[0].WebMessageInfo.messageStubType == 28
+        ) {
+          var gb = await getMessage(jid, "goodbye");
+          if (gb !== false) {
+            if (gb.message.includes("{gpp}")) {
+              if (gb.message.includes("{img:")) {
+                return await Proto.sendMessage(jid, {
+                  text: cmdlang.wrongwelcomePfp_gpp_img.replace(
+                    "{%c}",
+                    cmdlang.goodbye
+                  ),
+                });
+              }
+              if (gb.message.includes("{vid:")) {
+                return await Proto.sendMessage(jid, {
+                  text: cmdlang.wrongwelcomePfp_gpp_vid.replace(
+                    "{%c}",
+                    cmdlang.goodbye
+                  ),
+                });
+              }
+              var pfp = await Proto.profilePictureUrl(jid, "image");
+              if (pfp == undefined || pfp == "") {
+                return await Proto.sendMessage(jid, { text: modulelang.no_pfp})
+              } 
+              var img = await axios.get(pfp, { responseType: "arraybuffer"})
+              console.log(pfp)
+              return await Proto.sendMessage(jid, { image: Buffer.from(img.data), caption: gb.message.replace("{gpp}", ""), mimetype: Mimetype.png})
+            } else {
+              if (gb.message.includes("{img:")) {
+                if (gb.message.includes("{vid:")) {
+                  return await Proto.sendMessage(jid, {
+                    text: cmdlang.wrongwelcomePfp_img_vid.replace(
+                      "{%c}",
+                      cmdlang.goodbye
+                    ),
+                  });
+                }
+                try {
+                  var img_link = gb.message.split("{img: ")[1].split("}")[0] + "}"
+                  var img = await axios.get(gb.message.split("{img: ")[1].split("}")[0], { responseType: "arraybuffer"})
+                } catch {
+                  return await Proto.sendMessage(jid, {
+                    text: modulelang.error_img
+                  });
+                }
+                console.log(pfp);
+                try {
+                  return await Proto.sendMessage(jid, { image: Buffer.from(img.data), caption: gb.message.replace("{img: ", "").replace(img_link, ""), mimetype: Mimetype.png})
+                } catch {
+                  return await Proto.sendMessage(jid, {
+                    text: modulelang.error_img
+                  });
+                }
+              }
+              if (gb.message.includes("{vid:")) {
+                if (gb.message.includes("{img:")) {
+                  return await Proto.sendMessage(jid, {
+                    text: cmdlang.wrongwelcomePfp_img_vid.replace(
+                      "{%c}",
+                      cmdlang.goodbye
+                    ),
+                  });
+                }
+                try {
+                  var vid_link = gb.message.split("{vid: ")[1].split("}")[0] + "}"
+                  ytdl(gb.message.split("{vid: ")[1].split("}")[0]).pipe(fs.createWriteStream('./video.mp4'));
+                } catch {
+                  return await Proto.sendMessage(jid, {
+                    text: modulelang.error_vid
+                  });
+                }
+                try {
+                  return await Proto.sendMessage(jid, { video: fs.readFileSync("./video.mp4"), caption: gb.message.replace("{vid: ", "").replace(vid_link, ""), mimetype: Mimetype.mp4})
+                } catch {
+                  return await Proto.sendMessage(jid, {
+                    text: modulelang.error_vid
+                  });
+                }
+              }
+            }
+          }
+        } else if (
+          m.messages[0].WebMessageInfo.messageStubType == 27 ||
+          m.messages[0].WebMessageInfo.messageStubType == 31
+        ) {
+          var gb = await getMessage(jid);
+          if (gb !== false) {
+            if (gb.message.includes("{gpp}")) {
+              if (gb.message.includes("{img:")) {
+                return await Proto.sendMessage(jid, {
+                  text: cmdlang.wrongwelcomePfp_gpp_img.replace(
+                    "{%c}",
+                    cmdlang.welcome
+                  ),
+                });
+              }
+              if (gb.message.includes("{vid:")) {
+                return await Proto.sendMessage(jid, {
+                  text: cmdlang.wrongwelcomePfp_gpp_vid.replace(
+                    "{%c}",
+                    cmdlang.welcome
+                  ),
+                });
+              }
+              var pfp = await Proto.profilePictureUrl(jid, "image");
+              if (pfp == undefined || pfp == "") {
+                return await Proto.sendMessage(jid, { text: modulelang.no_pfp})
+              } 
+              var img = await axios.get(pfp, { responseType: "arraybuffer"})
+              console.log(pfp)
+              return await Proto.sendMessage(jid, { image: Buffer.from(img.data), caption: gb.message.replace("{gpp}", ""), mimetype: Mimetype.png})
+            } else {
+              if (gb.message.includes("{img:")) {
+                if (gb.message.includes("{vid:")) {
+                  return await Proto.sendMessage(jid, {
+                    text: cmdlang.wrongwelcomePfp_img_vid.replace(
+                      "{%c}",
+                      cmdlang.welcome
+                    ),
+                  });
+                }
+                try {
+                  var img_link = gb.message.split("{img: ")[1].split("}")[0] + "}"
+                  var img = await axios.get(gb.message.split("{img: ")[1].split("}")[0], { responseType: "arraybuffer"})
+                } catch {
+                  return await Proto.sendMessage(jid, {
+                    text: modulelang.error_img
+                  });
+                }
+                console.log(pfp);
+                try {
+                  return await Proto.sendMessage(jid, { image: Buffer.from(img.data), caption: gb.message.replace("{img: ", "").replace(img_link, ""), mimetype: Mimetype.png})
+                } catch {
+                  return await Proto.sendMessage(jid, {
+                    text: modulelang.error_img
+                  });
+                }
+              }
+              if (gb.message.includes("{vid:")) {
+                if (gb.message.includes("{img:")) {
+                  return await Proto.sendMessage(jid, {
+                    text: cmdlang.wrongwelcomePfp_img_vid.replace(
+                      "{%c}",
+                      cmdlang.welcome
+                    ),
+                  });
+                }
+                try {
+                  var vid_link = gb.message.split("{vid: ")[1].split("}")[0] + "}"
+                  ytdl(gb.message.split("{vid: ")[1].split("}")[0]).pipe(fs.createWriteStream('./video.mp4'));
+                } catch {
+                  return await Proto.sendMessage(jid, {
+                    text: modulelang.error_vid
+                  });
+                }
+                try {
+                  return await Proto.sendMessage(jid, { video: fs.readFileSync("./video.mp4"), caption: gb.message.replace("{vid: ", "").replace(vid_link, ""), mimetype: Mimetype.mp4})
+                } catch {
+                  return await Proto.sendMessage(jid, {
+                    text: modulelang.error_vid
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     if (message !== undefined) {
       if (m.type == "notify") {
         if (sudo.includes(g_participant)) {
@@ -277,15 +482,35 @@ async function Primon() {
                       { text: cmds(modulelang.ping, 2, cmd[0]) },
                       { quoted: m.messages[0] }
                     );
+                  } else if (
+                    args == "goodbye" ||
+                    args == "Goodbye" ||
+                    args == "GOODBYE"
+                  ) {
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: cmds(modulelang.goodbye, 3, cmd[0]) },
+                      { quoted: m.messages[0] }
+                    );
+                  } else if (
+                    args == "welcome" ||
+                    args == "Welcome" ||
+                    args == "WELCOME"
+                  ) {
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: cmds(modulelang.welcome, 3, cmd[0]) },
+                      { quoted: m.messages[0] }
+                    );
                   } else {
-                    command_list.map(async (Element) => {
-                      var similarity = await openapi.similarity(
-                        args,
-                        Element
-                      );
-                      diff.push(similarity.similarity);
+                    command_list.map((Element) => {
+                      openapi
+                        .similarity(args, Element)
+                        .then(async (similarity) => {
+                          diff.push(similarity.similarity);
+                        });
                     });
-                    console.log(diff)
+                    console.log(diff);
                     var filt = diff.filter((mum) => mum > 0.8);
                     if (filt[0] == undefined) {
                       return await Proto.sendMessage(
@@ -313,6 +538,14 @@ async function Primon() {
 
               // Tagall
               if (attr == "tagall") {
+                if (ispm) {
+                  await Proto.sendMessage(jid, { delete: msgkey });
+                  return await Proto.sendMessage(
+                    jid,
+                    { text: cmdlang.onlyGroup },
+                    { quoted: m.messages[0] }
+                  );
+                }
                 if (isreplied) {
                   await Proto.sendMessage(jid, { delete: msgkey });
                   const metadata = await Proto.groupMetadata(jid);
@@ -359,6 +592,132 @@ async function Primon() {
                 }
               }
 
+              // Welcome
+              if ((attr = "welcome")) {
+                await Proto.sendMessage(jid, { delete: msgkey });
+                if (ispm) {
+                  return await Proto.sendMessage(
+                    jid,
+                    { text: cmdlang.onlyGroup },
+                    { quoted: m.messages[0] }
+                  );
+                }
+                if (args == "") {
+                  var hg = await getMessage(message.jid);
+                  if (hg === false) {
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: modulelang.not_set_welcome },
+                      { quoted: m.messages[0] }
+                    );
+                  } else {
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: modulelang.alr_set_welcome + hg.message },
+                      { quoted: m.messages[0] }
+                    );
+                  }
+                }
+                if (args == "delete") {
+                  await Proto.sendMessage(
+                    jid,
+                    { text: modulelang.suc_del_welcome },
+                    { quoted: m.messages[0] }
+                  );
+                  return await deleteMessage(message.jid, "welcome");
+                }
+                if (isreplied) {
+                  if (repliedmsg == "delete") {
+                    await Proto.sendMessage(
+                      jid,
+                      { text: modulelang.suc_del_welcome },
+                      { quoted: m.messages[0] }
+                    );
+                    return await deleteMessage(message.jid, "welcome");
+                  } else {
+                    await setMessage(message.jid, "welcome", repliedmsg);
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: modulelang.suc_set_welcome },
+                      { quoted: m.messages[0] }
+                    );
+                  }
+                }
+                await setMessage(
+                  message.jid,
+                  "welcome",
+                  message.replace(message[0], "").replace("welcome ", "")
+                );
+                return await Proto.sendMessage(
+                  jid,
+                  { text: modulelang.suc_set_welcome },
+                  { quoted: m.messages[0] }
+                );
+              }
+
+              // Goodbye
+              if ((attr = "goodbye")) {
+                await Proto.sendMessage(jid, { delete: msgkey });
+                if (ispm) {
+                  return await Proto.sendMessage(
+                    jid,
+                    { text: cmdlang.onlyGroup },
+                    { quoted: m.messages[0] }
+                  );
+                }
+                if (args == "") {
+                  var hg = await getMessage(message.jid, "goodbye");
+                  if (hg === false) {
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: modulelang.not_set_goodbye },
+                      { quoted: m.messages[0] }
+                    );
+                  } else {
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: modulelang.alr_set_goodbye + hg.message },
+                      { quoted: m.messages[0] }
+                    );
+                  }
+                }
+                if (args == "delete") {
+                  await Proto.sendMessage(
+                    jid,
+                    { text: modulelang.suc_del_goodbye },
+                    { quoted: m.messages[0] }
+                  );
+                  return await deleteMessage(message.jid, "goodbye");
+                }
+                if (isreplied) {
+                  if (repliedmsg == "delete") {
+                    await Proto.sendMessage(
+                      jid,
+                      { text: modulelang.suc_del_goodbye },
+                      { quoted: m.messages[0] }
+                    );
+                    return await deleteMessage(message.jid, "goodbye");
+                  } else {
+                    await setMessage(message.jid, "goodbye", repliedmsg);
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: modulelang.suc_set_goodbye },
+                      { quoted: m.messages[0] }
+                    );
+                  }
+                }
+                await setMessage(
+                  message.jid,
+                  "goodbye",
+                  message.replace(message[0], "").replace("goodbye ", "")
+                );
+                return await Proto.sendMessage(
+                  jid,
+                  { text: modulelang.suc_set_goodbye },
+                  { quoted: m.messages[0] }
+                );
+              }
+
               // Textpro
               if (attr == "textpro") {
                 if (isreplied) {
@@ -372,6 +731,7 @@ async function Primon() {
                     return await Proto.sendMessage(jid, {
                       image: Buffer.from(img2.data),
                       caption: "By Primon Proto",
+                      mimetype: Mimetype.png,
                     });
                   } else {
                     var msg = await Proto.sendMessage(
@@ -418,6 +778,7 @@ async function Primon() {
                     return await Proto.sendMessage(jid, {
                       image: Buffer.from(img2.data),
                       caption: "By Primon Proto",
+                      mimetype: Mimetype.png,
                     });
                   }
                 }
@@ -433,12 +794,20 @@ async function Primon() {
                 var d2 = new Date().getTime();
                 var timestep = Number(d2) - Number(d1);
                 if (timestep > 600) {
-                  return await Proto.sendMessage(jid, {
-                    text: pinglang.ping + String(timestep) + "ms" + pinglang.badping,
-                  }, { quoted: msg });
+                  return await Proto.sendMessage(
+                    jid,
+                    {
+                      text:
+                        pinglang.ping +
+                        String(timestep) +
+                        "ms" +
+                        pinglang.badping,
+                    },
+                    { quoted: msg }
+                  );
                 } else {
                   return await Proto.sendMessage(jid, {
-                    text: pinglang.ping + String(timestep),
+                    text: pinglang.ping + String(timestep) + "ms",
                   });
                 }
               }

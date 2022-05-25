@@ -36,7 +36,7 @@ function dictEmojis() {
 }
 
 function bademojis() {
-  var emoji = ["😥", "😪", "😫", "😕", "😞", "😱", "💔", "⁉", "⚠", "❣"];
+  var emoji = ["😥", "😪", "😫", "😕", "😞", "😱", "💔", "⁉", "⚠"];
   var random = Math.floor(Math.random() * emoji.length);
   return emoji[random];
 }
