@@ -12,7 +12,7 @@ const build = require("./build_lang");
 var { get_db } = require("./add");
 require("util").inspect.defaultOptions.depth = null;
 
-var lang = get_db.language.toUpperCase();
+var lang = get_db.language
 
 if (lang == "TR") {
   var langname = "Türkçe Dili Yükleniyor..";
