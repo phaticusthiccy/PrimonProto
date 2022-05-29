@@ -147,6 +147,7 @@ function get_db() {
       db = d.data.files["primon.db.json"].content;
       return JSON.parse(db);
     });
+    return JSON.parse(db);
 }
 module.exports = {
   dictEmojis: dictEmojis,
