@@ -12,7 +12,7 @@ const { Octokit } = require("@octokit/core");
 require("util").inspect.defaultOptions.depth = null;
 const get_db = require("./db.json");
 
-var Primondb = get_db()
+var Primondb = get_db
 
 var DEBUG = Primondb.debug === true ? true : false
 let btn = [

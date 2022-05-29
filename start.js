@@ -44,6 +44,7 @@ const startlang = Language.getString("onStart");
 const openapi = require("@phaticusthiccy/open-apis");
 const config = require("./config_proto");
 const { Octokit } = require("@octokit/core");
+const shell = require('shelljs');
 
 const {
   dictEmojis,
@@ -74,15 +75,16 @@ if (GITHUB_AUTH !== false) {
   process.exit();
 }
 
-var PrimonDB = get_db();
+var PrimonDB = get_db;
 
 setInterval(async () => {
-  PrimonDB = await get_db();
-}, 10000);
-// Save DB every 10 second
-// 1min = 6 auth
-// 10 min = 60 auth
-// 1 hour = 360 auth // Reaming 4440 auth per hour
+  var sh1 = shell.exec("node ./save_db_store.js")
+  PrimonDB = JSON.parse(fs.readFileSync("./db.json"))
+}, 5000);
+// Save DB every 5 second
+// 1min = 12 auth
+// 10 min = 120 auth
+// 1 hour = 720 auth // Reaming 4280 auth per hour
 
 var c_num_cnt = 0;
 function cmds(text, arguments = 3, cmd) {
@@ -184,7 +186,7 @@ setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
 }, 10000);
 
-var command_list = ["textpro", "tagall", "ping"],
+var command_list = ["textpro", "tagall", "ping", "welcome", "goodbye", "alive"],
   diff = [];
 
 async function Primon() {
