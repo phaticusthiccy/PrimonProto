@@ -9,6 +9,7 @@
 var exec = require("child_process").exec
 var fs = require("fs")
 var axios = require("axios")
+require("util").inspect.defaultOptions.depth = null;
 
 // https://open-apis-rest.up.railway.app/api
 // Official Public API From https://github.com/phaticusthiccy/Open-APIs

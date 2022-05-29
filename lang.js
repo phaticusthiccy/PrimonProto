@@ -1,6 +1,6 @@
-// Primon Proto 
+// Primon Proto
 // Headless WebSocket, type-safe Whatsapp UserBot
-// 
+//
 // Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
 // Multi-Device Lightweight ES5 Module (can ysable with mjs)
 //
@@ -8,11 +8,18 @@
 
 const fs = require("fs");
 const chalk = require("chalk");
-const build = require("./build_lang")
+const build = require("./build_lang");
+var { get_db } = require("./add");
+require("util").inspect.defaultOptions.depth = null;
 
-var lang = process.env.LANG.toUpperCase();
-var langname =
-  lang == "EN" ? "Loading English Language.." : "Türkçe Dili Yükleniyor..";
+var lang = get_db.language.toUpperCase();
+
+if (lang == "TR") {
+  var langname = "Türkçe Dili Yükleniyor..";
+}
+if (lang == "EN") {
+  var langname = "Loading English Language..";
+}
 
 if (fs.existsSync(`./langs/${lang}.json`)) {
   console.log(chalk.green.bold(langname));
@@ -25,7 +32,7 @@ if (fs.existsSync(`./langs/${lang}.json`)) {
     )
   );
   var json = JSON.parse(fs.readFileSync("./langs/EN.json"));
-  console.log(chalk.green.bold("Loaded EN Language!"))
+  console.log(chalk.green.bold("Loaded EN Language!"));
 }
 
 function getString(file) {

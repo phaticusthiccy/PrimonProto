@@ -8,7 +8,11 @@
       "menu": "Command List",
       "owner": "Developer",
       "star": "Star on Github! 🌟",
-      "pp": "Primon Command List"
+      "pp": "Primon Command List",
+      "by:": "_By Primon Proto_"
+    },
+    "onStart": {
+      "msg": "*Primon Proto Working!* \n\n*Please use the* ```.menu``` command to see the commands.\n\n*Database:* {c}\n*Token:* {c}"
     },
     "cmd": {
       "command": "*⌨ Command:* ",
@@ -21,7 +25,11 @@
       "goodbye": "goodbye",
       "wrongwelcomePfp_gpp_img": "*Both {gpp} and {img: ..} cannot be used when sending the {%c} message. Please remove one.*",
       "wrongwelcomePfp_gpp_vid": "*Both {gpp} and {vid: ..} cannot be used when sending the {%c} message. Please remove one.*",
-      "wrongwelcomePfp_img_vid": "*Both {vid: ..} and {img: ..} cannot be used when sending the {%c} message. Please remove one.*"
+      "wrongwelcomePfp_img_vid": "*Both {vid: ..} and {img: ..} cannot be used when sending the {%c} message. Please remove one.*",
+      "wrongalive_pp_img": "*Both {pp} and {img: ..} cannot be used when sending alive message. Please remove one.*",
+      "wrongalive_pp_vid": "*Both {pp} and {vid: ..} cannot be used when sending alive message. Please remove one.*",
+      "wrongalive_img_vid": "*Both {vid: ..} and {img: ..} cannot be used when sending alive message. Please remove one.*",
+      "nopfp": "*To use {pp} in an alive message, first set a profile picture!*"
     },
     "ping": {
       "ping": "Primon's Ping: ",
@@ -36,26 +44,48 @@
     "tagall": {
       "msg": "🔸 Members of {%c} 🔸\n\n"
     },
+    "goodbye": {
+      "not_set_goodbye": "_No goodbye messages are set for this chat._",
+      "alr_set_goodbye": "_Goodbye message is set in this chat. Message:_ \n\n",
+      "suc_set_goodbye": "_Goodbye message set successfully!_ ✅",
+      "suc_del_goodbye": "_Goodbye message deleted successfully!_ ✅"
+    },
+    "welcome": {
+      "not_set_welcome": "_No welcome messages are set for this chat!_",
+      "alr_set_welcome": "_Welcome message is set in this chat. Message:_ \n\n",
+      "suc_set_welcome": "_Welcome message set successfully!_ ✅",
+      "suc_del_welcome": "_Welcome message deleted successfully!_ ✅"
+    },
     "module": {
+      "alive2": "_Checks if the bot is running._",
+      "ping2": "_Controls the running speed of the bot._",
+      "tagall2": "_Tags all members in the group._",
+      "tagall3": "🔹 ```&tagall``` \n🔹 ```&tagall Hello Everyone``` \n🔹 ```&tagall <reply>```",
+      "textpro2": "_Produce different images and logos._",
+      "textpro3": "🔹 ```&textpro {type} {text}``` \n🔹 ```&textpro neon Atticus``` \n🔹 ```&textpro {type} <reply a message>```\n\n*Types:* _neon, neon2, neon3, batman, love, love2, sea, led, devil, glitch, summer, robot_",
+      "welcome2": "_Automatically sends messages to new members who join the group._",
+      "welcome3": "🔹 ```&welcome``` \n🔹 ```&welcome Welcome The Group``` \n🔹 ```&welcome delete``` (Removes the Message) \n 🔹 ```&welcome <reply a message>``` \n\n*Additional Features:* \n\n{gpp}: _Welcome message is sent with group profile photo._ \n{img}: _Welcome message is sent with any picture._\nExample: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _The welcome message is sent via video._\nExample: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
+      "goodbye2": "_Automatically sends messages to new members who leave the group._",
+      "goodbye3": "🔹 ```&goodbye``` \n🔹 ```&goodbye Goodbye Mate..``` \n🔹 ```&goodbye delete``` (Removes the Message) \n 🔹 ```&goodbye <reply a message>``` \n\n*Additional Features:* \n\n{gpp}: _Goodbye message is sent with group profile photo._ \n{img}: _Goodbye message is sent with any picture._\nExample: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _The goodbye message is sent via video._\nExample: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
+
+
+
+      "alive": "{%d1}```{%c}alive``` \n{%d1}_Is the bot running? Check now!_",
+      "star": "Star the https://github.com/phaticusthiccy/PrimonProto repository to support me!",
+      "owner": "_This bot is developed by https://github.com/phaticusthiccy. For suggestions and complaints, please refer to the 'issues' section._",
       "null": "_Sorry, Cannot Find Any Module Like That.._",
       "pron": "_Did you mean:_ ",
       "tagall": "{%d1}{%c}tagall``` \n{%d1}_Tag all group members!_ \n{%d1} \n\n🔹 ```{%c}tagall``` \n🔹 ```{%c}tagall Hello Everyone```",
       "textpro": "{%d1}```{%c}textpro``` \n{%d1}_Create different images or banners!_ \n {%d1} \n\n🔹 ```{%c}textpro {type} {text}``` \n🔹 ```{%c}textpro neon Atticus``` \n🔹 ```{%c}textpro {type} <reply a message>```\n\n*Types:* _neon, neon2, neon3, batman, love, love2, sea, led, devil, glitch, summer, robot_",
-      "textpro_null": "_Sorry, Cannot Find Any Style Like This.._",
+      "textpro_null": "_Sorry, Cannot Find Any Style Like This.. Please type_ ```.menu textpro``` _to see usage._",
       "ping": "{%d1}```{%c}ping``` \n{%d1}_Measure the bot's ping!_",
       "welcome": "{%d1}```{%c}welcome``` \n{%d1}_Automatically sends messages to new members who join the group._ \n{%d1} \n\n🔹 ```{%c}welcome``` \n🔹 ```{%c}welcome Welcome The Group``` \n🔹 ```{%c}welcome delete``` (Removes the Message) \n 🔹 ```{%c}welcome <reply a message>``` \n\n*Additional Features:* \n\n{gpp}: _Welcome message is sent with group profile photo._ \n{img}: _Welcome message is sent with any picture._\nExample: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _The welcome message is sent via video._\nExample: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
       "goodbye": "{%d1}```{%c}goodbye``` \n{%d1}_Automatically sends messages to new members who leave the group._ \n{%d1} \n\n🔹 ```{%c}goodbye``` \n🔹 ```{%c}goodbye Goodbye Mate..``` \n🔹 ```{%c}goodbye delete``` (Removes the Message) \n 🔹 ```{%c}goodbye <reply a message>``` \n\n*Additional Features:* \n\n{gpp}: _Goodbye message is sent with group profile photo._ \n{img}: _Goodbye message is sent with any picture._\nExample: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _The goodbye message is sent via video._\nExample: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
-      "not_set_welcome": "_No welcome messages are set for this chat!_",
-      "alr_set_welcome": "_Welcome message is set in this chat. Message:_ \n\n",
-      "suc_set_welcome": "_Welcome message set successfully!_ ✅",
-      "suc_del_welcome": "_Welcome message deleted successfully!_ ✅",
-      "not_set_goodbye": "_No goodbye messages are set for this chat._",
-      "alr_set_goodbye": "_Goodbye message is set in this chat. Message:_ \n\n",
-      "suc_set_goodbye": "_Goodbye message set successfully!_ ✅",
-      "suc_del_goodbye": "_Goodbye message deleted successfully!_ ✅",
       "no_pfp": "*Group picture not available. Therefore, the welcome message could not be sent. Please set a group photo!*",
       "error_img": "*The image in the entered {img: ..} is not valid. Please type* ```.menu welcome``` *to see usage. There should be no additional spaces and the image link should have a .png or .jpg extension.*",
-      "error_vid": "*The youtube link in the entered {vid: ..} is not valid. Please type* ```.menu welcome``` *to see usage. There should be no additional spaces and the video should be youtube link.*"
+      "raw_error_img": "*The image in the entered {img: ..} is not valid. There should be no additional spaces and the image link should have a .png or .jpg extension.*",
+      "error_vid": "*The youtube link in the entered {vid: ..} is not valid. Please type* ```.menu welcome``` *to see usage. There should be no additional spaces and the video should be youtube link.*",
+      "raw_error_vid": "*The youtube link in the entered {vid: ..} is not valid. There should be no additional spaces and the video should be youtube link.*"
     }
   }
 }

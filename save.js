@@ -8,6 +8,7 @@
 
 const fs = require("fs")
 require('util').inspect.defaultOptions.depth = null
+require("util").inspect.defaultOptions.depth = null;
 
 var SN = process.env.SESSION
 async function save(st) {

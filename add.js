@@ -8,6 +8,12 @@
 
 var axios = require("axios");
 var fs = require("fs");
+require("util").inspect.defaultOptions.depth = null;
+const { Octokit } = require("@octokit/core");
+const octokit = new Octokit({
+  auth: process.env.GITHUB_AUTH
+})
+
 
 function dictEmojis() {
   var emoji = [
@@ -130,6 +136,18 @@ function String(text) {
   return text.toString();
 }
 
+
+function get_db() {
+  var db;
+  octokit
+    .request("GET /gists/{gist_id}", {
+      gist_id: process.env.GITHUB_DB,
+    })
+    .then(async (d) => {
+      db = d.data.files["primon.db.json"].content;
+      return JSON.parse(db);
+    });
+}
 module.exports = {
   dictEmojis: dictEmojis,
   textpro_links: textpro_links,
@@ -137,5 +155,6 @@ module.exports = {
   bademojis: bademojis,
   afterarg: afterarg,
   String: String,
-  react: react
+  react: react,
+  get_db: get_db,
 };

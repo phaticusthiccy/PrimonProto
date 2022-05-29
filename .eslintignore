@@ -1,0 +1,4 @@
+lib
+coverage
+*.lock
+.eslintrc.json

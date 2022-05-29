@@ -6,15 +6,15 @@
 //
 // Phaticusthiccy - 2022
 
-const { Sequelize } = require("sequelize");
 const Language = require("./lang");
 const MenuLang = Language.getString("menu");
+const { Octokit } = require("@octokit/core");
+require("util").inspect.defaultOptions.depth = null;
+const { get_db } = require("./add");
 
-DATABASE_URL =
-  process.env.DATABASE_URL === undefined
-    ? "./primon.db"
-    : process.env.DATABASE_URL;
-DEBUG = process.env.DEBUG == true ? true : false;
+var Primondb = get_db()
+
+var DEBUG = Primondb.debug === true ? true : false
 let btn = [
   [
     {
@@ -52,20 +52,8 @@ let btn = [
   ]
 ];
 module.exports = {
-  DEBUG: this.DEBUG,
+  DEBUG: DEBUG,
   VERSION: "v1.0 Beta",
-  DATABASE_URL: DATABASE_URL,
-  DATABASE:
-    DATABASE_URL === "./primon.db"
-      ? new Sequelize({
-          dialect: "sqlite",
-          storage: DATABASE_URL,
-          logging: DEBUG,
-        })
-      : new Sequelize(DATABASE_URL, {
-          dialectOptions: { ssl: { require: true, rejectUnauthorized: false } },
-          logging: DEBUG,
-        }),
   TEXTS: {
     MENU: [
       {

@@ -20,6 +20,7 @@
       "@adiwajshing/keyed-db": "latest",
       "@phaticusthiccy/open-apis": "latest",
       "@railway/cli": "latest",
+      "@octokit/core": "latest",
       "@hapi/boom": "latest",
       "pino": "latest",
       "pg": "8.5.1",
@@ -27,7 +28,7 @@
       "sqlite3": "5.0.0",
       "axios": "latest",
       "qrcode-terminal": "latest",
-      "chalk": "4.1.0",
+      "chalk": "4.1.2",
       "child_process": "latest",
       "fluent-ffmpeg": "latest",
       "path": "latest"
