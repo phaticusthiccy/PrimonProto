@@ -9,7 +9,7 @@
 const fs = require("fs");
 const chalk = require("chalk");
 const build = require("./build_lang");
-var { get_db } = require("./add");
+var get_db = require("./db.json");
 require("util").inspect.defaultOptions.depth = null;
 
 var lang = get_db.language

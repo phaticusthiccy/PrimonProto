@@ -53,9 +53,9 @@ const {
   afterarg,
   String,
   react,
-  get_db,
 } = require("./add");
 
+const get_db = require("./db.json")
 var GITHUB_DB = process.env.GITHUB_DB == false ? false : process.env.GITHUB_DB;
 var GITHUB_AUTH =
   process.env.GITHUB_AUTH == false ? false : process.env.GITHUB_AUTH;
@@ -76,8 +76,8 @@ if (GITHUB_AUTH !== false) {
 
 var PrimonDB = get_db();
 
-setInterval(() => {
-  PrimonDB = get_db();
+setInterval(async () => {
+  PrimonDB = await get_db();
 }, 10000);
 // Save DB every 10 second
 // 1min = 6 auth

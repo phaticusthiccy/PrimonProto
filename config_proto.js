@@ -10,7 +10,7 @@ const Language = require("./lang");
 const MenuLang = Language.getString("menu");
 const { Octokit } = require("@octokit/core");
 require("util").inspect.defaultOptions.depth = null;
-const { get_db } = require("./add");
+const get_db = require("./db.json");
 
 var Primondb = get_db()
 
