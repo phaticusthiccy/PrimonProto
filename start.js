@@ -542,8 +542,11 @@ async function Primon() {
           m.messages[0].key.remoteJid.split("@")[0] + "@s.whatsapp.net";
       }
     } else {
-      g_participant =
-        m.messages[0].key.participant.split("@")[0] + "@s.whatsapp.net";
+      try {
+        g_participant = m.messages[0].key.participant.split(":")[0] + "@s.whatsapp.net";
+      } catch {
+        g_participant = m.messages[0].key.participant.split("@")[0] + "@s.whatsapp.net";
+      }
     }
     if (g_participant == "@s.whatsapp.net") {
       g_participant = "0";
