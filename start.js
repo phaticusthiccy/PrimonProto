@@ -425,11 +425,11 @@ async function Primon() {
     }
   }
   try {
-    sudo.push(Proto.authState.creds.me.id.split(":")[0] + "@s.whatsapp.net");
-    meid = Proto.authState.creds.me.id.split(":")[0] + "@s.whatsapp.net";
+    sudo.push(Proto.user.id.split(":")[0] + "@s.whatsapp.net");
+    meid = Proto.user.id.split(":")[0] + "@s.whatsapp.net";
   } catch {
-    sudo.push(Proto.authState.creds.me.id.split("@")[0] + "@s.whatsapp.net");
-    meid = Proto.authState.creds.me.id.split("@")[0] + "@s.whatsapp.net";
+    sudo.push(Proto.user.id.split("@")[0] + "@s.whatsapp.net");
+    meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
   }
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message) return;
@@ -489,6 +489,7 @@ async function Primon() {
       isbutton = false;
       message = undefined;
     }
+    
     var cmd1 = PrimonDB.handler;
     var cmd;
     if (cmd1.length > 1) {
@@ -548,6 +549,9 @@ async function Primon() {
       g_participant = "0";
     }
 
+    console.log(message)
+    console.log(sudo)
+    console.log(g_participant)
     // Buttons
     if (message == MenuLang.menu && isbutton) {
       if (sudo.includes(g_participant)) {
