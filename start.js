@@ -116,7 +116,7 @@ const { state, saveState } = useSingleFileAuthState("./session.json");
 
 const store = makeInMemoryStore({
   logger: P().child({
-    level: PrimonDB.debug === true ? "trace" : "silent",
+    level: "silent",
     stream: "store",
   }),
 });
@@ -192,7 +192,6 @@ var command_list = ["textpro", "tagall", "ping", "welcome", "goodbye", "alive", 
 async function Primon() {
   const Proto = makeWASocket({
     auth: state,
-    version: ["Primon Proto", "Chrome", "1.0"],
     logger: P({ level: "silent" }),
   });
   var message,
@@ -432,6 +431,7 @@ async function Primon() {
     meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
   }
   Proto.ev.on("messages.upsert", async (m) => {
+    console.log(m.messages[0])
     if (!m.messages[0].message) return;
     if (m.messages[0].key.remoteJid == "status@broadcast") return;
     jid = m.messages[0].key.remoteJid;
