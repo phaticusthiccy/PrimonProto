@@ -1,0 +1,8 @@
+[build.buildpacks]]
+uri = "heroku/nodejs"
+
+[[build.buildpacks]]
+uri = "heroku/nodejs-yarn"
+
+[[build.buildpacks]]
+uri = "heroku-community/apt"

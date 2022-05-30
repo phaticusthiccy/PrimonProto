@@ -1,0 +1,1 @@
+cd PrimonProto && node railway.js link

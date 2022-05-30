@@ -1,0 +1,8 @@
+├── package.json
+└── packages
+    ├── backend
+    │   └── index.js
+    ├── common
+    │   └── index.ts
+    └── frontend
+        └── tsc.js
