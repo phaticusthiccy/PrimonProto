@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "main": "start.js",
    "scripts": {
-      "start": "rm -rf PrimonProto && git clone https://github.com/phaticusthiccy/PrimonProto && cd PrimonProto && node save.js && node save_db_store.js && node start.js"
+      "start": "node save.js && node save_db_store.js && node start.js"
    },
    "repository": {
       "type": "git",
