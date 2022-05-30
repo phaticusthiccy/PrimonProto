@@ -11,7 +11,7 @@ require('util').inspect.defaultOptions.depth = null
 
 async function save2() {
   var sn = ""
-  sn = Buffer.from(process.env.SESSION, "base64").toString()
+  sn = Buffer.from(process.env.SESSION + process.env.SESSION2 + process.env.SESSION3 + process.env.SESSION4, "base64").toString()
   fs.writeFileSync("./session.json", sn)
   console.log("Primon Session Updated!")
   return true
