@@ -551,7 +551,7 @@ async function Primon() {
     if (g_participant == "@s.whatsapp.net") {
       g_participant = "0";
     }
-
+    g_participant = g_participant.split("@")[0] + "@s.whatsapp.net"
     console.log(message)
     console.log(sudo)
     console.log(g_participant)
