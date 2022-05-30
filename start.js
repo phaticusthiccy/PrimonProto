@@ -116,7 +116,7 @@ const { state, saveState } = useSingleFileAuthState("./session.json");
 
 const store = makeInMemoryStore({
   logger: P().child({
-    level: String(PrimonDB.debug).toLowerCase() === "true" ? "trace" : "silent",
+    level: PrimonDB.debug === true ? "trace" : "silent",
     stream: "store",
   }),
 });
@@ -818,8 +818,8 @@ async function Primon() {
                   return await Proto.sendMessage(jid, {text: modulelang.reply})
                 }
                 if (args == "alive") {
-                  var re = PrimonDB;
-                  re = re.alive_msg = repliedmsg;
+                  var res = PrimonDB;
+                  var re = res.alive_msg = repliedmsg;
                   re = JSON.stringify(re, null, 2);
                   var renwe_handler = await octokit.request("PATCH /gists/{gist_id}", {
                     gist_id: process.env.GITHUB_DB,
@@ -833,8 +833,8 @@ async function Primon() {
                   });
                   return await Proto.sendMessage(jid, { text: modulelang.setted})
                 } else if (args == "afk") {
-                  var re = PrimonDB;
-                  re = re.afk.message = repliedmsg;
+                  var res = PrimonDB;
+                  var re = res.afk.message = repliedmsg;
                   re = JSON.stringify(re, null, 2);
                   var renwe_handler = await octokit.request("PATCH /gists/{gist_id}", {
                     gist_id: process.env.GITHUB_DB,
@@ -848,8 +848,8 @@ async function Primon() {
                   });
                   return await Proto.sendMessage(jid, { text: modulelang.setted})
                 } else if (args == "ban") {
-                  var re = PrimonDB;
-                  re = re.ban_msg = repliedmsg;
+                  var res = PrimonDB;
+                  var re = res.ban_msg = repliedmsg;
                   re = JSON.stringify(re, null, 2);
                   var renwe_handler = await octokit.request("PATCH /gists/{gist_id}", {
                     gist_id: process.env.GITHUB_DB,
@@ -863,8 +863,8 @@ async function Primon() {
                   });
                   return await Proto.sendMessage(jid, { text: modulelang.setted})
                 } else if (args == "mute") {
-                  var re = PrimonDB;
-                  re = re.mute_msg = repliedmsg;
+                  var res = PrimonDB;
+                  var re = res.mute_msg = repliedmsg;
                   re = JSON.stringify(re, null, 2);
                   var renwe_handler = await octokit.request("PATCH /gists/{gist_id}", {
                     gist_id: process.env.GITHUB_DB,
@@ -878,8 +878,8 @@ async function Primon() {
                   });
                   return await Proto.sendMessage(jid, { text: modulelang.setted})
                 } else if (args == "unmute") {
-                  var re = PrimonDB;
-                  re = re.unmute_msg = repliedmsg;
+                  var res = PrimonDB;
+                  var re = res.unmute_msg = repliedmsg;
                   re = JSON.stringify(re, null, 2);
                   var renwe_handler = await octokit.request("PATCH /gists/{gist_id}", {
                     gist_id: process.env.GITHUB_DB,
@@ -893,8 +893,8 @@ async function Primon() {
                   });
                   return await Proto.sendMessage(jid, { text: modulelang.setted})
                 } else if (args == "block") {
-                  var re = PrimonDB;
-                  re = re.block_msg = repliedmsg;
+                  var res = PrimonDB;
+                  var re = res.block_msg = repliedmsg;
                   re = JSON.stringify(re, null, 2);
                   var renwe_handler = await octokit.request("PATCH /gists/{gist_id}", {
                     gist_id: process.env.GITHUB_DB,
@@ -908,8 +908,8 @@ async function Primon() {
                   });
                   return await Proto.sendMessage(jid, { text: modulelang.setted})
                 } else if (args == "unblock") {
-                  var re = PrimonDB;
-                  re = re.unblock_msg = repliedmsg;
+                  var res = PrimonDB;
+                  var re = res.unblock_msg = repliedmsg;
                   re = JSON.stringify(re, null, 2);
                   var renwe_handler = await octokit.request("PATCH /gists/{gist_id}", {
                     gist_id: process.env.GITHUB_DB,
@@ -1088,7 +1088,7 @@ async function Primon() {
                     {
                       text:
                         pinglang.ping +
-                        String(timestep) +
+                        timestep.toString() +
                         "ms" +
                         pinglang.badping,
                     },
@@ -1096,7 +1096,7 @@ async function Primon() {
                   );
                 } else {
                   return await Proto.sendMessage(jid, {
-                    text: pinglang.ping + String(timestep) + "ms",
+                    text: pinglang.ping + timestep.toString() + "ms",
                   });
                 }
               }
