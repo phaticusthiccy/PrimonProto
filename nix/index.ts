@@ -1,15 +1,13 @@
 import { Boom } from '@hapi/boom'
 import P from 'pino'
-import makeWASocket, { AnyMessageContent, delay, DisconnectReason, makeInMemoryStore, useSingleFileAuthState } from '@adiwajshing/baileys'
+import makeWASocket, { AnyMessageContent, DisconnectReason, makeInMemoryStore, useSingleFileAuthState } from '@adiwajshing/baileys'
 import * as fs from "fs"
 import * as readline from 'readline';
 import chalk from "chalk";
 import { Octokit } from "@octokit/core";
 import axios from "axios"
-import neko from "@phaticusthiccy/open-apis";
 import { exec, spawn, execSync } from "child_process";
-import rw from "./railway"
-import shell from 'shelljs'
+import shell from "shelljs";
 
 var db = `{
   "author": "https://github.com/phaticusthiccy",
@@ -250,7 +248,7 @@ async function MAIN() {
 
   rl.question(chalk.blue("Select A Language \n\n") + chalk.yellow("[1]") + " :: Türkçe \n" + chalk.yellow("[2]") + " :: English\n\n>>> ", async (answer) => {
     FIRST_TIMESTEP = new Date().getTime()
-    if (answer == 1) {
+    if (Number(answer) == 1) {
       console.log(chalk.green("Türkçe Dili Seçildi!"))
       lang == "TR"
       fs.writeFileSync("./lang.txt", "TR")
@@ -258,7 +256,7 @@ async function MAIN() {
       console.clear()
       await delay(400)
       rl.question(chalk.blue("\n\nNe Yapmak İstiyorsunuz? \n\n") + chalk.yellow("[1]") + " :: Session Yenileme\n" + chalk.yellow("[2]") + " :: Bot Kurma" + "\n\n1) Session yenileme işlemi, yavaş çalışan botu hızlandırmak veya çıkış yapılan botu veri kaybı olmadan geri getirmek için kullanılır.\n>>> ", async (answer2) => {
-        if (answer2 == 1) {
+        if (Number(answer2) == 1) {
           console.log(chalk.green("Session Yenileme Seçildi!"))
           await delay(3000)
           console.clear()
@@ -316,11 +314,10 @@ async function MAIN() {
                 console.clear()
                 var prpc = await PRIMON_PROTO6()
                 await delay(200000)
-                await after()
               })
             })
           })
-        } else if (answer2 == 2) {
+        } else if (Number(answer2) == 2) {
           console.log(chalk.green("Bot Kurma Seçildi!"))
           await delay(3000)
           console.clear()
@@ -443,7 +440,7 @@ async function MAIN() {
           process.exit()
         }
       })
-    } else if (answer == 2) {
+    } else if (Number(answer) == 2) {
       console.log(chalk.green("English Language Selected!"))
       lang == "TR"
       fs.writeFileSync("./lang.txt", "TR")
@@ -451,7 +448,7 @@ async function MAIN() {
       console.clear()
       await delay(400)
       rl.question(chalk.blue("\n\nWhat do you want to do? \n\n") + chalk.yellow("[1]") + " :: Session Renewal\n" + chalk.yellow("[2]") + " :: Setup Bot" + "\n\n1) Session refresh is used to speed up a slow bot or to restore a logged out bot without data loss.\n>>> ", async (answer2) => {
-        if (answer2 == 1) {
+        if (Number(answer2) == 1) {
           console.log(chalk.green("Session Renewal Selected!"))
           await delay(3000)
           console.clear()
@@ -511,7 +508,7 @@ async function MAIN() {
               })
             })
           })
-        } else if (answer2 == 2) {
+        } else if (number(answer2) == 2) {
           console.log(chalk.green("Bot Setup Selected!"))
           await delay(3000)
           console.clear()
