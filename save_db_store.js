@@ -22,13 +22,4 @@ async function save() {
   db = JSON.parse(db)
   return fs.writeFileSync("./db.json", JSON.stringify(db, null, 2));
 }
-
-async function save2(st) {
-  var sn = ""
-  sn = Buffer.from(process.env.SESSION, "base64").toString()
-  fs.writeFileSync("./session.json", sn)
-  console.log("Primon Session Updated!")
-  return true
-}
-save2()
 save()
