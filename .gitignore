@@ -6,6 +6,7 @@
 #
 # Phaticusthiccy - 2022
 
+
 logs
 *.log
 npm-debug.log*
