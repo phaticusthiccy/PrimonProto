@@ -45,6 +45,11 @@ const openapi = require("@phaticusthiccy/open-apis");
 const config = require("./config_proto");
 const { Octokit } = require("@octokit/core");
 const shell = require('shelljs');
+const { MessageRetryHandler } = require("./ret");
+
+const msgRetryCounterMap = {};
+
+const handler = new MessageRetryHandler();
 
 const {
   dictEmojis,
@@ -192,6 +197,9 @@ var command_list = ["textpro", "tagall", "ping", "welcome", "goodbye", "alive", 
 async function Primon() {
   const Proto = makeWASocket({
     auth: state,
+    version: ["Primon Proto", "Chrome", "1.0"],
+    msgRetryCounterMap,
+    getMessage: handler.messageRetryHandler,
     logger: P({ level: "silent" }),
   });
   var message,
