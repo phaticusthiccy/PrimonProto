@@ -425,11 +425,11 @@ async function Primon() {
     }
   }
   try {
-    sudo.push(Proto.user.id.split(":")[0] + "@s.whatsapp.net");
-    meid = Proto.user.id.split(":")[0] + "@s.whatsapp.net";
+    sudo.push(Proto.authState.creds.me.id.split(":")[0] + "@s.whatsapp.net");
+    meid = Proto.authState.creds.me.id.split(":")[0] + "@s.whatsapp.net";
   } catch {
-    sudo.push(Proto.user.id.split("@")[0] + "@s.whatsapp.net");
-    meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
+    sudo.push(Proto.authState.creds.me.id.split("@")[0] + "@s.whatsapp.net");
+    meid = Proto.authState.creds.me.id.split("@")[0] + "@s.whatsapp.net";
   }
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message) return;
