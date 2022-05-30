@@ -45,11 +45,6 @@ const openapi = require("@phaticusthiccy/open-apis");
 const config = require("./config_proto");
 const { Octokit } = require("@octokit/core");
 const shell = require('shelljs');
-const { MessageRetryHandler } = require("./ret");
-
-const msgRetryCounterMap = {};
-
-const handler = new MessageRetryHandler();
 
 const {
   dictEmojis,
@@ -557,7 +552,9 @@ async function Primon() {
     if (g_participant == "@s.whatsapp.net") {
       g_participant = "0";
     }
-    g_participant = g_participant.split("@")[0] + "@s.whatsapp.net"
+    try {
+      g_participant = g_participant.split("@")[0] + "@s.whatsapp.net"
+    } catch {}
     console.log(message)
     console.log(sudo)
     console.log(g_participant)
