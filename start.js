@@ -198,8 +198,6 @@ async function Primon() {
   const Proto = makeWASocket({
     auth: state,
     version: ["Primon Proto", "Chrome", "1.0"],
-    msgRetryCounterMap,
-    getMessage: handler.messageRetryHandler,
     logger: P({ level: "silent" }),
   });
   var message,
