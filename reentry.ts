@@ -1,3 +1,12 @@
+// Primon Proto
+// Headless WebSocket, type-safe Whatsapp UserBot
+//
+// Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
+// Multi-Device Lightweight ES5 Module (can ysable with mjs)
+//
+// Phaticusthiccy - 2022
+
+
 import { proto } from "@adiwajshing/baileys";
 export class MessageRetryHandler {
   public messagesMap: Record<string, proto.IMessage>;
@@ -8,11 +17,7 @@ export class MessageRetryHandler {
 
   addMessage = async (message: proto.IWebMessageInfo) => {
     const id = message.key.id ?? "";
-
-    console.log(this);
-
     this.messagesMap[id] = this.cleanMessage(message);
-
     return message;
   };
 
@@ -35,7 +40,6 @@ export class MessageRetryHandler {
 
   messageRetryHandler = async (message: proto.IMessageKey) => {
     const msg = this.getMessage(message.id ?? "");
-    // Remove msg from map
     this.removeMessage(message.id ?? "");
     return msg;
   };

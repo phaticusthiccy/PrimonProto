@@ -1,0 +1,139 @@
+// Primon Proto
+// Headless WebSocket, type-safe Whatsapp UserBot
+//
+// Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
+// Multi-Device Lightweight ES5 Module (can ysable with mjs)
+//
+// Phaticusthiccy - 2022
+
+
+syntax = "proto3";
+
+message SomeMessage {
+
+    message Primon {
+        string github = 1;
+        string author = 2;
+    }
+
+    message Menu {
+        string menu = 1;
+        string owner = 2;
+        string star = 3;
+        string pp = 4;
+        string by = 5;
+    }
+
+    message Onstart {
+        string msg = 1;
+    }
+
+    message Cmd {
+        string command = 1;
+        string info = 2;
+        string example = 3;
+        string danger = 4;
+        string onlyPM = 5;
+        string onlyGroup = 6;
+        string welcome = 7;
+        string goodbye = 8;
+        string wrongwelcomePfp_gpp_img = 9;
+        string wrongwelcomePfp_gpp_vid = 10;
+        string wrongwelcomePfp_img_vid = 11;
+        string wrongalive_pp_img = 12;
+        string wrongalive_pp_vid = 13;
+        string wrongalive_img_vid = 14;
+        string nopfp = 15;
+    }
+
+    message Ping {
+        string ping = 1;
+        string badping = 2;
+    }
+
+    message Session {
+        string bad = 1;
+        string recon = 2;
+        string out = 3;
+        string run = 4;
+    }
+
+    message Tagall {
+        string msg = 1;
+    }
+
+    message Goodbye {
+        string not_set_goodbye = 1;
+        string alr_set_goodbye = 2;
+        string suc_set_goodbye = 3;
+        string suc_del_goodbye = 4;
+    }
+
+    message Welcome {
+        string not_set_welcome = 1;
+        string alr_set_welcome = 2;
+        string suc_set_welcome = 3;
+        string suc_del_welcome = 4;
+    }
+
+    message Module {
+        string alive2 = 1;
+        string ping2 = 2;
+        string tagall2 = 3;
+        string tagall3 = 4;
+        string textpro2 = 5;
+        string textpro3 = 6;
+        string welcome2 = 7;
+        string welcome3 = 8;
+        string goodbye2 = 9;
+        string goodbye3 = 10;
+        string get = 11;
+        string get2 = 12;
+        string get3 = 13;
+        string set = 14;
+        string set2 = 15;
+        string set3 = 16;
+        string reply = 17;
+        string alive = 18;
+        string star = 19;
+        string owner = 20;
+        string null = 21;
+        string pron = 22;
+        string setted = 23;
+        string get_alive = 24;
+        string get_afk = 25;
+        string get_ban = 26;
+        string get_mute = 27;
+        string get_unmute = 28;
+        string get_block = 29;
+        string get_unblock = 30;
+        string set_null = 31;
+        string get_null = 32;
+        string tagall = 33;
+        string textpro = 34;
+        string textpro_null = 35;
+        string ping = 36;
+        string welcome = 37;
+        string goodbye = 38;
+        string no_pfp = 39;
+        string error_img = 40;
+        string raw_error_img = 41;
+        string error_vid = 42;
+        string raw_error_vid = 43;
+    }
+
+    message Strings {
+        Menu menu = 1;
+        Onstart onStart = 2;
+        Cmd cmd = 3;
+        Ping ping = 4;
+        Session session = 5;
+        Tagall tagall = 6;
+        Goodbye goodbye = 7;
+        Welcome welcome = 8;
+        Module module = 9;
+    }
+
+    Primon PRIMON = 1;
+    Strings STRINGS = 2;
+}

@@ -12,7 +12,20 @@
       "by": "_Primon Proto Tarafından Yapıldı_"
     },
     "onStart": {
-      "msg": "*Primon Proto Çalışıyor!* \n\n*Komutları görmek için lütfen* ```.menu``` komutunu kullanın.\n\n*Veritabanı:* {c}\n*Token:* {c}"
+      "msg": "*Primon Proto Çalışıyor!* \n\n*Komutları görmek için lütfen* ```&menu``` komutunu kullanın.\n\n*Veritabanı:* {c}\n*Token:* {c}"
+    },
+    "stop_f": {
+      "null": "_Böyle bir filtre bulamadım.._",
+      "null2": "_Lütfen kaldırılacak filter ismini girin._ \n*Örnek:* ```&stop selam```",
+      "succ": "*&* _filtresi başarıyla kaldırıldı!_ ✅"
+    },
+    "filter": {
+      "null": "*Yanıtlanan mesajı filter olarak ayarlamak için lütfen komuttan sonra bir kelime girin* \n*Örnek:* ```&filter selam```",
+      "null2": "_Lütfen filter eklemek için_ ```&menu filter``` _göz atın veya_ ```&filter \"selam\" \"nasılsın\"``` _şeklinde kullanın!_",
+      "unsuc": "*Üzgünüm, girdiğiniz filter bu sohbete eklenemedi.*",
+      "succ": "*&* _filtresi başarıyla ayarlandı!_ ✅",
+      "list": "_Bu sohbetindeki filter listeniz:_ \n\n",
+      "nolist": "_Bu sohbette herhangi bir filtre bulunmuyor!_"
     },
     "cmd": {
       "command": "*⌨ Komut:* ",
@@ -60,19 +73,19 @@
       "alive2": "_Botun çalışıp çalışmadığını kontrol eder._",
       "ping2": "_Botun çalışma hızını kontol eder._",
       "tagall2": "_Gruptaki tüm üyeleri etiketler._",
-      "tagall3": "🔹 ```&tagall``` \n🔹 ```&tagall Herkese Merhaba``` \n🔹 ```&tagall <yanıt>```",
+      "tagall3": "```&tagall``` \n```&tagall Herkese Merhaba``` \n```&tagall <yanıt>```",
       "textpro2": "_Birbirinden farklı resimler ve logolar üretin._",
-      "textpro3": "🔹 ```&textpro {stil} {yazı}``` \n🔹 ```&textpro neon Atticus``` \n🔹 ```&textpro {stil} <mesaja yanıt ver>```\n\n*Stiller:* _neon, neon2, neon3, batman, love, love2, sea, led, devil, glitch, summer, robot_",
+      "textpro3": "```&textpro {stil} {yazı}``` \n```&textpro neon Atticus``` \n```&textpro {stil} <mesaja yanıt ver>```\n\n*Stiller:* _neon, neon2, neon3, batman, love, love2, sea, led, devil, glitch, summer, robot_",
       "welcome2": "_Gruba yeni katılan üyelere otomatik mesaj gönderir._",
-      "welcome3": "🔹 ```&welcome``` \n🔹 ```&welcome Hoşgeldin``` \n🔹 ```&welcome delete``` (Mesajı Kaldırır) \n🔹 ```&welcome <mesaja yanıt ver>``` \n\n*Ek Özellikler:* \n\n{gpp}: _Hoşgeldin mesajı grup profil fotoğrafı ile gönderilir._ \n{img}: _Hoşgeldin mesajı herhangi bir resim ile gönderilir._\nÖrnek: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _Hoşgeldin mesajı video ile gönderilir._\nÖrnek: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
+      "welcome3": "```&welcome``` \n```&welcome Hoşgeldin``` \n```&welcome delete``` (Mesajı Kaldırır) \n```&welcome <mesaja yanıt ver>``` \n\n*Ek Özellikler:* \n\n{gpp}: _Hoşgeldin mesajı grup profil fotoğrafı ile gönderilir._ \n{img}: _Hoşgeldin mesajı herhangi bir resim ile gönderilir._\nÖrnek: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _Hoşgeldin mesajı video ile gönderilir._\nÖrnek: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
       "goodbye2": "_Gruptan ayrılan üyelere otomatik mesaj gönderir._",
-      "goodbye3": "🔹 ```&goodbye``` \n🔹 ```&goodbye Güle Güle..``` \n🔹 ```&goodbye delete``` (Mesajı Kaldırır) \n🔹 ```&goodbye <mesaja yanıt ver>``` \n\n*Ek Özellikler:* \n\n{gpp}: _Görüşürüz mesajı grup profil fotoğrafı ile gönderilir._ \n{img}: _Görüşürüz mesajı herhangi bir resim ile gönderilir._\nÖrnek: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _Görüşürüz mesajı video ile gönderilir._\nÖrnek: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
+      "goodbye3": "```&goodbye``` \n```&goodbye Güle Güle..``` \n```&goodbye delete``` (Mesajı Kaldırır) \n```&goodbye <mesaja yanıt ver>``` \n\n*Ek Özellikler:* \n\n{gpp}: _Görüşürüz mesajı grup profil fotoğrafı ile gönderilir._ \n{img}: _Görüşürüz mesajı herhangi bir resim ile gönderilir._\nÖrnek: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _Görüşürüz mesajı video ile gönderilir._\nÖrnek: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
       "get": "_Komut mesajlarını gösterir. (alive, afk vs.)_",
-      "get2": "🔹 ```&get {tür}``` \n\n*Türler:* _alive, afk, ban, block, unblock, mute, unmute_",
-      "get3": "{%d1}```{%c}get``` \n{%d1}_Komut mesajlarını gösterir. (alive, afk vs.)_\n{%d1} \n\n🔹 ```{%c}get {tür}``` \n\n*Türler:* _alive, afk, ban, block, unblock, mute, unmute_",
+      "get2": "```&get {tür}``` \n\n*Türler:* _alive, afk, ban, block, unblock, mute, unmute_",
+      "get3": "{%d1}```{%c}get``` \n{%d1}_Komut mesajlarını gösterir. (alive, afk vs.)_\n{%d1} \n\n```{%c}get {tür}``` \n\n*Türler:* _alive, afk, ban, block, unblock, mute, unmute_",
       "set": "_Komut mesajlarını düzenler (alive, afk vs.)_",
-      "set2": "🔹 ```&set {tür}``` \n\n*Türler:* _alive, afk, ban, block, unblock, mute, unmute_",
-      "set3": "{%d1}```{%c}set``` \n{%d1}_Komut mesajlarını düzenler (alive, afk vs.)_\n{%d1} \n\n🔹 ```{%c}set {tür}``` \n\n*Türler:* _alive, afk, ban, block, unblock, mute, unmute_",
+      "set2": "```&set {tür}``` \n\n*Türler:* _alive, afk, ban, block, unblock, mute, unmute_",
+      "set3": "{%d1}```{%c}set``` \n{%d1}_Komut mesajlarını düzenler (alive, afk vs.)_\n{%d1} \n\n```{%c}set {tür}``` \n\n*Türler:* _alive, afk, ban, block, unblock, mute, unmute_",
       "reply": "*Lütfen herhangi bir mesaja yanıt verin!*",
       "alive": "{%d1}```{%c}alive``` \n{%d1}_Bot çalışyor mu? Kontrol edin!_",
       "star": "Bana destek olmak için https://github.com/phaticusthiccy/PrimonProto deposunu yıldızla!",
@@ -89,17 +102,23 @@
       "get_unblock": "*Unblock Mesajı:* \n\n",
       "set_null": "_Bilinmeyen Tür! Lütfen_ ```&menu set``` _komutunu kullanın._",
       "get_null": "_Bilinmeyen Tür! Lütfen_ ```&menu get``` _komutunu kullanın._",
-      "tagall": "{%d1}```{%c}tagall``` \n{%d1}_Gruptaki tüm üyeleri etiketleyin!_ \n{%d1} \n\n🔹 ```{%c}tagall``` \n🔹 ```{%c}tagall Herkese Merhaba```",
-      "textpro": "{%d1}```{%c}textpro``` \n{%d1}_Birbirinden farklı resimler veya afişler oluşturun!_ \n {%d1} \n\n🔹 ```{%c}textpro {stil} {yazı}``` \n🔹 ```{%c}textpro neon Atticus``` \n🔹 ```{%c}textpro {stil} <mesaja yanıt ver>```\n\n*Stiller:* _neon, neon2, neon3, batman, love, love2, sea, led, devil, glitch, summer, robot_",
+      "tagall": "{%d1}```{%c}tagall``` \n{%d1}_Gruptaki tüm üyeleri etiketleyin!_ \n{%d1} \n\n```{%c}tagall``` \n```{%c}tagall Herkese Merhaba```",
+      "textpro": "{%d1}```{%c}textpro``` \n{%d1}_Birbirinden farklı resimler veya afişler oluşturun!_ \n {%d1} \n\n```{%c}textpro {stil} {yazı}``` \n```{%c}textpro neon Atticus``` \n```{%c}textpro {stil} <mesaja yanıt ver>```\n\n*Stiller:* _neon, neon2, neon3, batman, love, love2, sea, led, devil, glitch, summer, robot_",
       "textpro_null": "_Böyle Bir Stil Bulamadım.. Lütfen_ ```.menu textpro``` _yazarak kullanımına balkın._",
       "ping": "{%d1}```{%c}ping``` \n{%d1}_Bot'un pingini ölçün!_",
-      "welcome": "{%d1}```{%c}welcome``` \n{%d1}_Gruba yeni katılan üyelere otomatik mesaj gönderir._ \n{%d1} \n\n🔹 ```{%c}welcome``` \n🔹 ```{%c}welcome Hoşgeldin``` \n🔹 ```{%c}welcome delete``` (Mesajı Kaldırır) \n🔹 ```{%c}welcome <mesaja yanıt ver>``` \n\n*Ek Özellikler:* \n\n{gpp}: _Hoşgeldin mesajı grup profil fotoğrafı ile gönderilir._ \n{img}: _Hoşgeldin mesajı herhangi bir resim ile gönderilir._\nÖrnek: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _Hoşgeldin mesajı video ile gönderilir._\nÖrnek: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
-      "goodbye": "{%d1}```{%c}goodbye``` \n{%d1}_Gruptan ayrılan üyelere otomatik mesaj gönderir._ \n{%d1} \n\n🔹 ```{%c}goodbye``` \n🔹 ```{%c}goodbye Güle Güle..``` \n🔹 ```{%c}goodbye delete``` (Mesajı Kaldırır) \n🔹 ```{%c}goodbye <mesaja yanıt ver>``` \n\n*Ek Özellikler:* \n\n{gpp}: _Görüşürüz mesajı grup profil fotoğrafı ile gönderilir._ \n{img}: _Görüşürüz mesajı herhangi bir resim ile gönderilir._\nÖrnek: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _Görüşürüz mesajı video ile gönderilir._\nÖrnek: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
+      "welcome": "{%d1}```{%c}welcome``` \n{%d1}_Gruba yeni katılan üyelere otomatik mesaj gönderir._ \n{%d1} \n\n```{%c}welcome``` \n```{%c}welcome Hoşgeldin``` \n```{%c}welcome delete``` (Mesajı Kaldırır) \n```{%c}welcome <mesaja yanıt ver>``` \n\n*Ek Özellikler:* \n\n{gpp}: _Hoşgeldin mesajı grup profil fotoğrafı ile gönderilir._ \n{img}: _Hoşgeldin mesajı herhangi bir resim ile gönderilir._\nÖrnek: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _Hoşgeldin mesajı video ile gönderilir._\nÖrnek: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
+      "goodbye": "{%d1}```{%c}goodbye``` \n{%d1}_Gruptan ayrılan üyelere otomatik mesaj gönderir._ \n{%d1} \n\n```{%c}goodbye``` \n```{%c}goodbye Güle Güle..``` \n```{%c}goodbye delete``` (Mesajı Kaldırır) \n```{%c}goodbye <mesaja yanıt ver>``` \n\n*Ek Özellikler:* \n\n{gpp}: _Görüşürüz mesajı grup profil fotoğrafı ile gönderilir._ \n{img}: _Görüşürüz mesajı herhangi bir resim ile gönderilir._\nÖrnek: _{img: https://i.hizliresim.com/ifo5s63.jpg}_\n\n{vid}: _Görüşürüz mesajı video ile gönderilir._\nÖrnek: _{vid: https://www.youtube.com/watch?v=OuajHe9SdSk}_",
       "no_pfp": "*Grup resmi mevcut değil. Bu yüzden hoşgeldin mesajı gönderilemedi. Lütfen bir grup fotoğrafı belirleyin!*",
       "error_img": "*Girilen {img: ..} içindeki resim geçerli değil. Lütfen* ```.menu welcome``` *yazarak kullanım taliamatına bakın. Ek bir boşluk olmamalı ve resim link .png veya .jpg uzantılı olmalıdır.*",
       "raw_error_img": "*Girilen {img: ..} içindeki resim geçerli değil. Ek bir boşluk olmamalı ve resim link .png veya .jpg uzantılı olmalıdır.*",
       "error_vid": "*Girilen {vid: ..} içindeki youtube bağlantısı geçerli değil. Lütfen* ```.menu welcome``` *yazarak kullanım taliamatına bakın. Ek bir boşluk olmamalı ve video youtube bağlantısı olmalıdır.*",
-      "raw_error_vid": "*Girilen {vid: ..} içindeki youtube bağlantısı geçerli değil. Ek bir boşluk olmamalı ve video youtube bağlantısı olmalıdır.*"
+      "raw_error_vid": "*Girilen {vid: ..} içindeki youtube bağlantısı geçerli değil. Ek bir boşluk olmamalı ve video youtube bağlantısı olmalıdır.*",
+      "filter": "_Gruba veya sohbete filtre ayarlar. Ayarlanan filtre mesaj ile aynıysa otomatik gönderilir._",
+      "filter2:": "```&filter \"selam\" \"naber, nasılsın?\"``` \n```&filter selam <mesaja yanıt ver>```",
+      "filter3": "{%d1}```{%c}filter``` \n{%d1}_Gruba veya sohbete filtre ayarlar. Ayarlanan filtre mesaj ile aynıysa otomatik gönderilir._ \n{%d1}\n\n```{%c}filter \"selam\" \"naber, nasılsın?\"``` \n```{%c}filter selam <mesaja yanıt ver>```",
+      "stop": "_Filtreyi durdurur._",
+      "stop2": "```&stop selam``` \n```&stop <mesaja yanıt ver>```",
+      "stop3": "{%d1}```{%c}stop``` \n{%d1}_Filtreyi durdurur._\n{%d1}\n\n```{%c}stop selam``` \n```{%c}stop <mesaja yanıt ver>```"
     }
   }
 }

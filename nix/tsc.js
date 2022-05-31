@@ -1,3 +1,12 @@
+// Primon Proto
+// Headless WebSocket, type-safe Whatsapp UserBot
+//
+// Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
+// Multi-Device Lightweight ES5 Module (can ysable with mjs)
+//
+// Phaticusthiccy - 2022
+
+
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
