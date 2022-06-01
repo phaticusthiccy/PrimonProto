@@ -10,7 +10,7 @@
 const { Octokit } = require("@octokit/core");
 const fs = require("fs");
 const octokit = new Octokit({
-  auth: process.env.GITHUB_AUTH,
+  auth: process.env.GITHUB_AUTH
 });
 require("util").inspect.defaultOptions.depth = null;
 async function save() {
