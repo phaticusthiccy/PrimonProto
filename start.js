@@ -562,9 +562,6 @@ async function Primon() {
     try {
       g_participant = g_participant.split("@")[0] + "@s.whatsapp.net"
     } catch {}
-    console.log(message)
-    console.log(sudo)
-    console.log(g_participant)
     // Buttons
 
     PrimonDB.filter.map(async (el) => {
@@ -780,7 +777,7 @@ async function Primon() {
                       diff.push(similarity);
                     });
                     var filt = diff.filter((mum) => mum > 0.8);
-                    if (filt[0] == undefined) {
+                    if (filt[0] == undefined || filt[0] == "undefined") {
                       return await Proto.sendMessage(
                         jid,
                         { text: modulelang.null },
@@ -1577,7 +1574,7 @@ async function Primon() {
                   var rst = ""
                   re.filter.map((el) => {
                     
-                    if (el.jid == jid && el.trigger == repliedmsg) {
+                    if (el.jid == jid && el.trigger == args) {
                       delete el.jid
                       rst = "1"
                       delete el.trigger
