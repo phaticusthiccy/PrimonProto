@@ -118,6 +118,7 @@
       "filter3": "{%d1}```{%c}filter``` \n{%d1}_Sets a filter to the group or chat. Automatically sent if the set filter is the same as the message._\n{%d1}\n\n```{%c}filter \"hi\" \"hello, how are you?\"``` \n```{%c}filter hello <reply a message>```",
       "stop": "_Stops the filter._",
       "stop2": "```&stop hi``` \n```&stop <reply a message>```",
+      "update": "*Update Successfully Done! Latest Data Added!* ✅",
       "stop3": "{%d1}```{%c}stop``` \n{%d1}_Stops the filter._\n{%d1}\n\n```{%c}stop hi``` \n```{%c}stop <reply a message>```"
     }
   }

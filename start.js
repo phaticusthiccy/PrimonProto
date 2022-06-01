@@ -188,7 +188,7 @@ setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
 }, 10000);
 
-var command_list = ["textpro", "tagall", "ping", "welcome", "goodbye", "alive", "get", "set", "filter", "stop", "sticker"],
+var command_list = ["textpro", "tagall", "ping", "welcome", "goodbye", "alive", "get", "set", "filter", "stop", "sticker", "update"],
   diff = [];
 
 async function Primon() {
@@ -242,7 +242,7 @@ async function Primon() {
               return await Proto.sendMessage(jid, {
                 image: Buffer.from(img.data),
                 caption: re[0].message.replace("{gpp}", ""),
-                mimetype: Mimetype.png,
+                
               });
             }
           } else {
@@ -270,7 +270,7 @@ async function Primon() {
                 return await Proto.sendMessage(jid, {
                   image: Buffer.from(img.data),
                   caption: re[0].message.replace("{img: ", "").replace(img_link, ""),
-                  mimetype: Mimetype.png,
+                  
                 });
               } catch {
                 return await Proto.sendMessage(jid, {
@@ -300,8 +300,7 @@ async function Primon() {
               try {
                 return await Proto.sendMessage(jid, {
                   video: fs.readFileSync("./goodbye.mp4"),
-                  caption: re[0].message.replace("{vid: ", "").replace(vid_link, ""),
-                  mimetype: Mimetype.mp4,
+                  caption: re[0].message.replace("{vid: ", "").replace(vid_link, "")
                 });
               } catch {
                 return await Proto.sendMessage(jid, {
@@ -347,7 +346,7 @@ async function Primon() {
               return await Proto.sendMessage(jid, {
                 image: Buffer.from(img.data),
                 caption: re2[0].message.replace("{gpp}", ""),
-                mimetype: Mimetype.png,
+                
               });
             }
           } else {
@@ -375,7 +374,7 @@ async function Primon() {
                 return await Proto.sendMessage(jid, {
                   image: Buffer.from(img.data),
                   caption: re2[0].message.replace("{img: ", "").replace(img_link, ""),
-                  mimetype: Mimetype.png,
+                  
                 });
               } catch {
                 return await Proto.sendMessage(jid, {
@@ -405,8 +404,7 @@ async function Primon() {
               try {
                 return await Proto.sendMessage(jid, {
                   video: fs.readFileSync("./welcome.mp4"),
-                  caption: re2[0].message.replace("{vid: ", "").replace(vid_link, ""),
-                  mimetype: Mimetype.mp4,
+                  caption: re2[0].message.replace("{vid: ", "").replace(vid_link, "")
                 });
               } catch {
                 return await Proto.sendMessage(jid, {
@@ -1057,7 +1055,7 @@ async function Primon() {
                     return await Proto.sendMessage(jid, {
                       image: Buffer.from(img2.data),
                       caption: modulelang.by,
-                      mimetype: Mimetype.png,
+                      
                     });
                   } else {
                     var msg = await Proto.sendMessage(
@@ -1113,7 +1111,7 @@ async function Primon() {
                     return await Proto.sendMessage(jid, {
                       image: Buffer.from(img2.data),
                       caption: modulelang.by,
-                      mimetype: Mimetype.png,
+                      
                     });
                   }
                 }
@@ -1606,6 +1604,12 @@ async function Primon() {
               }
 
 
+              else if (attr == "update") {
+                await Proto.sendMessage(jid, { delete: msgkey });
+                await Proto.sendMessage(jid, { text: modulelang.update })
+                process.exit()
+
+              }
               // Alive
               else if (attr == "alive") {
                 await Proto.sendMessage(jid, { delete: msgkey });
@@ -1637,7 +1641,7 @@ async function Primon() {
                       return await Proto.sendMessage(jid, {
                         image: Buffer.from(buff.data),
                         caption: PrimonDB.alive_msg.replace("{pp}", ""),
-                        mimetype: Mimetype.png,
+                        
                       });
                     }
                   }
@@ -1662,7 +1666,7 @@ async function Primon() {
                       return await Proto.sendMessage(jid, {
                         image: Buffer.from(img.data),
                         caption: re[0].message.replace("{img: ", "").replace(img_link, ""),
-                        mimetype: Mimetype.png,
+                        
                       });
                     } catch {
                       return await Proto.sendMessage(jid, {
@@ -1690,8 +1694,7 @@ async function Primon() {
                     try {
                       return await Proto.sendMessage(jid, {
                         video: fs.readFileSync("./alive.mp4"),
-                        caption: PrimonDB.alive_msg.replace("{vid: ", "").replace(img_link, ""),
-                        mimetype: Mimetype.mp4,
+                        caption: PrimonDB.alive_msg.replace("{vid: ", "").replace(img_link, "")
                       });
                     } catch {
                       return await Proto.sendMessage(jid, {
