@@ -14,6 +14,11 @@
     "onStart": {
       "msg": "*Primon Proto Working!* \n\n*Please use the* ```.menu``` command to see the commands.\n\n*Database:* {c}\n*Token:* {c}"
     },
+    "stop_f": {
+      "null": "_I couldn't find such a filter.._",
+      "null2": "_Please enter the filter name to be removed._ \n*Example:* ```&stop hi```",
+      "succ": "*&* _named filter successfully removed!_ ✅"
+    },
     "filter": {
       "null": "*Please enter a word after the command to set the replied message as filter.* \n*Example:* ```&filter hi```",
       "null2": "_Please type_ ```&menu filter`` _to add filter or use_ ```&filter \"hi\" \"how are you\"```",
