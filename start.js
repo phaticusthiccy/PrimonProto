@@ -211,7 +211,7 @@ async function Primon() {
     var re = PrimonDB;
     if (st.action == "remove") {
       re.goodbye.map(async (el) => {
-        if (el.length == 0) return;
+        ;
         if (el.jid == jid) {
           if (re[0].message.includes("{gpp}")) {
             if (re[0].message.includes("{img:")) {
@@ -317,7 +317,7 @@ async function Primon() {
         
     } else if (st.action == "add") {
       re.welcome.map(async (el) => {
-        if (el.length == 0) return;
+        ;
         if (el.jid == jid) {
           if (re2[0].message.includes("{gpp}")) {
             if (re2[0].message.includes("{img:")) {
@@ -568,7 +568,7 @@ async function Primon() {
     // Buttons
 
     PrimonDB.filter.map(async (el) => {
-      if (el.length == 0) return;
+      ;
       if (el.jid == jid && el.trigger == message) {
         if (m.messages[0].key.fromMe) {
           return;
@@ -1164,7 +1164,7 @@ async function Primon() {
                     if (repliedmsg == "delete") {
                       var re = PrimonDB;
                       re.welcome.map((el) => {
-                        if (el.length == 0) return;
+                        ;
                         if (el.jid == jid) {
                           delete el.jid
                           delete el.message
@@ -1190,7 +1190,7 @@ async function Primon() {
                       var re = PrimonDB;
                       var d = { jid: jid, message: repliedmsg };
                       re.welcome.map((el) => {
-                        if (el.length == 0) return;
+                        ;
                         if (el.jid == jid) {
                           delete el.jid
                           delete el.message
@@ -1218,7 +1218,7 @@ async function Primon() {
                     if (args == "delete") {
                       var re = PrimonDB;
                       re.welcome.map((el) => {
-                        if (el.length == 0) return;
+                        ;
                         if (el.jid == jid) {
                           delete el.jid
                           delete el.message
@@ -1260,7 +1260,7 @@ async function Primon() {
                       var re = PrimonDB;
                       var d = { jid: jid, message: args };
                       re.welcome.map((el) => {
-                        if (el.length == 0) return;
+                        ;
                         if (el.jid == jid) {
                           delete el.jid
                           delete el.message
@@ -1302,7 +1302,7 @@ async function Primon() {
                     if (repliedmsg == "delete") {
                       var re = PrimonDB;
                       re.goodbye.map((el) => {
-                        if (el.length == 0) return;
+                        ;
                         if (el.jid == jid) {
                           delete el.jid
                           delete el.message
@@ -1328,7 +1328,7 @@ async function Primon() {
                       var re = PrimonDB;
                       var d = { jid: jid, message: repliedmsg };
                       re.goodbye.map((el) => {
-                        if (el.length == 0) return;
+                        ;
                         if (el.jid == jid) {
                           delete el.jid
                           delete el.message
@@ -1356,7 +1356,7 @@ async function Primon() {
                     if (args == "delete") {
                       var re = PrimonDB;
                       re.goodbye.map((el) => {
-                        if (el.length == 0) return;
+                        ;
                         if (el.jid == jid) {
                           delete el.jid
                           delete el.message
@@ -1398,7 +1398,7 @@ async function Primon() {
                       var re = PrimonDB;
                       var d = { jid: jid, message: args };
                       re.goodbye.map((el) => {
-                        if (el.length == 0) return;
+                        ;
                         if (el.jid == jid) {
                           delete el.jid
                           delete el.message
@@ -1439,7 +1439,7 @@ async function Primon() {
                   } else {
                     var re = PrimonDB;
                     re.filter.map((el) => {
-                      if (el.length == 0) return;
+                      ;
                       if (el.trigger == args && el.jid == jid) {
                         delete el.trigger
                         delete el.message
@@ -1469,7 +1469,7 @@ async function Primon() {
                     var re = PrimonDB;
                     var filter_list = "";
                     re.filter.map((el) => {
-                      if (el.length == 0) return;
+                      ;
                       if (el.jid == jid) {
                         filter_list += "🔎 ```" + el.trigger + "``` \n"
                       }
@@ -1502,14 +1502,13 @@ async function Primon() {
                     }
                     var re = PrimonDB;
                     re.filter.map((el) => {
-                      if (el.length == 0) return;
                       if (el.trigger == args && el.jid == jid) {
                         delete el.trigger
                         delete el.message
                         delete el.jid
                       }
                     });
-                    var d = { jid: jid, trigger: args, message: f_message }
+                    var d = { jid: jid, trigger: trigger, message: f_message }
                     re.filter.push(d)
                     re = JSON.stringify(re, null, 2);
                     await octokit.request("PATCH /gists/{gist_id}", {
@@ -1538,7 +1537,7 @@ async function Primon() {
                   var re = PrimonDB;
                   var rst = ""
                   re.filter.map((el) => {
-                    if (el.length == 0) return
+                    
                     if (el.jid == jid && el.trigger == repliedmsg) {
                       delete el.jid
                       rst = "1"
@@ -1577,7 +1576,7 @@ async function Primon() {
                   var re = PrimonDB;
                   var rst = ""
                   re.filter.map((el) => {
-                    if (el.length == 0) return
+                    
                     if (el.jid == jid && el.trigger == repliedmsg) {
                       delete el.jid
                       rst = "1"
