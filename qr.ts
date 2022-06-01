@@ -753,7 +753,7 @@ async function after_tr() {
             if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
             if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
           }
-          if (tkn.lenth < 4) {
+          if (tkn.length < 4) {
             tkn = fs.readFileSync("./break.txt").toString().match(/.{10,7000}/g)
             if (tkn.length < 4) {
               tkn = fs.readFileSync("./break.txt").toString().match(/.{10,5000}/g)
@@ -891,7 +891,7 @@ async function after_tr() {
         if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
         if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
       }
-      if (tkn.lenth < 4) {
+      if (tkn.length < 4) {
         tkn = fs.readFileSync("./break.txt").toString().match(/.{10,7000}/g)
         if (tkn.length < 4) {
           tkn = fs.readFileSync("./break.txt").toString().match(/.{10,5000}/g)
@@ -1051,7 +1051,7 @@ async function after_en() {
             if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
             if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
           }
-          if (tkn.lenth < 4) {
+          if (tkn.length < 4) {
             tkn = fs.readFileSync("./break.txt").toString().match(/.{10,7000}/g)
             if (tkn.length < 4) {
               tkn = fs.readFileSync("./break.txt").toString().match(/.{10,5000}/g)
@@ -1186,7 +1186,7 @@ async function after_en() {
         if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
         if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
       }
-      if (tkn.lenth < 4) {
+      if (tkn.length < 4) {
         tkn = fs.readFileSync("./break.txt").toString().match(/.{10,7000}/g)
         if (tkn.length < 4) {
           tkn = fs.readFileSync("./break.txt").toString().match(/.{10,5000}/g)
@@ -1306,7 +1306,7 @@ async function after_s_tr() {
         if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
         if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
       }
-      if (tkn.lenth < 4) {
+      if (tkn.length < 4) {
         tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,7000}/g)
         if (tkn.length < 4) {
           tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,5000}/g)
@@ -1419,7 +1419,7 @@ async function after_s_en() {
         if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
         if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
       }
-      if (tkn.lenth < 4) {
+      if (tkn.length < 4) {
         tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,7000}/g)
         if (tkn.length < 4) {
           tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,5000}/g)
@@ -1431,7 +1431,7 @@ async function after_s_en() {
             if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
           }
         } else {
-          if (tkn !== 4) {
+          if (tkn.length !== 4) {
             if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
             if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
             if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]

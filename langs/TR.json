@@ -114,7 +114,7 @@
       "error_vid": "*Girilen {vid: ..} içindeki youtube bağlantısı geçerli değil. Lütfen* ```.menu welcome``` *yazarak kullanım taliamatına bakın. Ek bir boşluk olmamalı ve video youtube bağlantısı olmalıdır.*",
       "raw_error_vid": "*Girilen {vid: ..} içindeki youtube bağlantısı geçerli değil. Ek bir boşluk olmamalı ve video youtube bağlantısı olmalıdır.*",
       "filter": "_Gruba veya sohbete filtre ayarlar. Ayarlanan filtre mesaj ile aynıysa otomatik gönderilir._",
-      "filter2:": "```&filter \"selam\" \"naber, nasılsın?\"``` \n```&filter selam <mesaja yanıt ver>```",
+      "filter2": "```&filter \"selam\" \"naber, nasılsın?\"``` \n```&filter selam <mesaja yanıt ver>```",
       "filter3": "{%d1}```{%c}filter``` \n{%d1}_Gruba veya sohbete filtre ayarlar. Ayarlanan filtre mesaj ile aynıysa otomatik gönderilir._ \n{%d1}\n\n```{%c}filter \"selam\" \"naber, nasılsın?\"``` \n```{%c}filter selam <mesaja yanıt ver>```",
       "stop": "_Filtreyi durdurur._",
       "stop2": "```&stop selam``` \n```&stop <mesaja yanıt ver>```",

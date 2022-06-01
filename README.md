@@ -1,6 +1,6 @@
 <html>
 <center>
-  <h1> PrimonProto </h1>
+  <h1> Primon Proto </h1>
   
 Configurational ESM Lightweigth WebSocket Tool. Uses side clients to connect firewall bridge.
  

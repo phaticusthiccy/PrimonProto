@@ -188,7 +188,7 @@ setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
 }, 10000);
 
-var command_list = ["textpro", "tagall", "ping", "welcome", "goodbye", "alive", "get", "set", "filter", "stop"],
+var command_list = ["textpro", "tagall", "ping", "welcome", "goodbye", "alive", "get", "set", "filter", "stop", "sticker"],
   diff = [];
 
 async function Primon() {

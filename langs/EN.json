@@ -9,7 +9,7 @@
       "owner": "Developer",
       "star": "Star on Github! 🌟",
       "pp": "Primon Command List",
-      "by:": "_By Primon Proto_"
+      "by": "_By Primon Proto_"
     },
     "onStart": {
       "msg": "*Primon Proto Working!* \n\n*Please use the* ```.menu``` command to see the commands.\n\n*Database:* {c}\n*Token:* {c}"
@@ -109,7 +109,7 @@
       "error_vid": "*The youtube link in the entered {vid: ..} is not valid. Please type* ```.menu welcome``` *to see usage. There should be no additional spaces and the video should be youtube link.*",
       "raw_error_vid": "*The youtube link in the entered {vid: ..} is not valid. There should be no additional spaces and the video should be youtube link.*",
       "filter": "_Sets a filter to the group or chat. Automatically sent if the set filter is the same as the message._",
-      "filter2:": "```&filter \"hi\" \"hello, how are you?\"``` \n```&filter hello <reply a message>```",
+      "filter2": "```&filter \"hi\" \"hello, how are you?\"``` \n```&filter hello <reply a message>```",
       "filter3": "{%d1}```{%c}filter``` \n{%d1}_Sets a filter to the group or chat. Automatically sent if the set filter is the same as the message._\n{%d1}\n\n```{%c}filter \"hi\" \"hello, how are you?\"``` \n```{%c}filter hello <reply a message>```",
       "stop": "_Stops the filter._",
       "stop2": "```&stop hi``` \n```&stop <reply a message>```",
