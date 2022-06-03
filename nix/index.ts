@@ -1,59 +1,119 @@
-// Primon Proto
-// Headless WebSocket, type-safe Whatsapp UserBot
-//
-// Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
-// Multi-Device Lightweight ES5 Module (can ysable with mjs)
-//
-// Phaticusthiccy - 2022
-
-
 import { Boom } from '@hapi/boom'
 import P from 'pino'
-import makeWASocket, { AnyMessageContent, DisconnectReason, makeInMemoryStore, useSingleFileAuthState } from '@adiwajshing/baileys'
+import makeWASocket, { AnyMessageContent, delay, DisconnectReason, makeInMemoryStore, useSingleFileAuthState } from '@adiwajshing/baileys'
 import * as fs from "fs"
 import * as readline from 'readline';
 import chalk from "chalk";
 import { Octokit } from "@octokit/core";
 import axios from "axios"
+import neko from "@phaticusthiccy/open-apis";
 import { exec, spawn, execSync } from "child_process";
-import shell from "shelljs";
+import rw from "./railway"
+import shell from 'shelljs'
 
-var db = `{
-  "author": "https://github.com/phaticusthiccy",
-  "welcome": [],
-  "goodbye": [],
-  "sudo": false,
-  "super_sudo": [],
-  "pmpermit": [],
-  "handler": ".!;/",
-  "blocklist": [],
-  "snip": [],
-  "antiflood": [],
-  "warn": [],
-  "block_msg": "",
-  "unblock_msg": "",
-  "ban_msg": "",
-  "mute_msg": "",
-  "unmute_msg": "",
-  "warncount": [],
-  "language": "",
-  "debug": false,
-  "afk": { 
-    "status": false, 
-    "message": "I am AFK Now! \\nLastseen: {lastseen}"
-  },
-  "filter": [],
-  "global_filter": [],
-  "alive_msg": "",
-  "db_url": "",
-  "token_key": ""
-}
+  var db = `{
+    "author": "https://github.com/phaticusthiccy",
+    "welcome": [],
+    "welcome_media": [],
+    "goodbye": [],
+    "goodbye_media": [],
+    "sudo": "",
+    "super_sudo": [],
+    "pmpermit": [],
+    "pmpermit_media": {
+      "type": "",
+      "media": ""
+    },
+    "handler": ".!;/",
+    "blocklist": [],
+    "snip": [],
+    "snip_media": [],
+    "antiflood": [],
+    "warn": [],
+    "block_msg": "",
+    "bloc_msg_media": {
+      "type": "",
+      "media": ""
+    },
+    "unblock_msg": "",
+    "unblock_msg_media": {
+      "type": "",
+      "media": ""
+    },
+    "ban_msg": "",
+    "ban_msg_media": {
+      "type": "",
+      "media": ""
+    },
+    "mute_msg": "",
+    "mute_msg_media": {
+      "type": "",
+      "media": ""
+    },
+    "unmute_msg": "",
+    "unmute_msg_media": {
+      "type": "",
+      "media": ""
+    },
+    "warncount": [],
+    "language": "",
+    "debug": false,
+    "afk": { 
+      "status": false, 
+      "message": "I am AFK Now! \\nLastseen: {lastseen}"
+    },
+    "afk_media": {
+      "type": "",
+      "media": ""
+    },
+    "filter": [],
+    "filter_media": [],
+    "global_filter": [],
+    "global_filter_media": [],
+    "alive_msg": "",
+    "alive_msg_media": {
+      "type": "",
+      "media": ""
+    },
+    "db_url": "",
+    "token_key": "",
+    "lang_json": false
+  }
 
 `
 
+// media [object]
+// {
+//     "type": "",
+//     "media": ""
+// }
+//
+// 
+// media [array]
+// {
+//     "type": "",
+//     "media": "",
+//     "jid": ""
+// }
+//
+//
+// filter_media [object]
+// {
+//     "type": "",
+//     "media": "",
+//     "jid": "",
+//     "trigger": ""
+// }
+//
+//
 // handler[string]
 // [".", "!", "/", ";"]
 // Info: Primon's handlers
+//
+//
+// lang_json[string]
+// "{ "STRINGS": { "menu": { "menu": "Command List", "owner": "Developer"}}... }
+// Info: Configurational language data. Default: false? bool
 //
 //
 // welcome [jid: string, message: string]
@@ -128,10 +188,11 @@ var db = `{
 // [
 //   {
 //     "status": true || false,
-//     "message": "I am AFK Now! \nLastseen: {lastseen}",
+//     "message": "I am AFK Now! \nLastseen: {lastseen}"
 //   }
 // ]
 // Info: Stores the AFK status (Away From Keyboard)
+// lastseen?: Last seen via second type. 120 = 2min, 621 ≂ 10min
 //
 //
 // filter [jid: string]
@@ -227,6 +288,9 @@ octokit.request('POST /gists', {
 })
 */
 
+try {
+  fs.unlinkSync("./auth_info_multi.json")
+} catch { }
 var rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -257,7 +321,7 @@ async function MAIN() {
 
   rl.question(chalk.blue("Select A Language \n\n") + chalk.yellow("[1]") + " :: Türkçe \n" + chalk.yellow("[2]") + " :: English\n\n>>> ", async (answer) => {
     FIRST_TIMESTEP = new Date().getTime()
-    if (Number(answer) == 1) {
+    if (answer == 1) {
       console.log(chalk.green("Türkçe Dili Seçildi!"))
       lang == "TR"
       fs.writeFileSync("./lang.txt", "TR")
@@ -265,7 +329,7 @@ async function MAIN() {
       console.clear()
       await delay(400)
       rl.question(chalk.blue("\n\nNe Yapmak İstiyorsunuz? \n\n") + chalk.yellow("[1]") + " :: Session Yenileme\n" + chalk.yellow("[2]") + " :: Bot Kurma" + "\n\n1) Session yenileme işlemi, yavaş çalışan botu hızlandırmak veya çıkış yapılan botu veri kaybı olmadan geri getirmek için kullanılır.\n>>> ", async (answer2) => {
-        if (Number(answer2) == 1) {
+        if (answer2 == 1) {
           console.log(chalk.green("Session Yenileme Seçildi!"))
           await delay(3000)
           console.clear()
@@ -323,10 +387,11 @@ async function MAIN() {
                 console.clear()
                 var prpc = await PRIMON_PROTO6()
                 await delay(200000)
+                await after()
               })
             })
           })
-        } else if (Number(answer2) == 2) {
+        } else if (answer2 == 2) {
           console.log(chalk.green("Bot Kurma Seçildi!"))
           await delay(3000)
           console.clear()
@@ -383,6 +448,8 @@ async function MAIN() {
                     gist_id: res.data.id
                   })
                   var t2 = new Date().getTime()
+                  var t3 = Number(t2) - Number(t1)
+                  t3 = Math.floor(t3 / 4)
                   await octokit.request('DELETE /gists/{gist_id}', {
                     gist_id: res.data.id
                   })
@@ -401,6 +468,12 @@ async function MAIN() {
                   jsoner.db_url = res.data.id
                   fs.writeFileSync("./gb_db.txt", res.data.id)
                   jsoner.token_key = token
+                  jsoner.alive_msg = "_Primon Proto Çalışıyor!_\n\n_Versiyon: {version}_\n_Sahibim:_ {name}_"
+                  jsoner.ban_msg = "{user} *Adlı kullanıcı gruptan banlandı!*"
+                  jsoner.block_msg = "{user} *Adlı kullanıcı bloke edildi!*"
+                  jsoner.unblock_msg = "{user} Adlı kullanıcının blokesi kaldırıldı!*"
+                  jsoner.mute_msg = "*Grup {time} süreyle sessize alındı!*"
+                  jsoner.unmute_msg = "*Pekala, tekrardan konuşabilirler.*"
                   jsoner.afk.message = "*Bip Bop 🤖* \nBu bir bot. Sahibim şuan burda değil. Bunu sahibime ilettim. En kısa zamanda dönüş yapacaktır.\n\n*Son Görülme:* {lastseen}\n*Sebep:* {reason}"
                   jsoner.language = "TR"
                   var fin = JSON.stringify(jsoner, null, 2)
@@ -416,7 +489,7 @@ async function MAIN() {
                   })
 
                   var step = Number(t2) - Number(t1)
-                  console.log(chalk.green("Veritabanı Oluşturuldu! \nDatabase Hızı: " + step.toString() + "ms\n\n"))
+                  console.log(chalk.green("Veritabanı Oluşturuldu! \nDatabase Hızı: " + t3 + "ms\n\n"))
                   await delay(5000)
                   console.clear()
                   console.log(pmsg)
@@ -449,7 +522,7 @@ async function MAIN() {
           process.exit()
         }
       })
-    } else if (Number(answer) == 2) {
+    } else if (answer == 2) {
       console.log(chalk.green("English Language Selected!"))
       lang == "TR"
       fs.writeFileSync("./lang.txt", "TR")
@@ -457,7 +530,7 @@ async function MAIN() {
       console.clear()
       await delay(400)
       rl.question(chalk.blue("\n\nWhat do you want to do? \n\n") + chalk.yellow("[1]") + " :: Session Renewal\n" + chalk.yellow("[2]") + " :: Setup Bot" + "\n\n1) Session refresh is used to speed up a slow bot or to restore a logged out bot without data loss.\n>>> ", async (answer2) => {
-        if (Number(answer2) == 1) {
+        if (answer2 == 1) {
           console.log(chalk.green("Session Renewal Selected!"))
           await delay(3000)
           console.clear()
@@ -517,7 +590,7 @@ async function MAIN() {
               })
             })
           })
-        } else if (number(answer2) == 2) {
+        } else if (answer2 == 2) {
           console.log(chalk.green("Bot Setup Selected!"))
           await delay(3000)
           console.clear()
@@ -574,6 +647,8 @@ async function MAIN() {
                     gist_id: res.data.id
                   })
                   var t2 = new Date().getTime()
+                  var t3 = Number(t2) - Number(t1)
+                  t3 = Math.floor(t3 / 4)
                   await octokit.request('DELETE /gists/{gist_id}', {
                     gist_id: res.data.id
                   })
@@ -593,6 +668,12 @@ async function MAIN() {
                   fs.writeFileSync("./gb_db.txt", res.data.id)
                   jsoner.token_key = token
                   jsoner.afk.message = "*Bip Bop 🤖* \nThis is a bot. My owner is not here right now. I told this to my owner. It will be returned as soon as possible.\n\n*Last Seen:* {lastseen}\n*Reason:* {reason}"
+                  jsoner.alive_msg = "_Primon Proto Alive!_\n\n_Version: {version}_\n_Owner:_ {name}_"
+                  jsoner.ban_msg = "*Banned* {user} f*rom this group!*"
+                  jsoner.block_msg = "*Blocked* {user}! *Now you can't able to send message to me!*"
+                  jsoner.unblock_msg = "*Unblocked {user}! *You can send messages to me.*"
+                  jsoner.mute_msg = "*Grop chat muted for {time}!*"
+                  jsoner.unmute_msg = "*Well, they can talk again.*"
                   jsoner.language = "EN"
                   var fin = JSON.stringify(jsoner, null, 2)
                   await octokit.request('PATCH /gists/{gist_id}', {
@@ -607,7 +688,7 @@ async function MAIN() {
                   })
 
                   var step = Number(t2) - Number(t1)
-                  console.log(chalk.green("Database Created! \n\nDatabase Speed: " + step.toString() + "ms\n\n"))
+                  console.log(chalk.green("Database Created! \n\nDatabase Speed: " + t3 + "ms\n\n"))
                   await delay(5000)
                   console.clear()
                   console.log(penmsg)
@@ -655,15 +736,16 @@ async function after_tr() {
       gist_id: fs.readFileSync("./gb_db.txt").toString()
     })
     var fin = JSON.parse(jsoner.data.files["primon.db.json"].content)
-    fin.sudo = []
+    fin.sudo = ""
+    var tsudo = ""
     try {
       var sd = fs.readFileSync("./sudo.txt").toString()
-      sd = sd.split(":")[0] + "@s.whatsapp.net"
+      tsudo = sd.split(":")[0] + "@s.whatsapp.net"
     } catch {
       var sd = fs.readFileSync("./sudo.txt").toString()
-      sd = sd.split("@")[0] + "@s.whatsapp.net"
+      tsudo = sd.split("@")[0] + "@s.whatsapp.net"
     }
-    fin.sudo.push(sd)
+    fin.sudo = tsudo
     fin = JSON.stringify(fin, null, 2)
     await octokit.request('PATCH /gists/{gist_id}', {
       gist_id: fs.readFileSync("./gb_db.txt").toString(),
@@ -696,7 +778,7 @@ async function after_tr() {
       console.clear()
       console.log(pmsg)
       await delay(1500)
-      console.log(chalk.green("Lütfen https://railway.app/new bu adrese gidip ") + chalk.yellow("Empty project ") + chalk.green("butonuna tıklayın. Ardından enter tuşuna basın. Daha sonra gelen ekranda ortadaki") + chalk.yellow('Add Servive') + chalk.green("kısmına tıklayp tekrar") + chalk.yellow(" Empty Service ") + chalk.green("bölümüne basalım."))
+      console.log(chalk.green("Lütfen https://railway.app/new bu adrese gidip ") + chalk.yellow("Empty project ") + chalk.green("butonuna tıklayın. Ardından enter tuşuna basın. Daha sonra gelen ekranda ortadaki") + chalk.yellow(' Add Servive ') + chalk.green("kısmına tıklayp tekrar") + chalk.yellow(" Empty Service ") + chalk.green("bölümüne basalım."))
       rl.question("\n\n[Enter Tuşuna Bas]", async () => {
         console.clear()
         console.log(pmsg)
@@ -715,36 +797,39 @@ async function after_tr() {
           var prj = shell.exec("cd PrimonProto && node railway.js link " + proj)
           var sh4 = shell.exec("cd PrimonProto/ && node railway.js variables set GITHUB_DB=" + fs.readFileSync("./gb_db.txt").toString())
           var sh5 = shell.exec("cd PrimonProto/ && node railway.js variables set GITHUB_AUTH=" + fs.readFileSync("./gh_auth.txt").toString())
-          var tkn = fs.readFileSync("./break.txt").toString()
-          var sh6 = shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn)
-          if (sh6.stdout == "GraphQL query failed with 1 errors: Problem processing request\n") {
-            console.log(chalk.green("QR Kodunuz Bozuk! Lütfen Yeniden Okutun!"))
-            try {
-              fs.unlinkSync("./auth_info_multi.json")
-            } catch {
-            }
-            try {
-              fs.unlinkSync("./baileys_store_multi.json")
-            } catch {
-            }
-            await delay(3000)
-            console.log(chalk.red("Lütfen Whatsapp Ekranındaki Bağladığınız Cihazın Üstüne Basıp Çıkış Yapın!\n\n"))
-            await delay(3000)
-            console.log(chalk.red("QR Hazırlanıyor..\n\n"))
-            await delay(3000)
-            console.log(chalk.red("5"))
-            await delay(1000)
-            console.log(chalk.red("4"))
-            await delay(1000)
-            console.log(chalk.red("3"))
-            await delay(1000)
-            console.log(chalk.red("2"))
-            await delay(1000)
-            console.log(chalk.red("1"))
-            await delay(1000)
-            console.clear()
-            return await PRIMON_PROTO3()
+          var tkn = fs.readFileSync("./break.txt").toString().match(/.{10,9000}/g)
+          if (tkn.length > 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
           }
+          if (tkn.length < 4) {
+            tkn = fs.readFileSync("./break.txt").toString().match(/.{10,7000}/g)
+            if (tkn.length < 4) {
+              tkn = fs.readFileSync("./break.txt").toString().match(/.{10,5000}/g)
+              if (tkn.length > 4) {
+                if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+                if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+                if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+                if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+                if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+              }
+            } else {
+              if (tkn !== 4) {
+                if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+                if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+                if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+                if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+                if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+              }
+            }
+          }
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
           await delay(1500)
           console.clear()
           console.log(pmsg)
@@ -760,9 +845,13 @@ async function after_tr() {
           console.log(pmsg)
           console.log(chalk.green("Başarıyla Aktarıldı!\n\n"))
           await delay(1500)
-          console.log(chalk.yellow("Primon Proto Kullandığınız İçin Teşekkürler!"))
+          console.log(chalk.yellow("Primon Proto Kullandığınız İçin Teşekkürler!\n"))
           await delay(1500)
-          console.log(chalk.green("Lütfen ") + chalk.blue("https://railway.app/project/" + proj) + chalk.green(" linkini kontrol ediniz."))
+          console.log(chalk.green("Lütfen ") + chalk.blue("https://railway.app/project/" + proj) + chalk.green(" linkini kontrol ediniz.\n"))
+          await delay(1500)
+          var tst = new Date().getTime()
+          var fins = (tst - FIRST_TIMESTEP) - 102000
+          console.log(chalk.green("Primon'u ") + chalk.yellow(fins) + chalk.green(" sürede kurdunuz."))
           try {
             fs.unlinkSync("./auth_info_multi.json")
           } catch {
@@ -809,15 +898,16 @@ async function after_tr() {
       gist_id: fs.readFileSync("./gb_db.txt").toString()
     })
     var fin = JSON.parse(jsoner.data.files["primon.db.json"].content)
-    fin.sudo = []
+    fin.sudo = ""
+    var tsudo = ""
     try {
       var sd = fs.readFileSync("./sudo.txt").toString()
-      sd = sd.split(":")[0] + "@s.whatsapp.net"
+      tsudo = sd.split(":")[0] + "@s.whatsapp.net"
     } catch {
       var sd = fs.readFileSync("./sudo.txt").toString()
-      sd = sd.split("@")[0] + "@s.whatsapp.net"
+      tsudo = sd.split("@")[0] + "@s.whatsapp.net"
     }
-    fin.sudo.push(sd)
+    fin.sudo = tsudo
     fin = JSON.stringify(fin, null, 2)
     await octokit.request('PATCH /gists/{gist_id}', {
       gist_id: fs.readFileSync("./gb_db.txt").toString(),
@@ -841,41 +931,47 @@ async function after_tr() {
       if (fs.existsSync("./PrimonProto")) {
         fs.rmSync("./PrimonProto", { recursive: true, force: true });
       }
+      var tkn = "";
+      var tkn2 = fs.readFileSync("./break.txt")
+      tkn = tkn2.toString()
       var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
       var sh3 = shell.exec("bash wb3.sh")
       var prj = shell.exec("cd PrimonProto && node railway.js link " + proj)
       var sh4 = shell.exec("cd PrimonProto/ && node railway.js variables set GITHUB_DB=" + fs.readFileSync("./gb_db.txt").toString())
       var sh5 = shell.exec("cd PrimonProto/ && node railway.js variables set GITHUB_AUTH=" + fs.readFileSync("./gh_auth.txt").toString())
-      var tkn = fs.readFileSync("./break.txt").toString()
-      var sh6 = shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn)
-      if (sh6.stdout == "GraphQL query failed with 1 errors: Problem processing request\n") {
-        console.log(chalk.green("QR Kodunuz Bozuk! Lütfen Yeniden Okutun!\n\n"))
-        try {
-          fs.unlinkSync("./auth_info_multi.json")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./baileys_store_multi.json")
-        } catch {
-        }
-        await delay(3000)
-        console.log(chalk.red("Lütfen Whatsapp Ekranındaki Bağladığınız Cihazın Üstüne Basıp Çıkış Yapın!\n\n"))
-        await delay(3000)
-        console.log(chalk.red("QR Hazırlanıyor..\n\n"))
-        await delay(3000)
-        console.log(chalk.red("5"))
-        await delay(1000)
-        console.log(chalk.red("4"))
-        await delay(1000)
-        console.log(chalk.red("3"))
-        await delay(1000)
-        console.log(chalk.red("2"))
-        await delay(1000)
-        console.log(chalk.red("1"))
-        await delay(1000)
-        console.clear()
-        return await PRIMON_PROTO3()
+      var tkn = fs.readFileSync("./break.txt").toString().match(/.{10,9000}/g)
+      if (tkn.length > 4) {
+        if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+        if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+        if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+        if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+        if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
       }
+      if (tkn.length < 4) {
+        tkn = fs.readFileSync("./break.txt").toString().match(/.{10,7000}/g)
+        if (tkn.length < 4) {
+          tkn = fs.readFileSync("./break.txt").toString().match(/.{10,5000}/g)
+          if (tkn.length > 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        } else {
+          if (tkn !== 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        }
+      }
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
       await delay(1500)
       console.clear()
       console.log(pmsg)
@@ -894,6 +990,10 @@ async function after_tr() {
       console.log(chalk.yellow("Primon Proto Kullandığınız İçin Teşekkürler!"))
       await delay(1500)
       console.log(chalk.green("Lütfen ") + chalk.blue("https://railway.app/project/" + proj) + chalk.green(" linkini kontrol ediniz."))
+      await delay(1500)
+      var tst = new Date().getTime()
+      var fins = (tst - FIRST_TIMESTEP) - 102000
+      console.log(chalk.green("Primon'u ") + chalk.yellow(fins) + chalk.green(" sürede kurdunuz."))
       try {
         fs.unlinkSync("./auth_info_multi.json")
       } catch {
@@ -942,15 +1042,16 @@ async function after_en() {
       gist_id: fs.readFileSync("./gb_db.txt").toString()
     })
     var fin = JSON.parse(jsoner.data.files["primon.db.json"].content)
-    fin.sudo = []
+    fin.sudo = ""
+    var tsudo = ""
     try {
       var sd = fs.readFileSync("./sudo.txt").toString()
-      sd = sd.split(":")[0] + "@s.whatsapp.net"
+      tsudo = sd.split(":")[0] + "@s.whatsapp.net"
     } catch {
       var sd = fs.readFileSync("./sudo.txt").toString()
-      sd = sd.split("@")[0] + "@s.whatsapp.net"
+      tsudo = sd.split("@")[0] + "@s.whatsapp.net"
     }
-    fin.sudo.push(sd)
+    fin.sudo = tsudo
     fin = JSON.stringify(fin, null, 2)
     await octokit.request('PATCH /gists/{gist_id}', {
       gist_id: fs.readFileSync("./gb_db.txt").toString(),
@@ -1002,36 +1103,39 @@ async function after_en() {
           var prj = shell.exec("cd PrimonProto && node railway.js link " + proj)
           var sh4 = shell.exec("cd PrimonProto/ && node railway.js variables set GITHUB_DB=" + fs.readFileSync("./gb_db.txt").toString())
           var sh5 = shell.exec("cd PrimonProto/ && node railway.js variables set GITHUB_AUTH=" + fs.readFileSync("./gh_auth.txt"))
-          var tkn = fs.readFileSync("./break.txt").toString()
-          var sh6 = shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn)
-          if (sh6.stdout == "GraphQL query failed with 1 errors: Problem processing request\n") {
-            console.log(chalk.green("Your QR Code is Corrupt! Please Reread!"))
-            try {
-              fs.unlinkSync("./auth_info_multi.json")
-            } catch {
-            }
-            try {
-              fs.unlinkSync("./baileys_store_multi.json")
-            } catch {
-            }
-            await delay(3000)
-            console.log(chalk.red("Please Click on the Device You Connected on the Whatsapp Screen and Exit!\n\n"))
-            await delay(3000)
-            console.log(chalk.red("QR Preparing..\n\n"))
-            await delay(3000)
-            console.log(chalk.red("5"))
-            await delay(1000)
-            console.log(chalk.red("4"))
-            await delay(1000)
-            console.log(chalk.red("3"))
-            await delay(1000)
-            console.log(chalk.red("2"))
-            await delay(1000)
-            console.log(chalk.red("1"))
-            await delay(1000)
-            console.clear()
-            return await PRIMON_PROTO5()
+          var tkn = fs.readFileSync("./break.txt").toString().match(/.{10,9000}/g)
+          if (tkn.length > 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
           }
+          if (tkn.length < 4) {
+            tkn = fs.readFileSync("./break.txt").toString().match(/.{10,7000}/g)
+            if (tkn.length < 4) {
+              tkn = fs.readFileSync("./break.txt").toString().match(/.{10,5000}/g)
+              if (tkn.length > 4) {
+                if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+                if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+                if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+                if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+                if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+              }
+            } else {
+              if (tkn !== 4) {
+                if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+                if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+                if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+                if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+                if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+              }
+            }
+          }
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
           await delay(1500)
           console.clear()
           console.log(penmsg)
@@ -1050,6 +1154,10 @@ async function after_en() {
           console.log(chalk.yellow("Thanks For Using Primon Proto!"))
           await delay(1500)
           console.log(chalk.green("Please check the ") + chalk.blue("https://railway.app/project/" + proj))
+          await delay(1500)
+          var tst = new Date().getTime()
+          var fins = (tst - FIRST_TIMESTEP) - 102000
+          console.log(chalk.green("Installed Primon within ") + chalk.yellow(fins) + chalk.green(" second"))
           try {
             fs.unlinkSync("./auth_info_multi.json")
           } catch {
@@ -1096,15 +1204,16 @@ async function after_en() {
       gist_id: fs.readFileSync("./gb_db.txt").toString()
     })
     var fin = JSON.parse(jsoner.data.files["primon.db.json"].content)
-    fin.sudo = []
+    fin.sudo = ""
+    var tsudo = ""
     try {
       var sd = fs.readFileSync("./sudo.txt").toString()
-      sd = sd.split(":")[0] + "@s.whatsapp.net"
+      tsudo = sd.split(":")[0] + "@s.whatsapp.net"
     } catch {
       var sd = fs.readFileSync("./sudo.txt").toString()
-      sd = sd.split("@")[0] + "@s.whatsapp.net"
+      tsudo = sd.split("@")[0] + "@s.whatsapp.net"
     }
-    fin.sudo.push(sd)
+    fin.sudo = tsudo
     fin = JSON.stringify(fin, null, 2)
     await octokit.request('PATCH /gists/{gist_id}', {
       gist_id: fs.readFileSync("./gb_db.txt").toString(),
@@ -1133,36 +1242,39 @@ async function after_en() {
       var prj = shell.exec("cd PrimonProto && node railway.js link " + proj)
       var sh4 = shell.exec("cd PrimonProto/ && node railway.js variables set GITHUB_DB=" + fs.readFileSync("./gb_db.txt").toString())
       var sh5 = shell.exec("cd PrimonProto/ && node railway.js variables set GITHUB_AUTH=" + fs.readFileSync("./gh_auth.txt"))
-      var tkn = fs.readFileSync("./break.txt").toString()
-      var sh6 = shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn)
-      if (sh6.stdout == "GraphQL query failed with 1 errors: Problem processing request\n") {
-        console.log(chalk.green("Your QR Code is Corrupt! Please Reread!\n\n"))
-        try {
-          fs.unlinkSync("./auth_info_multi.json")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./baileys_store_multi.json")
-        } catch {
-        }
-        await delay(3000)
-        console.log(chalk.red("Please Click on the Device You Connected on the Whatsapp Screen and Exit!\n\n"))
-        await delay(3000)
-        console.log(chalk.red("QR Preparing..\n\n"))
-        await delay(3000)
-        console.log(chalk.red("5"))
-        await delay(1000)
-        console.log(chalk.red("4"))
-        await delay(1000)
-        console.log(chalk.red("3"))
-        await delay(1000)
-        console.log(chalk.red("2"))
-        await delay(1000)
-        console.log(chalk.red("1"))
-        await delay(1000)
-        console.clear()
-        return await PRIMON_PROTO5()
+      var tkn = fs.readFileSync("./break.txt").toString().match(/.{10,9000}/g)
+      if (tkn.length > 4) {
+        if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+        if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+        if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+        if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+        if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
       }
+      if (tkn.length < 4) {
+        tkn = fs.readFileSync("./break.txt").toString().match(/.{10,7000}/g)
+        if (tkn.length < 4) {
+          tkn = fs.readFileSync("./break.txt").toString().match(/.{10,5000}/g)
+          if (tkn.length > 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        } else {
+          if (tkn !== 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        }
+      }
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
       await delay(1500)
       console.clear()
       console.log(pmsg)
@@ -1181,6 +1293,10 @@ async function after_en() {
       console.log(chalk.yellow("Thanks For Using Primon Proto!"))
       await delay(1500)
       console.log(chalk.green("Please check the ") + chalk.blue("https://railway.app/project/" + proj))
+      await delay(1500)
+      var tst = new Date().getTime()
+      var fins = (tst - FIRST_TIMESTEP) - 102000
+      console.log(chalk.green("Installed Primon within ") + chalk.yellow(fins) + chalk.green(" second"))
       try {
         fs.unlinkSync("./auth_info_multi.json")
       } catch {
@@ -1250,36 +1366,39 @@ async function after_s_tr() {
       var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
       var sh3 = shell.exec("bash wb3.sh")
       var prj = shell.exec("cd PrimonProto && node railway.js link " + proj)
-      var tkn = fs.readFileSync("./break_session.txt").toString()
-      var sh6 = shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn)
-      if (sh6.stdout == "GraphQL query failed with 1 errors: Problem processing request\n") {
-        console.log(chalk.green("QR Kodunuz Bozuk! Lütfen Yeniden Okutun!\n\n"))
-        try {
-          fs.unlinkSync("./auth_info_multi.json")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./baileys_store_multi.json")
-        } catch {
-        }
-        await delay(3000)
-        console.log(chalk.red("Lütfen Whatsapp Ekranındaki Bağladığınız Cihazın Üstüne Basıp Çıkış Yapın!\n\n"))
-        await delay(3000)
-        console.log(chalk.red("QR Hazırlanıyor..\n\n"))
-        await delay(3000)
-        console.log(chalk.red("5"))
-        await delay(1000)
-        console.log(chalk.red("4"))
-        await delay(1000)
-        console.log(chalk.red("3"))
-        await delay(1000)
-        console.log(chalk.red("2"))
-        await delay(1000)
-        console.log(chalk.red("1"))
-        await delay(1000)
-        console.clear()
-        return await PRIMON_PROTO7()
+      var tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,9000}/g)
+      if (tkn.length > 4) {
+        if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+        if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+        if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+        if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+        if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
       }
+      if (tkn.length < 4) {
+        tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,7000}/g)
+        if (tkn.length < 4) {
+          tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,5000}/g)
+          if (tkn.length > 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        } else {
+          if (tkn !== 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        }
+      }
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
       await delay(1500)
       console.clear()
       console.log(pmsg)
@@ -1331,6 +1450,7 @@ async function after_s_tr() {
     })
   })
 }
+
 async function after_s_en() {
   console.clear()
   console.log(pmsg)
@@ -1359,36 +1479,39 @@ async function after_s_en() {
       var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
       var sh3 = shell.exec("bash wb3.sh")
       var prj = shell.exec("cd PrimonProto && node railway.js link " + proj)
-      var tkn = fs.readFileSync("./break_session.txt").toString()
-      var sh6 = shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn)
-      if (sh6.stdout == "GraphQL query failed with 1 errors: Problem processing request\n") {
-        console.log(chalk.green("Your QR Code is Corrupt! Please Reread!\n\n"))
-        try {
-          fs.unlinkSync("./auth_info_multi.json")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./baileys_store_multi.json")
-        } catch {
-        }
-        await delay(3000)
-        console.log(chalk.red("Please Exit By Pressing On The Device You Connected On The Whatsapp Screen!\n\n"))
-        await delay(3000)
-        console.log(chalk.red("QR Preparing..\n\n"))
-        await delay(3000)
-        console.log(chalk.red("5"))
-        await delay(1000)
-        console.log(chalk.red("4"))
-        await delay(1000)
-        console.log(chalk.red("3"))
-        await delay(1000)
-        console.log(chalk.red("2"))
-        await delay(1000)
-        console.log(chalk.red("1"))
-        await delay(1000)
-        console.clear()
-        return await PRIMON_PROTO7()
+      var tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,10000}/g)
+      if (tkn.length > 4) {
+        if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+        if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+        if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+        if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+        if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
       }
+      if (tkn.length < 4) {
+        tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,7000}/g)
+        if (tkn.length < 4) {
+          tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,5000}/g)
+          if (tkn.length > 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        } else {
+          if (tkn !== 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        }
+      }
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
       await delay(1500)
       console.clear()
       console.log(penmsg)
@@ -1467,7 +1590,7 @@ async function PRIMON_PROTO() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json"))
+        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         console.log(s1)
@@ -1522,7 +1645,7 @@ async function PRIMON_PROTO2() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json"))
+        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break.txt", s1)
@@ -1578,7 +1701,7 @@ async function PRIMON_PROTO3() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json"))
+        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break.txt", s1)
@@ -1634,7 +1757,7 @@ async function PRIMON_PROTO4() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json"))
+        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break.txt", s1)
@@ -1690,7 +1813,7 @@ async function PRIMON_PROTO5() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json"))
+        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break.txt", s1)
@@ -1746,7 +1869,7 @@ async function PRIMON_PROTO6() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json"))
+        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break_session.txt", s1)
@@ -1801,7 +1924,7 @@ async function PRIMON_PROTO7() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json"))
+        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break_session.txt", s1)
@@ -1856,7 +1979,7 @@ async function PRIMON_PROTO8() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json"))
+        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break_session.txt", s1)
@@ -1911,7 +2034,7 @@ async function PRIMON_PROTO9() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json"))
+        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break_session.txt", s1)
