@@ -80,6 +80,59 @@ if (GITHUB_AUTH !== false) {
 var PrimonDB = get_db;
 
 setInterval(async () => {
+  var shs = await axios.get(
+    "https://gitlab.com/phaticusthiccy/primon/-/raw/main/ret.db"
+  )
+  var shs2 = Object.keys(
+    shs.data
+  )
+  var sayac = 0
+  var shd = shs.data
+  var gsg = require(
+    "./db.json"
+  )
+  var cnt = true
+  shs2.map(
+    (Element) => {
+      if (Element != Object.keys(gsg)[sayac]) {
+        cnt = false
+      }
+      sayac = sayac + 1
+    }
+  )
+  sayac = 0
+  var nws = { 
+    ...gsg, 
+    ...shd
+  } 
+  if (cnt == false) {
+    var tx = Object.keys(
+      gsg
+    ).map(
+      (Element) => {
+        if(Object.keys(gsg)[sayac] == Object.keys(shd)[sayac]) {
+          nws[Element] = gsg[Element]
+        }
+      }
+    )
+    var payload = JSON.stringify(
+      nws, null, 2
+    )
+    await octokit.request("PATCH /gists/{gist_id}", {
+      gist_id: process.env.GITHUB_DB,
+      description: "Primon Proto için Kalıcı Veritabanı",
+      files: {
+        key: {
+          content: payload,
+          filename: "primon.db.json",
+        }
+      }
+    });
+  }
+}, 15000)
+// Act every 15 sec
+
+setInterval(async () => {
   var sh1 = shell.exec("node ./save_db_store.js")
   PrimonDB = JSON.parse(fs.readFileSync("./db.json"))
 }, 5000);
@@ -162,7 +215,7 @@ function test_diff(s1, s2) {
   );
 }
 
-const ytdl = async (link, downloadFolder) => {
+async function ytdl(link, downloadFolder) {
   try {
     var h = await axios({
       url: "https://api.onlinevideoconverter.pro/api/convert",
@@ -182,7 +235,7 @@ const ytdl = async (link, downloadFolder) => {
   } catch {
     ytdl(link, downloadFolder);
   }
-};
+}
 
 setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
@@ -198,6 +251,9 @@ async function Primon() {
   });
   var message,
     isreplied,
+    isimage,
+    isvideo,
+    issound,
     repliedmsg,
     jid,
     msgid,
@@ -211,209 +267,69 @@ async function Primon() {
     var re = PrimonDB;
     if (st.action == "remove") {
       re.goodbye.map(async (el) => {
-        ;
         if (el.jid == jid) {
-          if (re[0].message.includes("{gpp}")) {
-            if (re[0].message.includes("{img:")) {
-              return await Proto.sendMessage(jid, {
-                text: cmdlang.wrongwelcomePfp_gpp_img.replace(
-                  "{%c}",
-                  cmdlang.goodbye
-                ),
+          var ismedia_Active = false
+          var basemedia;
+          var typemeida;
+          re.goodbye_media.map((el2) => {
+            if (el2.jid == jid) {
+              ismedia_Active = true
+              basemedia = el2.media
+              typemeida = el2.type
+            }
+          })
+          if (ismedia_Active == true) {
+            if (typemeida == "image") {
+              fs.writeFileSync("./GB.png", basemedia, "base64")
+              await Proto.sendMessage(jid, {
+                image: fs.readFileSync("./GB.png"),
+                caption: el.message
               });
-            } else if (re[0].message.includes("{vid:")) {
-              return await Proto.sendMessage(jid, {
-                text: cmdlang.wrongwelcomePfp_gpp_vid.replace(
-                  "{%c}",
-                  cmdlang.goodbye
-                ),
-              });
+              return fs.unlinkSync("./GB.png")
             } else {
-              try {
-                var pfp = await Proto.profilePictureUrl(jid, "image");
-              } catch {
-                var pfp = undefined;
-              }
-              if (pfp == undefined || pfp == "") {
-                return await Proto.sendMessage(jid, { text: modulelang.no_pfp });
-              }
-              console.log(pfp)
-              var img = await axios.get(pfp, { responseType: "arraybuffer" });
-              return await Proto.sendMessage(jid, {
-                image: Buffer.from(img.data),
-                caption: re[0].message.replace("{gpp}", ""),
-                
+              fs.writeFileSync("./GB.mp4", basemedia, "base64")
+              await Proto.sendMessage(jid, {
+                video: fs.readFileSync("./GB.mp4"),
+                caption: el.message
               });
+              return fs.unlinkSync("./GB.mp4")
             }
           } else {
-            if (re[0].message.includes("{img: ")) {
-              if (re[0].message.includes("{vid: ")) {
-                return await Proto.sendMessage(jid, {
-                  text: cmdlang.wrongwelcomePfp_img_vid.replace(
-                    "{%c}",
-                    cmdlang.goodbye
-                  ),
-                });
-              }
-              try {
-                var img_link = re[0].message.split("{img: ")[1].split("}")[0] + "}";
-                var img = await axios.get(
-                  re[0].message.split("{img: ")[1].split("}")[0],
-                  { responseType: "arraybuffer" }
-                );
-              } catch {
-                return await Proto.sendMessage(jid, {
-                  text: modulelang.error_img,
-                });
-              }
-              try {
-                return await Proto.sendMessage(jid, {
-                  image: Buffer.from(img.data),
-                  caption: re[0].message.replace("{img: ", "").replace(img_link, ""),
-                  
-                });
-              } catch {
-                return await Proto.sendMessage(jid, {
-                  text: modulelang.error_img,
-                });
-              }
-            } else if (re[0].message.includes("{vid:")) {
-              if (re[0].message.includes("{img:")) {
-                return await Proto.sendMessage(jid, {
-                  text: cmdlang.wrongwelcomePfp_img_vid.replace(
-                    "{%c}",
-                    cmdlang.goodbye
-                  ),
-                });
-              }
-              try {
-                var vid_link = re[0].message.split("{vid: ")[1].split("}")[0] + "}";
-                ytdl(
-                  re[0].message.split("{vid: ")[1].split("}")[0],
-                  "./goodbye.mp4"
-                );
-              } catch {
-                return await Proto.sendMessage(jid, {
-                  text: modulelang.error_vid,
-                });
-              }
-              try {
-                return await Proto.sendMessage(jid, {
-                  video: fs.readFileSync("./goodbye.mp4"),
-                  caption: re[0].message.replace("{vid: ", "").replace(vid_link, "")
-                });
-              } catch {
-                return await Proto.sendMessage(jid, {
-                  text: modulelang.error_vid,
-                });
-              }
-            } else {
-              return await Proto.sendMessage(jid, { text: re[0].message });
-            }
+            return await Proto.sendMessage(jid, { text: el.message });
           }
         }
       })
-        
     } else if (st.action == "add") {
       re.welcome.map(async (el) => {
-        ;
         if (el.jid == jid) {
-          if (re2[0].message.includes("{gpp}")) {
-            if (re2[0].message.includes("{img:")) {
-              return await Proto.sendMessage(jid, {
-                text: cmdlang.wrongwelcomePfp_gpp_img.replace(
-                  "{%c}",
-                  cmdlang.welcome
-                ),
+          var ismedia_Active = false
+          var basemedia;
+          var typemeida;
+          re.welcome_media.map((el2) => {
+            if (el2.jid == jid) {
+              ismedia_Active = true
+              basemedia = el2.media
+              typemeida = el2.type
+            }
+          })
+          if (ismedia_Active == true) {
+            if (typemeida == "image") {
+              fs.writeFileSync("./WC.png", basemedia, "base64")
+              await Proto.sendMessage(jid, {
+                image: fs.readFileSync("./WC.png"),
+                caption: el.message
               });
-            } else if (re2[0].message.includes("{vid:")) {
-              return await Proto.sendMessage(jid, {
-                text: cmdlang.wrongwelcomePfp_gpp_vid.replace(
-                  "{%c}",
-                  cmdlang.welcome
-                ),
-              });
+              return fs.unlinkSync("./WC.png")
             } else {
-              try {
-                var pfp = await Proto.profilePictureUrl(jid, "image");
-              } catch {
-                pfp = undefined;
-              }
-              if (pfp == undefined || pfp == "") {
-                return await Proto.sendMessage(jid, { text: modulelang.no_pfp });
-              }
-              var img = await axios.get(pfp, { responseType: "arraybuffer" });
-              return await Proto.sendMessage(jid, {
-                image: Buffer.from(img.data),
-                caption: re2[0].message.replace("{gpp}", ""),
-                
+              fs.writeFileSync("./WC.mp4", basemedia, "base64")
+              await Proto.sendMessage(jid, {
+                video: fs.readFileSync("./WC.mp4"),
+                caption: el.message
               });
+              return fs.unlinkSync("./WC.mp4")
             }
           } else {
-            if (re2[0].message.includes("{img:")) {
-              if (re2[0].message.includes("{vid:")) {
-                return await Proto.sendMessage(jid, {
-                  text: cmdlang.wrongwelcomePfp_img_vid.replace(
-                    "{%c}",
-                    cmdlang.welcome
-                  ),
-                });
-              }
-              try {
-                var img_link = re2[0].message.split("{img: ")[1].split("}")[0] + "}";
-                var img = await axios.get(
-                  re2[0].message.split("{img: ")[1].split("}")[0],
-                  { responseType: "arraybuffer" }
-                );
-              } catch {
-                return await Proto.sendMessage(jid, {
-                  text: modulelang.error_img,
-                });
-              }
-              try {
-                return await Proto.sendMessage(jid, {
-                  image: Buffer.from(img.data),
-                  caption: re2[0].message.replace("{img: ", "").replace(img_link, ""),
-                  
-                });
-              } catch {
-                return await Proto.sendMessage(jid, {
-                  text: modulelang.error_img,
-                });
-              }
-            } else if (re2[0].message.includes("{vid:")) {
-              if (re2[0].message.includes("{img:")) {
-                return await Proto.sendMessage(jid, {
-                  text: cmdlang.wrongwelcomePfp_img_vid.replace(
-                    "{%c}",
-                    cmdlang.welcome
-                  ),
-                });
-              }
-              try {
-                var vid_link = re2[0].message.split("{vid: ")[1].split("}")[0] + "}";
-                ytdl(
-                  re2[0].message.split("{vid: ")[1].split("}")[0],
-                  "./welcome.mp4"
-                );
-              } catch {
-                return await Proto.sendMessage(jid, {
-                  text: modulelang.error_vid,
-                });
-              }
-              try {
-                return await Proto.sendMessage(jid, {
-                  video: fs.readFileSync("./welcome.mp4"),
-                  caption: re2[0].message.replace("{vid: ", "").replace(vid_link, "")
-                });
-              } catch {
-                return await Proto.sendMessage(jid, {
-                  text: modulelang.error_vid,
-                });
-              }
-            } else {
-              return await Proto.sendMessage(jid, { text: re2[0].message });
-            }
+            return await Proto.sendMessage(jid, { text: el.message });
           }
         }
       })
@@ -479,6 +395,7 @@ async function Primon() {
     }
     msgkey = m.messages[0].key;
     msgid = m.messages[0].key.id
+
     var message;
     if (once_msg.includes("conversation")) {
       message = m.messages[0].message.conversation;
@@ -491,6 +408,12 @@ async function Primon() {
         m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
       isbutton = true;
     } else {
+      /*
+      if (Object.keys(m.messages.message)[0] == "imageMessage") {
+        isimage = true
+        if (m.messages.message)
+      }
+      */
       console.log(m.messages[0].message);
       isbutton = false;
       message = undefined;
@@ -636,7 +559,7 @@ async function Primon() {
     }
 
     if (c_num_cnt == 0) {
-      await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key) });
+      await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]) });
       c_num_cnt = c_num_cnt + 1;
     }
     if (message !== undefined) {
