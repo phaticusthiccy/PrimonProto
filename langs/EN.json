@@ -113,7 +113,8 @@
       "stop2": "```&stop hi``` \n```&stop <reply a message>```",
       "update": "*Update Successfully Done! Latest Data Added!* ✅\n*Last 3 Changes:* \n\n",
       "update2": "{%d1}```{%c}update \n{%d1}_Adds the most up-to-date data to Primon. Updates the bot_.",
-      "stop3": "{%d1}```{%c}stop``` \n{%d1}_Stops the filter._\n{%d1}\n\n```{%c}stop hi``` \n```{%c}stop <reply a message>```"
+      "stop3": "{%d1}```{%c}stop``` \n{%d1}_Stops the filter._\n{%d1}\n\n```{%c}stop hi``` \n```{%c}stop <reply a message>```",
+      "nosound": "*Audio File Not Acceptable!*"
     }
   }
 }

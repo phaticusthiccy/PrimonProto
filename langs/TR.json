@@ -113,7 +113,8 @@
       "stop2": "```&stop selam``` \n```&stop <mesaja yanıt ver>```",
       "update": "*Güncelleme Başarıyla Yapıldı! En güncel veriler eklendi!* ✅ \n*Son 3 Değişiklik:* \n\n",
       "update2": "{%d1}```{%c}update \n{%d1}_Primon'a en güncel verileri ekler. Botu günceller._",
-      "stop3": "{%d1}```{%c}stop``` \n{%d1}_Filtreyi durdurur._\n{%d1}\n\n```{%c}stop selam``` \n```{%c}stop <mesaja yanıt ver>```"
+      "stop3": "{%d1}```{%c}stop``` \n{%d1}_Filtreyi durdurur._\n{%d1}\n\n```{%c}stop selam``` \n```{%c}stop <mesaja yanıt ver>```",
+      "nosound": "*Ses Dosyası Kabul Edilemez!*"
     }
   }
 }

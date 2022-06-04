@@ -356,8 +356,21 @@ async function Primon() {
     meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
   }
   Proto.ev.on("messages.upsert", async (m) => {
-    if (!m.messages[0].message) return;
-    if (m.messages[0].key.remoteJid == "status@broadcast") return;
+    if (!m.messages[0].message                                                                ) return;
+    if (Object.keys(m.messages[0].message)[0] == "protocolMessage"                            ) return;
+    if (Object.keys(m.messages[0].message)[0] == "reactionMessage"                            ) return;
+    if (Object.keys(m.messages[0].message)[0] == "requestPaymentMessage"                      ) return;
+    if (Object.keys(m.messages[0].message)[0] == "sendPaymentMessage"                         ) return;
+    if (Object.keys(m.messages[0].message)[0] == "senderKeyDistributionMessage"               ) return;
+    if (Object.keys(m.messages[0].message)[0] == "paymentInviteMessage"                       ) return;
+    if (Object.keys(m.messages[0].message)[0] == "orderMessage"                               ) return;
+    if (Object.keys(m.messages[0].message)[0] == "fastRatchetKeySenderKeyDistributionMessage" ) return;
+    if (Object.keys(m.messages[0].message)[0] == "declinePaymentRequestMessage"               ) return;
+    if (Object.keys(m.messages[0].message)[0] == "call"                                       ) return;
+    if (Object.keys(m.messages[0].message)[0] == "cancelPaymentRequestMessage"                ) return;
+    if (Object.keys(m.messages[0].message)[0] == "protocolMessage"                            ) return;
+    if (Object.keys(m.messages[0].message)[0] == "pollUpdateMessage"                          ) return;
+    if (m.messages[0].key.remoteJid == "status@broadcast"                                     ) return;
     jid = m.messages[0].key.remoteJid;
     var once_msg = Object.keys(m.messages[0].message);
 
@@ -370,6 +383,7 @@ async function Primon() {
     }
 
     if (isreplied) {
+      console.log(m.messages[0].message)
       try {
         var once_msg2 = Object.keys(
           m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
@@ -403,20 +417,54 @@ async function Primon() {
     if (once_msg.includes("conversation")) {
       message = m.messages[0].message.conversation;
       isbutton = false;
+      isimage = false;
+      isvideo = false;
+      issound = false;
     } else if (once_msg.includes("extendedTextMessage")) {
       isbutton = false;
+      isimage = false;
+      isvideo = false;
+      issound = false;
       message = m.messages[0].message.extendedTextMessage.text;
     } else if (once_msg.includes("buttonsResponseMessage")) {
-      message =
-        m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
+      message = m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
       isbutton = true;
-    } else {
-      /*
-      if (Object.keys(m.messages.message)[0] == "imageMessage") {
+      isimage = false;
+      isvideo = false;
+      issound = false;
+    } else if (once_msg.includes("imageMessage")) {
+      try {
+        message = m.messages[0].message.imageMessage.caption;
         isimage = true
-        if (m.messages.message)
+        isvideo = false
+        issound = false
+      } catch {
+        message = "";
+        isimage = true;
+        isvideo = false;
+        issound = false;
       }
-      */
+      isbutton = false;
+    } else if (once_msg.includes("videoMessage")) {
+      try {
+        message = m.messages[0].message.videoMessage.caption;
+        isimage = false
+        isvideo = true
+        issound = false
+      } catch {
+        message = "";
+        isimage = false;
+        isvideo = true;
+        issound = false;
+      }
+      isbutton = false;
+    } else if (once_msg.includes("audioMessage")) {
+      isimage = false
+      isvideo = false
+      issound = true
+      isbutton = false;
+      message = ""
+    } else {
       console.log(m.messages[0].message);
       isbutton = false;
       message = undefined;
