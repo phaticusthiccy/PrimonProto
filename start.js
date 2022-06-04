@@ -245,9 +245,12 @@ var command_list = ["textpro", "tagall", "ping", "welcome", "goodbye", "alive", 
   diff = [];
 
 async function Primon() {
+
+  var { version } = await fetchLatestBaileysVersion();
   const Proto = makeWASocket({
     auth: state,
     logger: P({ level: "silent" }),
+    version
   });
   var message,
     isreplied,

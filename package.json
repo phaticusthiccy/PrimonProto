@@ -16,7 +16,7 @@
    },
    "homepage": "https://github.com/phaticusthiccy/PrimonProto#readme",
    "dependencies": {
-      "@adiwajshing/baileys": "latest",
+      "@adiwajshing/baileys": "github:adiwajshing/baileys",
       "@adiwajshing/keyed-db": "latest",
       "@phaticusthiccy/open-apis": "latest",
       "@railway/cli": "latest",
