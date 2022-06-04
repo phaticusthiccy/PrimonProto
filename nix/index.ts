@@ -1,3 +1,12 @@
+// Primon Proto
+// Headless WebSocket, type-safe Whatsapp UserBot
+//
+// Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
+// Multi-Device Lightweight ES5 Module (can usable with mjs)
+//
+// Phaticusthiccy - 2022
+
+
 import { Boom } from '@hapi/boom'
 import P from 'pino'
 import makeWASocket, { AnyMessageContent, delay, DisconnectReason, makeInMemoryStore, useSingleFileAuthState } from '@adiwajshing/baileys'

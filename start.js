@@ -2,7 +2,7 @@
 // Headless WebSocket, type-safe Whatsapp UserBot
 //
 // Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
-// Multi-Device Lightweight ES5 Module (can ysable with mjs)
+// Multi-Device Lightweight ES5 Module (can usable with mjs)
 //
 // Phaticusthiccy - 2022
 
@@ -506,6 +506,9 @@ async function Primon() {
             cmdlang.command + "```" + cmd[0] + "ping" + "```" + "\n" +
             cmdlang.info + modulelang.ping2 + "\n\n\n" +
 
+            cmdlang.command + "```" + cmd[0] + "update" + "```" + "\n" +
+            cmdlang.info + modulelang.update2 + "\n\n\n" +
+
             cmdlang.command + "```" + cmd[0] + "tagall" + "```" + "\n" +
             cmdlang.info + modulelang.tagall2 + "\n" +
             cmdlang.example + "\n\n" + modulelang.tagall3.replace(/&/gi, cmd[0]) + "\n\n\n" +
@@ -682,7 +685,7 @@ async function Primon() {
                       { text: cmds(modulelang.set3, 3, cmd[0]) },
                       { quoted: m.messages[0] }
                     );
-                  }else if (
+                  } else if (
                     args == "welcome" ||
                     args == "Welcome" ||
                     args == "WELCOME"
@@ -690,6 +693,16 @@ async function Primon() {
                     return await Proto.sendMessage(
                       jid,
                       { text: cmds(modulelang.welcome, 3, cmd[0]) },
+                      { quoted: m.messages[0] }
+                    );
+                  } else if (
+                    args == "update" ||
+                    args == "Updtae" ||
+                    args == "UPDATE"
+                  ) {
+                    return await Proto.sendMessage(
+                      jid,
+                      { text: cmds(modulelang.update2, 2, cmd[0]) },
                       { quoted: m.messages[0] }
                     );
                   } else {
@@ -1526,13 +1539,26 @@ async function Primon() {
                 }
               }
 
-
+              // Update
               else if (attr == "update") {
                 await Proto.sendMessage(jid, { delete: msgkey });
-                await Proto.sendMessage(jid, { text: modulelang.update })
-                process.exit()
-
+                var cmmts = await axios.get("https://api.github.com/users/phaticusthiccy/events/public")
+                var news = [];
+                var author_cmts = [];
+                cmmts.data.map((Element) => {
+                  if (Element.repo.name == "phaticusthiccy/PrimonProto") {
+                    news.push(Element.payload.commits[0].message)
+                    author_cmts.push(Element.payload.commits[0].author.name)
+                  }
+                })
+                var msg = 
+                "*◽ " + author_cmts[0] + "* :: _" + news[0] + "_" + "\n" +
+                "*◽ " + author_cmts[1] + "* :: _" + news[1] + "_" + "\n" +
+                "*◽ " + author_cmts[2] + "* :: _" + news[2] + "_"
+                await Proto.sendMessage(jid, { text: modulelang.update + msg})
+                shell.exec("npm start")
               }
+
               // Alive
               else if (attr == "alive") {
                 await Proto.sendMessage(jid, { delete: msgkey });

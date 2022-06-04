@@ -1,0 +1,45 @@
+// Primon Proto
+// Headless WebSocket, type-safe Whatsapp UserBot
+//
+// Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
+// Multi-Device Lightweight ES5 Module (can usable with mjs)
+//
+// Phaticusthiccy - 2022
+
+
+syntax = "proto3";
+
+option plugin = true;
+option DB = true;
+import package "./types.proto";
+option allow_alias = true;
+option optimize_for = SPEED;
+option deprecated = true;
+option optimize_for = CODE_SIZE;
+package types.proto;
+rpc Run (types.proto) returns (Response);
+
+message plugin {
+    string name = 1;
+    string code = 2;
+    string handler = 3;
+    string sendMessage = 4;
+    string option = 5;
+    string delete = 6;
+    enum key {
+        key = 1;
+    }
+    string jid = 7;
+}
+
+message type {
+    string type = 1;
+    string name = 2;
+    repeated string console = 3;
+    message inner {
+        bool valid = 1;
+        bool run = 2;
+    }
+    int64 unit = 4;
+    uint64 int = 5;
+}

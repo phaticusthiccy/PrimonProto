@@ -111,7 +111,8 @@
       "filter3": "{%d1}```{%c}filter``` \n{%d1}_Gruba veya sohbete filtre ayarlar. Ayarlanan filtre mesaj ile aynıysa otomatik gönderilir._ \n{%d1}\n\n```{%c}filter \"selam\" \"naber, nasılsın?\"``` \n```{%c}filter selam <mesaja yanıt ver>```",
       "stop": "_Filtreyi durdurur._",
       "stop2": "```&stop selam``` \n```&stop <mesaja yanıt ver>```",
-      "update": "*Güncelleme Başarıyla Yapıldı! En güncel veriler eklendi!* ✅",
+      "update": "*Güncelleme Başarıyla Yapıldı! En güncel veriler eklendi!* ✅ \n*Son 3 Değişiklik:* \n\n",
+      "update2": "{%d1}```{%c}update \n{%d1}_Primon'a en güncel verileri ekler. Botu günceller._",
       "stop3": "{%d1}```{%c}stop``` \n{%d1}_Filtreyi durdurur._\n{%d1}\n\n```{%c}stop selam``` \n```{%c}stop <mesaja yanıt ver>```"
     }
   }
