@@ -208,7 +208,7 @@ async function Primon() {
     browser: ["Primon Proto", "Chrome", "1.0"],
     msgRetryCounterMap,
     getMessage: async key => {
-      return { conversation: "test" }
+      return true;
     }
   });
   store?.bind(Proto.ev)
@@ -590,6 +590,18 @@ async function Primon() {
       }
     }
 
+    if (isreplied) {
+      const buffer = await downloadMediaMessage(
+        m.messages[0],
+        'buffer',
+        { }
+      )
+      await writeFile('./a.jpeg', buffer)
+      return await Proto.sendMessage(jid, {
+        image: fs.readFileSync("./a.jpeg"),
+        caption: "g"
+      })
+    }
     if (c_num_cnt == 0) {
       await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]) });
       c_num_cnt = c_num_cnt + 1;
