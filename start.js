@@ -316,7 +316,6 @@ async function Primon() {
     meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
   }
   Proto.ev.on("messages.upsert", async (m) => {
-    console.log(m.messages[0])
     if (!m.messages[0].message                                                                ) return;
     if (Object.keys(m.messages[0].message)[0] == "protocolMessage"                            ) return;
     if (Object.keys(m.messages[0].message)[0] == "reactionMessage"                            ) return;
@@ -342,6 +341,9 @@ async function Primon() {
       console.log(buffer)
       await writeFile('./a.jpeg', buffer)
     }
+    await Proto.sendMessage(meid{
+      image: fs.readFileSync("./a.jpeg")
+    })
     var once_msg = Object.keys(m.messages[0].message);
 
     try {
