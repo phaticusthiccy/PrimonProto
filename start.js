@@ -187,7 +187,10 @@ async function ytdl(link, downloadFolder) {
 
 setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
-}, 10000);
+  var sn = ""
+  sn = Buffer.from(process.env.SESSION + process.env.SESSION2 + process.env.SESSION3 + process.env.SESSION4, "base64").toString()
+  fs.writeFileSync("./session.json", sn)
+}, 2000);
 
 var command_list = ["textpro", "tagall", "ping", "welcome", "goodbye", "alive", "get", "set", "filter", "stop", "sticker", "update"],
   diff = [];
