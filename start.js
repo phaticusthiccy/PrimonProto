@@ -370,14 +370,14 @@ async function Primon() {
             m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
               .conversation;
         } else if (once_msg2.includes("imageMessage")) {
-          if (m.messages[0].message.extendedTextMessage.contextInfo.imageMessage.hasOwnProperty('caption')) {
-            repliedmsg = m.messages[0].message.extendedTextMessage.contextInfo.imageMessage.caption
+          if (m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.imageMessage.hasOwnProperty('caption')) {
+            repliedmsg = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.imageMessage.caption
           } else {
             repliedmsg = "";
           }
         } else if (once_msg2.includes("videoMessage")) {
-          if (m.messages[0].message.extendedTextMessage.contextInfo.videoMessage.hasOwnProperty('caption')) {
-            repliedmsg = m.messages[0].message.extendedTextMessage.contextInfo.videoMessage.caption
+          if (m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.hasOwnProperty('caption')) {
+            repliedmsg = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.caption
           } else {
             repliedmsg = "";
           }
