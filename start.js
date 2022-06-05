@@ -449,8 +449,12 @@ async function Primon() {
       message = undefined;
     }
 
+    if ((isimage && isreplied) || (isvideo && isreplied) || (issound && isreplied)) {
+      var reply_download_key = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
+    }
     console.log(message)
     console.log(isreplied)
+    console.log(isimage)
     console.log(repliedmsg)
     
     var cmd1 = PrimonDB.handler;
