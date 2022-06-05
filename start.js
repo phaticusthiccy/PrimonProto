@@ -97,8 +97,8 @@ setInterval(async () => {
       }
     }
   });
-}, 15000)
-// Act every 15 sec
+}, 60000)
+// Act every 1 min
 
 setInterval(async () => {
   var sh1 = shell.exec("node ./save_db_store.js")
