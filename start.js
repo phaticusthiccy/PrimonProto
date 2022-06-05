@@ -83,52 +83,20 @@ setInterval(async () => {
   var shs = await axios.get(
     "https://gitlab.com/phaticusthiccy/primon/-/raw/main/ret.db"
   )
-  var shs2 = Object.keys(
-    shs.data
-  )
-  var sayac = 0
   var shd = shs.data
-  var gsg = require(
-    "./db.json"
-  )
-  var cnt = true
-  shs2.map(
-    (Element) => {
-      if (Element != Object.keys(gsg)[sayac]) {
-        cnt = false
+  var gsg = require("./db.json")
+  var nws = { ...shd, ...gsg }
+  var payload = JSON.stringify(nws, null, 2)
+  await octokit.request("PATCH /gists/{gist_id}", {
+    gist_id: process.env.GITHUB_DB,
+    description: "Primon Proto için Kalıcı Veritabanı",
+    files: {
+      key: {
+        content: payload,
+        filename: "primon.db.json",
       }
-      sayac = sayac + 1
     }
-  )
-  sayac = 0
-  var nws = { 
-    ...gsg, 
-    ...shd
-  } 
-  if (cnt == false) {
-    var tx = Object.keys(
-      gsg
-    ).map(
-      (Element) => {
-        if(Object.keys(gsg)[sayac] == Object.keys(shd)[sayac]) {
-          nws[Element] = gsg[Element]
-        }
-      }
-    )
-    var payload = JSON.stringify(
-      nws, null, 2
-    )
-    await octokit.request("PATCH /gists/{gist_id}", {
-      gist_id: process.env.GITHUB_DB,
-      description: "Primon Proto için Kalıcı Veritabanı",
-      files: {
-        key: {
-          content: payload,
-          filename: "primon.db.json",
-        }
-      }
-    });
-  }
+  });
 }, 15000)
 // Act every 15 sec
 
@@ -401,6 +369,18 @@ async function Primon() {
           repliedmsg =
             m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
               .conversation;
+        } else if (once_msg2.includes("imageMessage")) {
+          if (m.messages[0].message.extendedTextMessage.contextInfo.imageMessage.hasOwnProperty('caption')) {
+            repliedmsg = m.messages[0].message.extendedTextMessage.contextInfo.imageMessage.caption
+          } else {
+            repliedmsg = "";
+          }
+        } else if (once_msg2.includes("videoMessage")) {
+          if (m.messages[0].message.extendedTextMessage.contextInfo.videoMessage.hasOwnProperty('caption')) {
+            repliedmsg = m.messages[0].message.extendedTextMessage.contextInfo.videoMessage.caption
+          } else {
+            repliedmsg = "";
+          }
         } else {
           repliedmsg = undefined;
         }
@@ -465,10 +445,13 @@ async function Primon() {
       isbutton = false;
       message = ""
     } else {
-      console.log(m.messages[0].message);
       isbutton = false;
       message = undefined;
     }
+
+    console.log(message)
+    console.log(isreplied)
+    console.log(repliedmsg)
     
     var cmd1 = PrimonDB.handler;
     var cmd;
@@ -558,7 +541,7 @@ async function Primon() {
             cmdlang.info + modulelang.ping2 + "\n\n\n" +
 
             cmdlang.command + "```" + cmd[0] + "update" + "```" + "\n" +
-            cmdlang.info + modulelang.update2 + "\n\n\n" +
+            cmdlang.info + modulelang.update3 + "\n\n\n" +
 
             cmdlang.command + "```" + cmd[0] + "tagall" + "```" + "\n" +
             cmdlang.info + modulelang.tagall2 + "\n" +
@@ -1505,7 +1488,7 @@ async function Primon() {
                     });
                     return await Proto.sendMessage(
                       jid,
-                      { text: filterlang.succ.replace("&", args) }
+                      { text: filterlang.succ.replace("&", trigger) }
                     );
                   }
                 }
