@@ -83,10 +83,6 @@ if (GITHUB_AUTH !== false) {
 
 var PrimonDB = get_db;
 
-setInterval(() => {
-  console.clear()
-}, 20000)
-
 setInterval(async () => {
   var sh1 = shell.exec("node ./save_db_store.js")
   PrimonDB = JSON.parse(fs.readFileSync("./db.json"))
@@ -330,7 +326,7 @@ async function Primon() {
     if (Object.keys(m.messages[0].message)[0] == "cancelPaymentRequestMessage"                ) return;
     if (Object.keys(m.messages[0].message)[0] == "protocolMessage"                            ) return;
     if (Object.keys(m.messages[0].message)[0] == "pollUpdateMessage"                          ) return;
-    if (m.messages[0].key.remoteJid == "status@broadcast"                                     ) return;
+    if (m.messages[0].key.remoteJid           == "status@broadcast"                           ) return;
     jid = m.messages[0].key.remoteJid;
     if (Object.keys(m.messages[0].message)[0] == "imageMessage") {
       const buffer = await downloadMediaMessage(
@@ -341,7 +337,7 @@ async function Primon() {
       console.log(buffer)
       await writeFile('./a.jpeg', buffer)
     }
-    await Proto.sendMessage(meid{
+    await Proto.sendMessage(meid, {
       image: fs.readFileSync("./a.jpeg")
     })
     var once_msg = Object.keys(m.messages[0].message);
