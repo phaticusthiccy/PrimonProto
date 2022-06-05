@@ -11,6 +11,7 @@ const {
   MessageType,
   MessageOptions,
   Mimetype,
+  MessageRetryMap,
   useSingleFileAuthState,
   DisconnectReason,
   fetchLatestBaileysVersion,
@@ -47,6 +48,8 @@ const openapi = require("@phaticusthiccy/open-apis");
 const config = require("./config_proto");
 const { Octokit } = require("@octokit/core");
 const shell = require('shelljs');
+
+const msgRetryCounterMap = { }
 
 const {
   dictEmojis,
@@ -202,8 +205,13 @@ async function Primon() {
     auth: state,
     logger: P({ level: "silent" }),
     version,
-    browser: ["Primon Proto", "Chrome", "1.0"]
+    browser: ["Primon Proto", "Chrome", "1.0"],
+    msgRetryCounterMap,
+    getMessage: async key => {
+      return { conversation: "test" }
+    }
   });
+  store?.bind(Proto.ev)
   var message,
     isreplied,
     isimage,
@@ -290,7 +298,6 @@ async function Primon() {
       })
     }
   });
-  Proto.ev.on("creds.update", saveState);
 
   if (PrimonDB.sudo !== false) {
     if (PrimonDB.sudo.includes(",")) {
@@ -1731,6 +1738,8 @@ async function Primon() {
     }
     return console.log(sessionlang.run);
   });
+  Proto.ev.on("creds.update", saveState);
+  return Proto;
 }
 try {
   Primon();
