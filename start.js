@@ -317,15 +317,6 @@ async function Primon() {
   }
   Proto.ev.on("messages.upsert", async (m) => {
     console.log(m.messages[0])
-    if (Object.keys(m.messages[0].message)[0] == "imageMessage") {
-    const buffer = await downloadMediaMessage(
-      m.messages[0],
-      'buffer',
-      { }
-    )
-    console.log(buffer)
-    await writeFile('./a.jpeg', buffer)
-    }
     if (!m.messages[0].message                                                                ) return;
     if (Object.keys(m.messages[0].message)[0] == "protocolMessage"                            ) return;
     if (Object.keys(m.messages[0].message)[0] == "reactionMessage"                            ) return;
@@ -342,6 +333,15 @@ async function Primon() {
     if (Object.keys(m.messages[0].message)[0] == "pollUpdateMessage"                          ) return;
     if (m.messages[0].key.remoteJid == "status@broadcast"                                     ) return;
     jid = m.messages[0].key.remoteJid;
+    if (Object.keys(m.messages[0].message)[0] == "imageMessage") {
+      const buffer = await downloadMediaMessage(
+        m.messages[0],
+        'buffer',
+        { }
+      )
+      console.log(buffer)
+      await writeFile('./a.jpeg', buffer)
+    }
     var once_msg = Object.keys(m.messages[0].message);
 
     try {
