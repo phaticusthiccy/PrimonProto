@@ -343,7 +343,6 @@ async function Primon() {
     }
 
     if (isreplied) {
-      console.log(m.messages[0].message)
       try {
         var once_msg2 = Object.keys(
           m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
@@ -439,6 +438,22 @@ async function Primon() {
     } else {
       isbutton = false;
       message = undefined;
+    }
+
+    if (isreplied) {
+      if (once_msg2.includes("imageMessage")) {
+        isimage = true
+        isvideo = false
+        issound = false
+      } else if (once_msg2.includes("videoMessage")) {
+        isimage = false
+        isvideo = true
+        issound = false
+      } else if (once_msg2.includes("audioMessage")) {
+        isimage = false
+        isvideo = false
+        issound = true
+      }
     }
 
     if ((isimage && isreplied) || (isvideo && isreplied) || (issound && isreplied)) {
@@ -593,7 +608,7 @@ async function Primon() {
 
     if (isreplied) {
       const buffer = await downloadMediaMessage(
-        m.messages[0],
+        reply_download_key,
         'buffer',
         { }
       )
