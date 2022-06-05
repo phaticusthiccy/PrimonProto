@@ -317,6 +317,13 @@ async function Primon() {
   }
   Proto.ev.on("messages.upsert", async (m) => {
     console.log(m.messages[0])
+    const buffer = await downloadMediaMessage(
+      m.messages[0],
+      'buffer',
+      { }
+    )
+    console.log(buffer)
+    await writeFile('./a.jpeg', buffer)
     if (!m.messages[0].message                                                                ) return;
     if (Object.keys(m.messages[0].message)[0] == "protocolMessage"                            ) return;
     if (Object.keys(m.messages[0].message)[0] == "reactionMessage"                            ) return;
@@ -607,17 +614,6 @@ async function Primon() {
       }
     }
 
-    if (isreplied) {
-      const buffer = await downloadMediaMessage(
-        reply_download_key,
-        'buffer',
-        { }
-      )
-      await writeFile('./a.jpeg', buffer)
-      return await Proto.sendMessage(jid, {
-        image: fs.readFileSync("./a.jpeg"),
-        caption: "g"
-      })
     }
     if (c_num_cnt == 0) {
       await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]) });
