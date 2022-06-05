@@ -15,6 +15,7 @@ const {
   useSingleFileAuthState,
   DisconnectReason,
   fetchLatestBaileysVersion,
+  downloadMediaMessage,
   generateForwardMessageContent,
   prepareWAMessageMedia,
   generateWAMessageFromContent,
