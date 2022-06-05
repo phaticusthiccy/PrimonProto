@@ -613,8 +613,6 @@ async function Primon() {
         })
       }
     }
-
-    }
     if (c_num_cnt == 0) {
       await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]) });
       c_num_cnt = c_num_cnt + 1;
