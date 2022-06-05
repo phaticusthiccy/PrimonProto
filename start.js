@@ -83,6 +83,9 @@ if (GITHUB_AUTH !== false) {
 
 var PrimonDB = get_db;
 
+setInterval(() => {
+  console.clear()
+}, 20000)
 
 setInterval(async () => {
   var sh1 = shell.exec("node ./save_db_store.js")
