@@ -79,35 +79,6 @@ if (GITHUB_AUTH !== false) {
 
 var PrimonDB = get_db;
 
-setInterval(async () => {
-  var shs = await axios.get("https://gitlab.com/phaticusthiccy/primon/-/raw/main/ret.db")
-  var shd = shs.data
-  var gsg = require("./db.json")
-
-  function extend(obj1, obj2) {
-    for (var key in obj2) {             
-      if (obj1[key]) {                
-          obj1[key]                   
-      } else {
-          obj1[key] = obj2[key]       
-      }
-    }
-    return obj1;                        
-  }
-  extend(gsg, shd);
-  var payload = JSON.stringify(gsg, null, 2)
-  await octokit.request("PATCH /gists/{gist_id}", {
-    gist_id: process.env.GITHUB_DB,
-    description: "Primon Proto için Kalıcı Veritabanı",
-    files: {
-      key: {
-        content: payload,
-        filename: "primon.db.json",
-      }
-    }
-  });
-}, 60000)
-// Act every 1 min
 
 setInterval(async () => {
   var sh1 = shell.exec("node ./save_db_store.js")
@@ -227,7 +198,8 @@ async function Primon() {
   const Proto = makeWASocket({
     auth: state,
     logger: P({ level: "silent" }),
-    version
+    version,
+    browser: ["Primon Proto", "Chrome", "1.0"]
   });
   var message,
     isreplied,
