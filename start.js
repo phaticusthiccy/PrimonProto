@@ -317,6 +317,7 @@ async function Primon() {
   }
   Proto.ev.on("messages.upsert", async (m) => {
     console.log(m.messages[0])
+    if (Object.keys(m.messages[0].message)[0] == "imageMessage") {
     const buffer = await downloadMediaMessage(
       m.messages[0],
       'buffer',
@@ -324,6 +325,7 @@ async function Primon() {
     )
     console.log(buffer)
     await writeFile('./a.jpeg', buffer)
+    }
     if (!m.messages[0].message                                                                ) return;
     if (Object.keys(m.messages[0].message)[0] == "protocolMessage"                            ) return;
     if (Object.keys(m.messages[0].message)[0] == "reactionMessage"                            ) return;
