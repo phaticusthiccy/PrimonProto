@@ -633,11 +633,10 @@ async function Primon() {
 
               if (attr == "down") {
                 if (isimage && isreplied) {
-                  const buffer = await downloadMediaMessage(
-                    extractMessageContent(m),
-                    'buffer',
-                    { }
+                  const buffer = await downloadContentFromMessage(
+                    extractMessageContent(m), "image"
                   )
+                  console.log(buffer)
                   await fs.writeFileSync('./a.jpeg', buffer)
                   return await Proto.sendMessage(meid, {
                     image: fs.readFileSync("./a.jpeg")
