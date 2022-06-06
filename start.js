@@ -12,6 +12,7 @@ const {
   MessageOptions,
   Mimetype,
   MessageRetryMap,
+  extractMessageContent,
   useSingleFileAuthState,
   DisconnectReason,
   fetchLatestBaileysVersion,
@@ -630,16 +631,18 @@ async function Primon() {
                 args = "";
               }
 
-              if (isimage && isreplied) {
-                const buffer = await downloadMediaMessage(
-                  reply_download_key,
-                  'buffer',
-                  { }
-                )
-                await fs.writeFileSync('./a.jpeg', buffer)
-                return await Proto.sendMessage(meid, {
-                  image: fs.readFileSync("./a.jpeg")
-                })
+              if (attr == "down") {
+                if (isimage && isreplied) {
+                  const buffer = await downloadMediaMessage(
+                    extractMessageContent(m),
+                    'buffer',
+                    { }
+                  )
+                  await fs.writeFileSync('./a.jpeg', buffer)
+                  return await Proto.sendMessage(meid, {
+                    image: fs.readFileSync("./a.jpeg")
+                  })
+                }
               }
               // Menu
               if (attr == "menu") {
