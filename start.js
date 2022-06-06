@@ -328,18 +328,7 @@ async function Primon() {
     if (Object.keys(m.messages[0].message)[0] == "pollUpdateMessage"                          ) return;
     if (m.messages[0].key.remoteJid           == "status@broadcast"                           ) return;
     jid = m.messages[0].key.remoteJid;
-    console.log(Object.keys(m.messages[0].message))
-    if (Object.keys(m.messages[0].message)[0] == "imageMessage") {
-      const buffer = await downloadMediaMessage(
-        m.messages[0],
-        'buffer',
-        { }
-      )
-      await fs.writeFileSync('./a.jpeg', buffer)
-      await Proto.sendMessage(meid, {
-        image: fs.readFileSync("./a.jpeg")
-      })
-    }
+    
     var once_msg = Object.keys(m.messages[0].message);
 
     try {
@@ -465,7 +454,7 @@ async function Primon() {
     }
 
     if ((isimage && isreplied) || (isvideo && isreplied) || (issound && isreplied)) {
-      var reply_download_key = m.messages[0]
+      var reply_download_key = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
     }
     console.log(message)
     console.log(isreplied)
@@ -639,6 +628,18 @@ async function Primon() {
                 args = arg.c;
               } else {
                 args = "";
+              }
+
+              if (isimage && isreplied) {
+                const buffer = await downloadMediaMessage(
+                  reply_download_key,
+                  'buffer',
+                  { }
+                )
+                await fs.writeFileSync('./a.jpeg', buffer)
+                return await Proto.sendMessage(meid, {
+                  image: fs.readFileSync("./a.jpeg")
+                })
               }
               // Menu
               if (attr == "menu") {
