@@ -328,13 +328,13 @@ async function Primon() {
     if (Object.keys(m.messages[0].message)[0] == "pollUpdateMessage"                          ) return;
     if (m.messages[0].key.remoteJid           == "status@broadcast"                           ) return;
     jid = m.messages[0].key.remoteJid;
+    console.log(Object.keys(m.messages[0].message))
     if (Object.keys(m.messages[0].message)[0] == "imageMessage") {
       const buffer = await downloadMediaMessage(
         m.messages[0],
         'buffer',
         { }
       )
-      console.log(buffer)
       await writeFile('./a.jpeg', buffer)
     }
     await Proto.sendMessage(meid, {
