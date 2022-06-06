@@ -336,10 +336,10 @@ async function Primon() {
         { }
       )
       await writeFile('./a.jpeg', buffer)
+      await Proto.sendMessage(meid, {
+        image: fs.readFileSync("./a.jpeg")
+      })
     }
-    await Proto.sendMessage(meid, {
-      image: fs.readFileSync("./a.jpeg")
-    })
     var once_msg = Object.keys(m.messages[0].message);
 
     try {
