@@ -50,6 +50,7 @@ const openapi = require("@phaticusthiccy/open-apis");
 const config = require("./config_proto");
 const { Octokit } = require("@octokit/core");
 const shell = require('shelljs');
+const { exec } = require("child_process");
 
 const msgRetryCounterMap = { }
 
@@ -87,11 +88,7 @@ var PrimonDB = get_db;
 setInterval(async () => {
   var sh1 = shell.exec("node ./save_db_store.js")
   PrimonDB = JSON.parse(fs.readFileSync("./db.json"))
-}, 5000);
-// Save DB every 5 second
-// 1min = 12 auth
-// 10 min = 120 auth
-// 1 hour = 720 auth // Reaming 4280 auth per hour
+}, 4000);
 
 var c_num_cnt = 0;
 function cmds(text, arguments = 3, cmd) {
@@ -457,10 +454,6 @@ async function Primon() {
     if ((isimage && isreplied) || (isvideo && isreplied) || (issound && isreplied)) {
       var reply_download_key = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
     }
-    console.log(message)
-    console.log(isreplied)
-    console.log(isimage)
-    console.log(repliedmsg)
     
     var cmd1 = PrimonDB.handler;
     var cmd;
@@ -529,7 +522,6 @@ async function Primon() {
     // Buttons
 
     PrimonDB.filter.map(async (el) => {
-      ;
       if (el.jid == jid && el.trigger == message) {
         if (m.messages[0].key.fromMe) {
           return;
@@ -643,8 +635,46 @@ async function Primon() {
                   })
                 }
               }
+
+              else if (attr == "term") {
+                if (args == "") {
+                  return await Proto.sendMessage(jid, { text: modulelang.need_cmd });
+                } else {
+                  if (args.match("rm") !== null && args.match("unlink") !== null) {
+                    return await Proto.sendMessage(jid, { text: modulelang.valid_cmd });
+                  } else {
+                    var command_t = exec(args)
+                    command_t.stdout.on('data', async (output) => {
+                      await Proto.sendMessage(jid, { text: output.toString() });
+                    })
+                    command_t.stdout.on('end', async () => {
+                      return await Proto.sendMessage(jid, { text: modulelang.done_cmd });
+                    })
+                  }
+                }
+              }
+
+              else if (attr == "yt") {
+                await Proto.sendMessage(jid, { delete: msgkey });
+                if (args == "") {
+                  return await Proto.sendMessage(jid, { text: modulelang.need_yt });
+                } else {
+                  var valid_url = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/gm
+                  if (valid_url.test(args)) {
+                    await Proto.sendMessage(jid, { text: modulelang.yt_down });
+                    var down = await ytdl(args, "./YT.mp4");
+
+                    return await Proto.sendMessage(jid, {
+                      video: fs.readFileSync("./YT.mp4"),
+                      caption: MenuLang.by
+                    })
+                  } else {
+                    return await Proto.sendMessage(jid, { text: modulelang.need_yt });
+                  }
+                }
+              }
               // Menu
-              if (attr == "menu") {
+              else if (attr == "menu") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
                   var msg = await Proto.sendMessage(jid, config.TEXTS.MENU[0]);

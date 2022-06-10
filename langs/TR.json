@@ -117,7 +117,12 @@
       "update3": "_Primon'a en güncel verileri ekler. Botu günceller._",
       "nosound": "*Ses Dosyası Kabul Edilemez!*",
       "noimage": "*Resim Dosyası Kabul Edilemez!*",
-      "novideo": "*Video Kabul Edilemez!*"
+      "novideo": "*Video Kabul Edilemez!*",
+      "need_yt": "*Lütfen herhangi bir YouTube bağlantısı girin.*",
+      "yt_down": "_Video İndiriliyor.._",
+      "need_cmd": "*Lütfen Herhangi Bir Shell Kodu Girin!*",
+      "valid_cmd": "*Lütfen Primon dosyalarını silmek için herhangi bir komut kullanmayın!*",
+      "done_cmd": "*İşlem Bitti!*"
     }
   }
 }

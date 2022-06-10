@@ -117,7 +117,12 @@
       "update3": "_Adds the most up-to-date data to Primon. Updates the bot_",
       "nosound": "*Audio File Not Acceptable!*",
       "noimage": "*Image File Not Acceptable!*",
-      "novideo": "*Video Not Acceptable!*"
+      "novideo": "*Video Not Acceptable!*",
+      "need_yt": "*Please enter any YouTube link.*",
+      "yt_down": "_Video Downloading.._",
+      "need_cmd": "*Please Enter Any Shell Code!*",
+      "valid_cmd": "*Please do not use any commands to delete Primon files!*",
+      "done_cmd": "*Transaction Done!*"
     }
   }
 }
