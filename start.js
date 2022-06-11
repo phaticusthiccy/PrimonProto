@@ -167,8 +167,6 @@ function test_diff(s1, s2) {
 }
 
 async function ytdl(link, downloadFolder) {
-  const path = Path.resolve(__dirname, './', downloadFolder)
-  const writer = fs.createWriteStream(path)
   try {
     var h = await axios({
       url: "https://api.onlinevideoconverter.pro/api/convert",
@@ -180,14 +178,11 @@ async function ytdl(link, downloadFolder) {
     const response = await axios({
       method: "GET",
       url: h.data.url[0].url,
-      responseType: "stream",
+      responseType: "arraybuffer",
     });
 
-    response.data.pipe(writer)
-      return new Promise((resolve, reject) => {
-      writer.on('finish', resolve)
-      writer.on('error', reject)
-    })
+    fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+    return true;
   } catch {
     ytdl(link, downloadFolder);
   }
@@ -197,7 +192,12 @@ setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
 }, 10000);
 
-var command_list = ["textpro", "tagall", "ping", "welcome", "goodbye", "alive", "get", "set", "filter", "stop", "sticker", "update"],
+var command_list = [
+  "textpro", "tagall", "ping", "welcome", 
+  "goodbye", "alive", "get", "set", 
+  "filter", "stop", "sticker", "update", 
+  "yt", "video", "term"
+],
   diff = [];
 
 async function Primon() {

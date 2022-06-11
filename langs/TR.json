@@ -124,10 +124,10 @@
       "valid_cmd": "*Lütfen Primon dosyalarını silmek için herhangi bir komut kullanmayın!*",
       "done_cmd": "*İşlem Bitti!*",
       "need_q": "*Lütfen aramak istediğiniz videonun ismini yazın!*",
-      "yt_title": "◽ _Video Başlığı:_ ",
-      "yt_duration": "◽ _Video Uzunluğu:_ ",
-      "yt_author": "◽ _Video Sahibi:_ ",
-      "yt_link": "▪ _Video Linki:_ "
+      "yt_title": "▪ _Video Başlığı:_ ",
+      "yt_duration": "\n▪ _Video Uzunluğu:_ ",
+      "yt_author": "\n▪ _Video Sahibi:_ ",
+      "yt_link": "\n▪ _Video Linki:_ "
     }
   }
 }
