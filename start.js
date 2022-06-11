@@ -145,8 +145,8 @@ function cmds(text, arguments = 3, cmd) {
     payload = text
       .replace("{%d1}", cmdlang.command)
       .replace("{%d1}", cmdlang.info)
-      .replace("{%d1}", cmdlang.example)
       .replace("{%d1}", cmdlang.danger)
+      .replace("{%d1}", cmdlang.example)
       .replace(/{%c}/gi, cmd);
   } else {
     payload = text
@@ -367,6 +367,12 @@ async function Primon() {
     meid = Proto.user.id.split(":")[0] + "@s.whatsapp.net";
   } catch {
     meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
+  }
+  if (c_num_cnt == 0) {
+    var gmsg = await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]) });
+    c_num_cnt = c_num_cnt + 1;
+    saveMessageST(gmsg.key.id, startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]))
+    return;
   }
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message                                                                ) return;
@@ -640,7 +646,20 @@ async function Primon() {
 
             cmdlang.command + "```" + cmd[0] + "stop" + "```" + "\n" +
             cmdlang.info + modulelang.stop + "\n" +
-            cmdlang.example + "\n\n" + modulelang.stop2.replace(/&/gi, cmd[0])
+            cmdlang.example + "\n\n" + modulelang.stop2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+            cmdlang.command + "```" + cmd[0] + "yt" + "```" + "\n" +
+            cmdlang.info + modulelang.yt1 + "\n" +
+            cmdlang.example + "\n\n" + modulelang.yt2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+            cmdlang.command + "```" + cmd[0] + "video" + "```" + "\n" +
+            cmdlang.info + modulelang.yt3 + "\n" +
+            cmdlang.example + "\n\n" + modulelang.yt4.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+            cmdlang.command + "```" + cmd[0] + "term" + "```" + "\n" +
+            cmdlang.info + modulelang.term1 + "\n" +
+            cmdlang.danger + modulelang.term3 + "\n" +
+            cmdlang.example + "\n\n" + modulelang.term2.replace(/&/gi, cmd[0])
 
           },
           { quoted: m.messages[0] }
@@ -684,7 +703,23 @@ async function Primon() {
 
         cmdlang.command + "```" + cmd[0] + "stop" + "```" + "\n" +
         cmdlang.info + modulelang.stop + "\n" +
-        cmdlang.example + "\n\n" + modulelang.stop2.replace(/&/gi, cmd[0]))
+        cmdlang.example + "\n\n" + modulelang.stop2.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        
+        cmdlang.command + "```" + cmd[0] + "yt" + "```" + "\n" +
+        cmdlang.info + modulelang.yt1 + "\n" +
+        cmdlang.example + "\n\n" + modulelang.yt2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+        cmdlang.command + "```" + cmd[0] + "video" + "```" + "\n" +
+        cmdlang.info + modulelang.yt3 + "\n" +
+        cmdlang.example + "\n\n" + modulelang.yt4.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+        cmdlang.command + "```" + cmd[0] + "term" + "```" + "\n" +
+        cmdlang.info + modulelang.term1 + "\n" +
+        cmdlang.danger + modulelang.term3 + "\n" +
+        cmdlang.example + "\n\n" + modulelang.term2.replace(/&/gi, cmd[0])
+        
+        
+        )
         return;
       }
     }
@@ -705,12 +740,6 @@ async function Primon() {
         saveMessageST(gmsg.key.id, modulelang.star)
         return;
       }
-    }
-    if (c_num_cnt == 0) {
-      var gmsg = await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]) });
-      c_num_cnt = c_num_cnt + 1;
-      saveMessageST(gmsg.key.id, startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]))
-      return;
     }
     if (message !== undefined) {
       if (m.type == "notify") {
@@ -795,6 +824,9 @@ async function Primon() {
                 } else {
                   var valid_url = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/gm
                   if (valid_url.test(args)) {
+                    try {
+                      fs.unlinkSync("./YT.mp4")
+                    } catch {}
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_down });
                     saveMessageST(gmsg.key.id, modulelang.yt_down)
                     await ytdl(args, "./YT.mp4");
@@ -854,8 +886,7 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.textpro, 3, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.textpro, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.textpro, 3, cmd[0]))
                     return;
@@ -866,8 +897,7 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.tagall, 3, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.tagall, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.tagall, 3, cmd[0]))
                     return;
@@ -878,8 +908,7 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.ping, 2, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.ping, 2, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.ping, 2, cmd[0]))
                     return;
@@ -890,8 +919,7 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.goodbye, 3, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.goodbye, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.goodbye, 3, cmd[0]))
                     return;
@@ -902,8 +930,7 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.filter3, 3, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.filter3, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.filter3, 3, cmd[0]))
                     return;
@@ -914,8 +941,7 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.stop3, 3, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.stop3, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.stop3, 3, cmd[0]))
                     return;
@@ -926,8 +952,7 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.alive, 2, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.alive, 2, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.alive, 2, cmd[0]))
                     return;
@@ -938,8 +963,7 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.get3, 3, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.get3, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.get3, 3, cmd[0]))
                     return;
@@ -950,8 +974,7 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.set3, 3, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.set3, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.set3, 3, cmd[0]))
                     return;
@@ -962,8 +985,7 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.welcome, 3, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.welcome, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.welcome, 3, cmd[0]))
                     return;
@@ -974,10 +996,42 @@ async function Primon() {
                   ) {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: cmds(modulelang.update2, 2, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: cmds(modulelang.update2, 2, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.update2, 2, cmd[0]))
+                    return;
+                  } else if (
+                    args == "yt" ||
+                    args == "Yt" ||
+                    args == "YT"
+                  ) {
+                    var gmsg = await Proto.sendMessage(
+                      jid,
+                      { text: cmds(modulelang.yt_src, 3, cmd[0]) }
+                    );
+                    saveMessageST(gmsg.key.id, cmds(modulelang.yt_src, 3, cmd[0]))
+                    return;
+                  } else if (
+                    args == "video" ||
+                    args == "Video" ||
+                    args == "VIDEO"
+                  ) {
+                    var gmsg = await Proto.sendMessage(
+                      jid,
+                      { text: cmds(modulelang.yt_video, 3, cmd[0]) }
+                    );
+                    saveMessageST(gmsg.key.id, cmds(modulelang.yt_video, 3, cmd[0]))
+                    return;
+                  } else if (
+                    args == "term" ||
+                    args == "Term" ||
+                    args == "TERM"
+                  ) {
+                    var gmsg = await Proto.sendMessage(
+                      jid,
+                      { text: cmds(modulelang.term4, 4, cmd[0]) }
+                    );
+                    saveMessageST(gmsg.key.id, cmds(modulelang.term4, 4, cmd[0]))
                     return;
                   } else {
                     command_list.map((Element) => {
@@ -988,16 +1042,14 @@ async function Primon() {
                     if (filt[0] == undefined || filt[0] == "undefined") {
                       var gmsg = await Proto.sendMessage(
                         jid,
-                        { text: modulelang.null },
-                        { quoted: m.messages[0] }
+                        { text: modulelang.null }
                       );
                       saveMessageST(gmsg.key.id, modulelang.null)
                       return;
                     } else {
                       var msg = await Proto.sendMessage(
                         jid,
-                        { text: modulelang.null },
-                        { quoted: m.messages[0] }
+                        { text: modulelang.null }
                       );
                       await Proto.sendMessage(jid, react(msg, "bad"));
                       saveMessageST(msg.key.id, modulelang.null)
@@ -1019,8 +1071,7 @@ async function Primon() {
                   await Proto.sendMessage(jid, { delete: msgkey });
                   var gmsg = await Proto.sendMessage(
                     jid,
-                    { text: cmdlang.onlyGroup },
-                    { quoted: m.messages[0] }
+                    { text: cmdlang.onlyGroup }
                   );
                   saveMessageST(gmsg.key.id, cmdlang.onlyGroup)
                   return;
@@ -1332,8 +1383,7 @@ async function Primon() {
                       jid,
                       {
                         text: modulelang.textpro_null,
-                      },
-                      { quoted: m.messages[0] }
+                      }
                     );
                     await Proto.sendMessage(jid, react(msg, "bad"));
                     saveMessageST(msg.key.id, modulelang.textpro_null)
@@ -1348,8 +1398,7 @@ async function Primon() {
                       jid,
                       {
                         text: modulelang.textpro_null,
-                      },
-                      { quoted: m.messages[0] }
+                      }
                     );
                     await Proto.sendMessage(jid, react(msg, "bad"));
                     saveMessageST(msg.key.id, modulelang.textpro_null)
@@ -1376,8 +1425,7 @@ async function Primon() {
                         jid,
                         {
                           text: modulelang.textpro_null,
-                        },
-                        { quoted: m.messages[0] }
+                        }
                       );
                       saveMessageST(gmsg.key.id, modulelang.textpro_null)
                       return;
@@ -1426,7 +1474,7 @@ async function Primon() {
                 } else {
                   var gmsg = await Proto.sendMessage(jid, {
                     text: pinglang.ping + timestep.toString() + "ms",
-                  });
+                  }, { quoted: msg });
                   saveMessageST(gmsg.key.id, pinglang.ping + timestep.toString() + "ms")
                   return;
                 }
@@ -1438,8 +1486,7 @@ async function Primon() {
                 if (ispm) {
                   var gmsg = await Proto.sendMessage(
                     jid,
-                    { text: cmdlang.onlyGroup },
-                    { quoted: m.messages[0] }
+                    { text: cmdlang.onlyGroup }
                   );
                   saveMessageST(gmsg.key.id, cmdlang.onlyGroup)
                   return;
@@ -1467,8 +1514,7 @@ async function Primon() {
                       });
                       var gmsg = await Proto.sendMessage(
                         jid,
-                        { text: welcomelang.suc_del_welcome },
-                        { quoted: m.messages[0] }
+                        { text: welcomelang.suc_del_welcome }
                       );
                       saveMessageST(gmsg.key.id, welcomelang.suc_del_welcome)
                       return;
@@ -1496,8 +1542,7 @@ async function Primon() {
                       });
                       var gmsg = await Proto.sendMessage(
                         jid,
-                        { text: welcomelang.suc_set_welcome },
-                        { quoted: m.messages[0] }
+                        { text: welcomelang.suc_set_welcome }
                       );
                       saveMessageST(gmsg.key.id, welcomelang.suc_set_welcome)
                       return;
@@ -1525,8 +1570,7 @@ async function Primon() {
                       });
                       var gmsg = await Proto.sendMessage(
                         jid,
-                        { text: welcomelang.suc_del_welcome },
-                        { quoted: m.messages[0] }
+                        { text: welcomelang.suc_del_welcome }
                       );
                       saveMessageST(gmsg.key.id, welcomelang.suc_del_welcome)
                       return;
@@ -1536,16 +1580,14 @@ async function Primon() {
                       if (d.length == 0) {
                         var gmsg = await Proto.sendMessage(
                           jid,
-                          { text: welcomelang.not_set_welcome },
-                          { quoted: m.messages[0] }
+                          { text: welcomelang.not_set_welcome }
                         );
                         saveMessageST(gmsg.key.id, welcomelang.not_set_welcome)
                         return;
                       } else {
                         var gmsg = await Proto.sendMessage(
                           jid,
-                          { text: welcomelang.alr_set_welcome + d[0].message },
-                          { quoted: m.messages[0] }
+                          { text: welcomelang.alr_set_welcome + d[0].message }
                         );
                         saveMessageST(gmsg.key.id, welcomelang.alr_set_welcome + d[0].message)
                         return;
@@ -1574,8 +1616,7 @@ async function Primon() {
                       });
                       var gmsg = await Proto.sendMessage(
                         jid,
-                        { text: welcomelang.suc_set_welcome },
-                        { quoted: m.messages[0] }
+                        { text: welcomelang.suc_set_welcome }
                       );
                       saveMessageST(gmsg.key.id, welcomelang.suc_set_welcome)
                       return;
@@ -1590,8 +1631,7 @@ async function Primon() {
                 if (ispm) {
                   var gmsg = await Proto.sendMessage(
                     jid,
-                    { text: cmdlang.onlyGroup },
-                    { quoted: m.messages[0] }
+                    { text: cmdlang.onlyGroup }
                   );
                   saveMessageST(gmsg.key.id, cmdlang.onlyGroup)
                   return;
@@ -1619,8 +1659,7 @@ async function Primon() {
                       });
                       var gmsg = await Proto.sendMessage(
                         jid,
-                        { text: goodbyelang.suc_del_goodbye },
-                        { quoted: m.messages[0] }
+                        { text: goodbyelang.suc_del_goodbye }
                       );
                       saveMessageST(gmsg.key.id, goodbyelang.suc_del_goodbye)
                       return;
@@ -1648,8 +1687,7 @@ async function Primon() {
                       });
                       var gmsg = await Proto.sendMessage(
                         jid,
-                        { text: goodbyelang.suc_set_goodbye },
-                        { quoted: m.messages[0] }
+                        { text: goodbyelang.suc_set_goodbye }
                       );
                       saveMessageST(gmsg.key.id, goodbyelang.suc_set_goodbye)
                       return;
@@ -1677,8 +1715,7 @@ async function Primon() {
                       });
                       var gmsg = await Proto.sendMessage(
                         jid,
-                        { text: goodbyelang.suc_del_goodbye },
-                        { quoted: m.messages[0] }
+                        { text: goodbyelang.suc_del_goodbye }
                       );
                       saveMessageST(gmsg.key.id, goodbyelang.suc_del_goodbye)
                       return;
@@ -1688,16 +1725,14 @@ async function Primon() {
                       if (d.length == 0) {
                         var gmsg = await Proto.sendMessage(
                           jid,
-                          { text: goodbyelang.not_set_goodbye },
-                          { quoted: m.messages[0] }
+                          { text: goodbyelang.not_set_goodbye }
                         );
                         saveMessageST(gmsg.key.id, goodbyelang.not_set_goodbye)
                         return;
                       } else {
                         var gmsg = await Proto.sendMessage(
                           jid,
-                          { text: goodbyelang.alr_set_goodbye + d[0].message },
-                          { quoted: m.messages[0] }
+                          { text: goodbyelang.alr_set_goodbye + d[0].message }
                         );
                         saveMessageST(gmsg.key.id, goodbyelang.alr_set_goodbye + d[0].message)
                         return;
@@ -1726,8 +1761,7 @@ async function Primon() {
                       });
                       var gmsg = await Proto.sendMessage(
                         jid,
-                        { text: goodbyelang.suc_set_goodbye },
-                        { quoted: m.messages[0] }
+                        { text: goodbyelang.suc_set_goodbye }
                       );
                       saveMessageST(gmsg.key.id, goodbyelang.suc_set_goodbye)
                       return;
@@ -1743,8 +1777,7 @@ async function Primon() {
                   if (args == "") {
                     var gmsg = await Proto.sendMessage(
                       jid,
-                      { text: filterlang.null.replace(/&/gi, cmd[0]) },
-                      { quoted: m.messages[0] }
+                      { text: filterlang.null.replace(/&/gi, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, filterlang.null.replace(/&/gi, cmd[0]))
                     return;

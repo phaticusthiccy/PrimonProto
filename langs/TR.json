@@ -129,7 +129,17 @@
       "yt_duration": "\n▪ _Video Uzunluğu:_ ",
       "yt_author": "\n▪ _Video Sahibi:_ ",
       "yt_link": "\n▪ _Video Linki:_ ",
-      "yt_not_found": "_Üzgünüm bu videoyu inderemedin.._"
+      "yt_not_found": "_Üzgünüm bu videoyu inderemedin.._",
+      "yt1": "_YouTube üzerinden arama yapar._",
+      "yt2": "```&yt Thiccy - Vibe House```",
+      "yt3": "_YouTube üzerinden video indirir._",
+      "yt4": "```&video https://www.youtube.com/watch?v=x-U1DhJGn1g```",
+      "term1": "_Shell komutlarını çalıştırır._",
+      "term2": "```&term ls```",
+      "term3": "_Shell komutları hakkında bilginiz yoksa lütfen kullanmayın. Botu bozabilirsiniz._",
+      "term4": "{%d1}```{%c}term``` \n{%d1}_Shell komutlarını çalıştırır._ \n{%d1}_Shell komutları hakkında bilginiz yoksa lütfen kullanmayın. Botu bozabilirsiniz._\n{%d1}\n\n```{%c}term ls```",
+      "yt_src": "{%d1}```{%c}yt``` \n{%d1}_YouTube üzerinden arama yapar._ \n{%d1}\n\n```{%c}yt Thiccy - Vibe House```",
+      "yt_video": "{%d1}```{%c}yt``` \n{%d1}_YouTube üzerinden video indirir._ \n{%d1}\n\n```{%c}video https://www.youtube.com/watch?v=x-U1DhJGn1g```"
     }
   }
 }

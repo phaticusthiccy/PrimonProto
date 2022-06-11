@@ -129,7 +129,17 @@
       "yt_duration": "\n▪ _Video Length:_ ",
       "yt_author": "\n▪ _Video Author:_ ",
       "yt_link": "\n▪ _Video Link:_ ",
-      "yt_not_found": "_I can't able to download this video.._"
+      "yt_not_found": "_I can't able to download this video.._",
+      "yt1": "_Searches on YouTube._",
+      "yt2": "```&yt Thiccy - Vibe House```",
+      "yt3": "_Downloads videos from YouTube._",
+      "yt4": "```&video https://www.youtube.com/watch?v=x-U1DhJGn1g```",
+      "term1": "_Runs shell commands._",
+      "term2": "```&term ls```",
+      "term3": "_Please don't use it if you don't know about shell commands. You can break the bot._",
+      "term4": "{%d1}```{%c}term``` \n{%d1}_Runs shell commands._ \n{%d1}_Please don't use it if you don't know about shell commands. You can break the bot._\n{%d1}\n\n```{%c}term ls```",
+      "yt_src": "{%d1}```{%c}yt``` \n{%d1}_Searches on YouTube._ \n{%d1}\n\n```{%c}yt Thiccy - Vibe House```",
+      "yt_video": "{%d1}```{%c}yt``` \n{%d1}_Downloads videos from YouTube._ \n{%d1}\n\n```{%c}video https://www.youtube.com/watch?v=x-U1DhJGn1g```"
     }
   }
 }
