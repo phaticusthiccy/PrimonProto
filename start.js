@@ -120,6 +120,8 @@ const store = makeInMemoryStore({
   }),
 });
 
+store.writeToFile("./baileys_store_multi.json");
+
 setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
 }, 10000);
@@ -672,7 +674,7 @@ async function Primon() {
                 } else {
                   var valid_url = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/gm
                   if (valid_url.test(args)) {
-                    var gmsg = Proto.sendMessage(jid, { text: modulelang.yt_down });
+                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_down });
                     saveMessageST(gmsg.key.id, modulelang.yt_down)
                     await ytdl(args, "./YT.mp4");
 
