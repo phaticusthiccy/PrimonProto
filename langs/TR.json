@@ -123,6 +123,7 @@
       "need_cmd": "*Lütfen Herhangi Bir Shell Kodu Girin!*",
       "valid_cmd": "*Lütfen Primon dosyalarını silmek için herhangi bir komut kullanmayın!*",
       "done_cmd": "*İşlem Bitti!*",
+      "bad_cmd": "_Girdiğniz işlemi gerçekleştiremiyorum.._",
       "need_q": "*Lütfen aramak istediğiniz videonun ismini yazın!*",
       "yt_title": "▪ _Video Başlığı:_ ",
       "yt_duration": "\n▪ _Video Uzunluğu:_ ",

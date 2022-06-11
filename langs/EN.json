@@ -123,6 +123,7 @@
       "need_cmd": "*Please Enter Any Shell Code!*",
       "valid_cmd": "*Please do not use any commands to delete Primon files!*",
       "done_cmd": "*Transaction Done!*",
+      "bad_cmd": "I can't perform the operation you entered",
       "need_q": "*Please type the name of the video you want to search!*",
       "yt_title": "▪ _Video Title:_ ",
       "yt_duration": "\n▪ _Video Length:_ ",

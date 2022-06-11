@@ -63,7 +63,9 @@ const {
   afterarg,
   String,
   react,
-  GetListByKeyword
+  GetListByKeyword,
+  test_diff,
+  ytdl
 } = require("./add");
 
 const get_db = require("./db.json")
@@ -93,30 +95,6 @@ setInterval(async () => {
 }, 4000);
 
 var c_num_cnt = 0;
-function cmds(text, arguments = 3, cmd) {
-  let payload;
-  if (arguments == 3) {
-    payload = text
-      .replace("{%d1}", cmdlang.command)
-      .replace("{%d1}", cmdlang.info)
-      .replace("{%d1}", cmdlang.example)
-      .replace(/{%c}/gi, cmd);
-  } else if (arguments == 4) {
-    payload = text
-      .replace("{%d1}", cmdlang.command)
-      .replace("{%d1}", cmdlang.info)
-      .replace("{%d1}", cmdlang.example)
-      .replace("{%d1}", cmdlang.danger)
-      .replace(/{%c}/gi, cmd);
-  } else {
-    payload = text
-      .replace("{%d1}", cmdlang.command)
-      .replace("{%d1}", cmdlang.info)
-      .replace("{%d1}", cmdlang.example)
-      .replace(/{%c}/gi, cmd);
-  }
-  return payload;
-}
 
 const { state, saveState } = useSingleFileAuthState("./session.json");
 
@@ -126,74 +104,6 @@ const store = makeInMemoryStore({
     stream: "store",
   }),
 });
-
-function editDistance(s1, s2) {
-  s1 = s1.toLowerCase();
-  s2 = s2.toLowerCase();
-  var costs = new Array();
-  for (var i = 0; i <= s1.length; i++) {
-    var lastValue = i;
-    for (var j = 0; j <= s2.length; j++) {
-      if (i == 0) costs[j] = j;
-      else {
-        if (j > 0) {
-          var newValue = costs[j - 1];
-          if (s1.charAt(i - 1) != s2.charAt(j - 1))
-            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
-          costs[j - 1] = lastValue;
-          lastValue = newValue;
-        }
-      }
-    }
-    if (i > 0) costs[s2.length] = lastValue;
-  }
-  return costs[s2.length];
-}
-
-function test_diff(s1, s2) {
-  var longer = s1;
-  var shorter = s2;
-  if (s1.length < s2.length) {
-    longer = s2;
-    shorter = s1;
-  }
-  var longerLength = longer.length;
-  if (longerLength == 0) {
-    return 1.0;
-  }
-  return (
-    (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength)
-  );
-}
-
-async function ytdl(link, downloadFolder, Proto, jid) {
-  try {
-    var h = await axios({
-      url: "https://api.onlinevideoconverter.pro/api/convert",
-      method: "post",
-      data: {
-        url: link,
-      },
-    });
-
-    var downs = [];
-    h.data.url.map((Element) => {
-      if (Element.downloadable == true && Element.name == "MP4") {
-        downs.push(Element.url)
-      }
-    })
-    const response = await axios({
-      method: "GET",
-      url: downs[0],
-      responseType: "arraybuffer",
-    });
-
-    fs.appendFileSync(downloadFolder, Buffer.from(response.data));
-    return true;
-  } catch {
-    return await Proto.sendMessage(jid, { text: modulelang.yt_not_found})
-  }
-}
 
 setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
@@ -641,7 +551,7 @@ async function Primon() {
                 if (isimage && isreplied) {
                   let buffer = Buffer.from([])
                   const stream = await downloadContentFromMessage(
-                    m.messages[0].extendedTextMessage.contextInfo.quotedMessage.imageMessage, "image"
+                    m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.imageMessage, "image"
                   )
                   for await (const chunk of stream) {
                     buffer = Buffer.concat([buffer, chunk])
@@ -663,19 +573,23 @@ async function Primon() {
                   if (args.match("rm") !== null && args.match("unlink") !== null) {
                     return await Proto.sendMessage(jid, { text: modulelang.valid_cmd });
                   } else {
-                    var command_t = exec(args)
-                    command_t.stdout.on('data', async (output) => {
-                      await Proto.sendMessage(jid, { text: output.toString() });
-                    })
-                    command_t.stdout.on('end', async () => {
-                      return await Proto.sendMessage(jid, { text: modulelang.done_cmd });
-                    })
+                    try {
+                      var command_t = exec(args)
+                      command_t.stdout.on('data', async (output) => {
+                        await Proto.sendMessage(jid, { text: output.toString() });
+                      })
+                      command_t.stdout.on('end', async () => {
+                        return await Proto.sendMessage(jid, { text: modulelang.done_cmd });
+                      })
+                    } catch {
+                      return await Proto.sendMessage(jid, { text: modulelang.bad_cmd });
+                    }
                   }
                 }
               }
 
               // YouTube Download
-              else if (attr == "yt") {
+              else if (attr == "video") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
                   return await Proto.sendMessage(jid, { text: modulelang.need_yt });
@@ -696,7 +610,7 @@ async function Primon() {
               }
 
               // YouTube Search
-              else if (attr == "video") {
+              else if (attr == "yt") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
                   return await Proto.sendMessage(jid, { text: modulelang.need_q });
@@ -704,7 +618,9 @@ async function Primon() {
                   var mp = await GetListByKeyword(args, false, 10)
                   var msgs = "";
                   mp.items.map((Element) => {
-                    msgs += modulelang.yt_title + Element.title + modulelang.yt_duration + Element["length"].simpleText + modulelang.yt_author + Element.channelTitle + modulelang.yt_link + "https://www.youtube.com/watch?v=" + Element.id + "\n\n"
+                    if (Element.type == "video") {
+                      msgs += modulelang.yt_title + Element.title + modulelang.yt_duration + Element["length"].simpleText + modulelang.yt_author + Element.channelTitle + modulelang.yt_link + "https://www.youtube.com/watch?v=" + Element.id + "\n\n"
+                    }
                   })
                   return await Proto.sendMessage(jid, { text: msgs });
                 }
@@ -1805,9 +1721,13 @@ async function Primon() {
       let reason = new Boom(lastDisconnect?.error)?.output.statusCode;
       if (reason === DisconnectReason.badSession) {
         console.log(sessionlang.bad);
+        console.log(sessionlang.recon);
+        Primon();
+        /*
         fs.unlinkSync("./session.json");
         fs.unlinkSync("./baileys_store_multi.json");
         Proto.logout();
+        */
       } else if (reason === DisconnectReason.connectionClosed) {
         console.log(sessionlang.recon);
         Primon();
