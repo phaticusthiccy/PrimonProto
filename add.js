@@ -408,7 +408,7 @@ async function GetVideoDetails(videoId) {
   }
 };
 
-async function ytdl(link, downloadFolder, Proto, jid) {
+async function ytdl(link, downloadFolder) {
   try {
     var h = await axios({
       url: "https://api.onlinevideoconverter.pro/api/convert",
@@ -433,7 +433,7 @@ async function ytdl(link, downloadFolder, Proto, jid) {
     fs.appendFileSync(downloadFolder, Buffer.from(response.data));
     return true;
   } catch {
-    return await Proto.sendMessage(jid, { text: modulelang.yt_not_found})
+    ytdl(link, downloadFolder)
   }
 }
 
