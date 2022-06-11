@@ -166,7 +166,7 @@ function test_diff(s1, s2) {
   );
 }
 
-async function ytdl(link, downloadFolder) {
+async function ytdl(link, downloadFolder, Proto, jid) {
   try {
     var h = await axios({
       url: "https://api.onlinevideoconverter.pro/api/convert",
@@ -175,16 +175,23 @@ async function ytdl(link, downloadFolder) {
         url: link,
       },
     });
+
+    var downs = [];
+    h.data.url.map((Element) => {
+      if (Element.downloadable == true && Element.name == "MP4") {
+        downs.push(Element.url)
+      }
+    })
     const response = await axios({
       method: "GET",
-      url: h.data.url[0].url,
+      url: downs[0],
       responseType: "arraybuffer",
     });
 
     fs.appendFileSync(downloadFolder, Buffer.from(response.data));
     return true;
   } catch {
-    ytdl(link, downloadFolder);
+    return await Proto.sendMessage(jid, { text: modulelang.yt_not_found})
   }
 }
 
@@ -632,9 +639,13 @@ async function Primon() {
 
               if (attr == "down") {
                 if (isimage && isreplied) {
-                  const buffer = await downloadContentFromMessage(
-                    extractMessageContent(m), "image"
+                  let buffer = Buffer.from([])
+                  const stream = await downloadContentFromMessage(
+                    m.messages[0].extendedTextMessage.contextInfo.quotedMessage.imageMessage, "image"
                   )
+                  for await (const chunk of stream) {
+                    buffer = Buffer.concat([buffer, chunk])
+                  }
                   console.log(buffer)
                   await fs.writeFileSync('./a.jpeg', buffer)
                   return await Proto.sendMessage(meid, {

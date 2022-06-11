@@ -127,7 +127,8 @@
       "yt_title": "▪ _Video Title:_ ",
       "yt_duration": "\n▪ _Video Length:_ ",
       "yt_author": "\n▪ _Video Author:_ ",
-      "yt_link": "\n▪ _Video Link:_ "
+      "yt_link": "\n▪ _Video Link:_ ",
+      "yt_not_found": "_I can't able to download this video.._"
     }
   }
 }

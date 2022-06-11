@@ -127,7 +127,8 @@
       "yt_title": "▪ _Video Başlığı:_ ",
       "yt_duration": "\n▪ _Video Uzunluğu:_ ",
       "yt_author": "\n▪ _Video Sahibi:_ ",
-      "yt_link": "\n▪ _Video Linki:_ "
+      "yt_link": "\n▪ _Video Linki:_ ",
+      "yt_not_found": "_Üzgünüm bu videoyu inderemedin.._"
     }
   }
 }
