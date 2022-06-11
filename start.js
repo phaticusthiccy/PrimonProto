@@ -124,7 +124,7 @@ async function Primon() {
     auth: state,
     logger: P({ level: "silent" }),
     version,
-    browser: ["Primon Proto", "Chrome", "1.0"],
+    browser: ["Primon Proto", "Chrome", "1.0.0"],
     msgRetryCounterMap,
     getMessage: async key => {
       return true;
