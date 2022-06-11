@@ -206,23 +206,47 @@ async function ytdl(link, downloadFolder) {
         url: link,
       },
     });
-
     var downs = [];
     h.data.url.map((Element) => {
       if (Element.downloadable == true && Element.name == "MP4") {
         downs.push(Element.url)
       }
     })
+
+    if (downs.length == 0) {
+      h.data.url.map((Element) => {
+        if (Element.name == "MP4" && Element.quality == "360") {
+          downs.push(Element.url)
+        }
+      })
+    }
+
+    if (downs.length == 0) {
+      h.data.url.map((Element) => {
+        if (Element.name == "MP4" && Element.quality == "240") {
+          downs.push(Element.url)
+        }
+      })
+    }
+
+    if (downs.length == 0) {
+      h.data.url.map((Element) => {
+        if (Element.name == "MP4" && Element.quality == "144") {
+          downs.push(Element.url)
+        }
+      })
+    }
+
     const response = await axios({
       method: "GET",
       url: downs[0],
-      responseType: "arraybuffer",
+      responseType: "arraybuffer"
     });
 
     fs.appendFileSync(downloadFolder, Buffer.from(response.data));
     return true;
   } catch {
-    ytdl(link, downloadFolder)
+    ytdl(link, downloadFolder);
   }
 }
 
@@ -770,10 +794,17 @@ async function Primon() {
                     saveMessageST(gmsg.key.id, modulelang.yt_down)
                     await ytdl(args, "./YT.mp4");
 
-                    return await Proto.sendMessage(jid, {
-                      video: fs.readFileSync("./YT.mp4"),
-                      caption: MenuLang.by
-                    })
+                    try {
+                      return await Proto.sendMessage(jid, {
+                        video: fs.readFileSync("./YT.mp4"),
+                        caption: MenuLang.by
+                      })
+                    } catch {
+                      var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_not_found });
+                      saveMessageST(gmsg.key.id, modulelang.yt_not_found)
+                      return;
+                    }
+                    
                   } else {
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt });
                     saveMessageST(gmsg.key.id, modulelang.need_yt)
