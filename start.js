@@ -1316,7 +1316,7 @@ async function Primon() {
                       { quoted: m.messages[0] }
                     );
                     await Proto.sendMessage(jid, react(msg, "bad"));
-                    saveMessageST(gmsg.key.id, modulelang.textpro_null)
+                    saveMessageST(msg.key.id, modulelang.textpro_null)
                     return;
                   }
                   var url = textpro_links(type);
@@ -1329,7 +1329,7 @@ async function Primon() {
                       { quoted: m.messages[0] }
                     );
                     await Proto.sendMessage(jid, react(msg, "bad"));
-                    saveMessageST(gmsg.key.id, modulelang.textpro_null)
+                    saveMessageST(msg.key.id, modulelang.textpro_null)
                     return;
                   } else {
                     var type = argfinder(args);
@@ -1366,7 +1366,7 @@ async function Primon() {
                 var msg = await Proto.sendMessage(jid, {
                   text: "_Ping, Pong!_",
                 });
-                saveMessageST(gmsg.key.id, "_Ping, Pong!_")
+                saveMessageST(msg.key.id, "_Ping, Pong!_")
                 var d2 = new Date().getTime();
                 var timestep = Number(d2) - Number(d1);
                 if (timestep > 600) {
