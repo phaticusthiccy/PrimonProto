@@ -386,7 +386,12 @@ async function Primon() {
     if (m.messages[0].key.remoteJid           == "status@broadcast"                           ) return;
     jid = m.messages[0].key.remoteJid;
     
-    var once_msg = Object.keys(m.messages[0].message);
+    try {
+      var once_msg = Object.keys(m.messages[0].message);
+    } catch {
+      var once_msg = []
+    }
+
 
     try {
       var trs1 =
