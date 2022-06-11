@@ -151,7 +151,7 @@ function get_db() {
     return JSON.parse(db);
 }
 
-const GetYoutubeInitData = async (url) => {
+async function GetYoutubeInitData (url) {
   var initdata = await {};
   var apiToken = await null;
   var context = await null;
@@ -187,7 +187,7 @@ const GetYoutubeInitData = async (url) => {
   }
 };
 
-const GetData = async (keyword, withPlaylist = false, limit = 0) => {
+async function GetData (keyword, withPlaylist = false, limit = 0) {
   const endpoint = await `${youtubeEndpoint}/results?search_query=${keyword}`;
 
   try {
@@ -254,7 +254,7 @@ const GetData = async (keyword, withPlaylist = false, limit = 0) => {
   }
 };
 
-const nextPage = async (nextPage, withPlaylist = false, limit = 0) => {
+async function nextPage (nextPage, withPlaylist = false, limit = 0) {
   const endpoint =
     await `${youtubeEndpoint}/youtubei/v1/search?key=${nextPage.nextPageToken}`;
   try {
@@ -299,7 +299,7 @@ const nextPage = async (nextPage, withPlaylist = false, limit = 0) => {
   }
 };
 
-const GetPlaylistData = async (playlistId, limit = 0) => {
+async function GetPlaylistData(playlistId, limit = 0) {
   const endpoint = await `${youtubeEndpoint}/playlist?list=${playlistId}`;
   try {
     const initData = await GetYoutubeInitData(endpoint);
@@ -328,7 +328,7 @@ const GetPlaylistData = async (playlistId, limit = 0) => {
   }
 };
 
-const GetSuggestData = async (limit = 0) => {
+async function GetSuggestData(limit = 0) {
   const endpoint = await `${youtubeEndpoint}`;
   try {
     const page = await GetYoutubeInitData(endpoint);
@@ -355,7 +355,7 @@ const GetSuggestData = async (limit = 0) => {
   }
 };
 
-const GetChannelById = async (channelId) => {
+async function GetChannelById(channelId) {
   const endpoint = await `${youtubeEndpoint}/channel/${channelId}`;
   try {
     const page = await GetYoutubeInitData(endpoint);
@@ -376,7 +376,7 @@ const GetChannelById = async (channelId) => {
   }
 };
 
-const GetVideoDetails = async (videoId) => {
+async function GetVideoDetails(videoId) {
   const endpoint = await `${youtubeEndpoint}/watch?v=${videoId}`;
   try {
     const page = await GetYoutubeInitData(endpoint);
@@ -408,7 +408,7 @@ const GetVideoDetails = async (videoId) => {
   }
 };
 
-const VideoRender = (json) => {
+function VideoRender(json) {
   try {
     if (json && (json.videoRenderer || json.playlistVideoRenderer)) {
       let videoRenderer = null;
@@ -469,7 +469,7 @@ const VideoRender = (json) => {
   }
 };
 
-const compactVideoRenderer = (json) => {
+function compactVideoRenderer(json) {
   const compactVideoRendererJson = json.compactVideoRenderer;
 
   var isLive = false;
@@ -504,8 +504,8 @@ module.exports = {
   String: String,
   react: react,
   get_db: get_db,
-  GetListByKeyword: GetListByKeyword,
-  NextPage: NextPage,
+  GetListByKeyword: GetData,
+  NextPage: nextPage,
   GetPlaylistData: GetPlaylistData,
   GetSuggestData: GetSuggestData,
   GetChannelById: GetChannelById,
