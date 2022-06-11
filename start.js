@@ -368,8 +368,15 @@ async function Primon() {
   } catch {
     meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
   }
+  var cmd1_f = PrimonDB.handler;
+  var cmd_f;
+  if (cmd1_f.length > 1) {
+    cmd_f = cmd1_f.split("");
+  } else {
+    cmd_f = [cmd1_f];
+  }
   if (c_num_cnt == 0) {
-    var gmsg = await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]) });
+    var gmsg = await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd_f[0]) });
     c_num_cnt = c_num_cnt + 1;
     saveMessageST(gmsg.key.id, startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]))
     return;
