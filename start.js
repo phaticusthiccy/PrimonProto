@@ -499,7 +499,7 @@ async function Primon() {
       message = undefined;
     }
 
-    if (isreplied) {
+    if (isreplied && nort == true) {
       if (once_msg2.includes("imageMessage")) {
         isimage = true
         isvideo = false
