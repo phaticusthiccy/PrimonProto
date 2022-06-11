@@ -598,12 +598,9 @@ module.exports = {
   react: react,
   get_db: get_db,
   GetListByKeyword: GetData,
-  cmds: cmds,
   NextPage: nextPage,
   GetPlaylistData: GetPlaylistData,
   GetSuggestData: GetSuggestData,
   GetChannelById: GetChannelById,
-  GetVideoDetails: GetVideoDetails,
-  ytdl: ytdl,
-  test_diff: test_diff
+  GetVideoDetails: GetVideoDetails
 };
