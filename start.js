@@ -51,6 +51,7 @@ const config = require("./config_proto");
 const { Octokit } = require("@octokit/core");
 const shell = require('shelljs');
 const { exec } = require("child_process");
+const Path = require('path')
 
 const msgRetryCounterMap = { }
 
@@ -62,6 +63,7 @@ const {
   afterarg,
   String,
   react,
+  GetListByKeyword
 } = require("./add");
 
 const get_db = require("./db.json")
@@ -165,6 +167,8 @@ function test_diff(s1, s2) {
 }
 
 async function ytdl(link, downloadFolder) {
+  const path = Path.resolve(__dirname, './', downloadFolder)
+  const writer = fs.createWriteStream(path)
   try {
     var h = await axios({
       url: "https://api.onlinevideoconverter.pro/api/convert",
@@ -179,8 +183,11 @@ async function ytdl(link, downloadFolder) {
       responseType: "stream",
     });
 
-    const w = response.data.pipe(fs.createWriteStream(downloadFolder));
-    w.on("finish", () => {});
+    response.data.pipe(writer)
+      return new Promise((resolve, reject) => {
+      writer.on('finish', resolve)
+      writer.on('error', reject)
+    })
   } catch {
     ytdl(link, downloadFolder);
   }
@@ -636,7 +643,9 @@ async function Primon() {
                 }
               }
 
+              // Term
               else if (attr == "term") {
+                await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
                   return await Proto.sendMessage(jid, { text: modulelang.need_cmd });
                 } else {
@@ -654,6 +663,7 @@ async function Primon() {
                 }
               }
 
+              // YouTube Download
               else if (attr == "yt") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
@@ -662,7 +672,7 @@ async function Primon() {
                   var valid_url = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/gm
                   if (valid_url.test(args)) {
                     await Proto.sendMessage(jid, { text: modulelang.yt_down });
-                    var down = await ytdl(args, "./YT.mp4");
+                    await ytdl(args, "./YT.mp4");
 
                     return await Proto.sendMessage(jid, {
                       video: fs.readFileSync("./YT.mp4"),
@@ -673,6 +683,22 @@ async function Primon() {
                   }
                 }
               }
+
+              // YouTube Search
+              else if (attr == "video") {
+                await Proto.sendMessage(jid, { delete: msgkey });
+                if (args == "") {
+                  return await Proto.sendMessage(jid, { text: modulelang.need_q });
+                } else {
+                  var mp = await GetListByKeyword(args, false, 10)
+                  var msgs = "";
+                  mp.items.map((Element) => {
+                    msgs += modulelang.yt_title + Element.title + modulelang.yt_duration + Element["length"].simpleText + modulelang.yt_author + Element.channelTitle + modulelang.yt_link + "https://www.youtube.com/watch?v=" + Element.id + "\n\n"
+                  })
+                  return await Proto.sendMessage(jid, { text: msgs });
+                }
+              }
+
               // Menu
               else if (attr == "menu") {
                 await Proto.sendMessage(jid, { delete: msgkey });

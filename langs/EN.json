@@ -122,7 +122,12 @@
       "yt_down": "_Video Downloading.._",
       "need_cmd": "*Please Enter Any Shell Code!*",
       "valid_cmd": "*Please do not use any commands to delete Primon files!*",
-      "done_cmd": "*Transaction Done!*"
+      "done_cmd": "*Transaction Done!*",
+      "need_q": "*Please type the name of the video you want to search!*",
+      "yt_title": "◽ _Video Title:_ ",
+      "yt_duration": "◽ _Video Length:_ ",
+      "yt_author": "◽ _Video Author:_ ",
+      "yt_link": "▪ _Video Link:_ "
     }
   }
 }
