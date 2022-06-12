@@ -18,11 +18,10 @@ output() {
 
 header "Installing ffmpeg"
 
-BUILD_DIR=${1:-}
+BUILD_DIR="./"
 VENDOR_DIR="vendor"
 FFMPEG_ARCHIVE_NAME="ffmpeg.tar.xz"
 
-cd $BUILD_DIR
 mkdir -p $VENDOR_DIR
 cd $VENDOR_DIR
 mkdir -p ffmpeg
@@ -51,8 +50,8 @@ fi
 
 rm $FFMPEG_ARCHIVE_NAME
 
-PROFILE_PATH="$BUILD_DIR/.profile.d/ffmpeg.sh"
+PROFILE_PATH="./.profile.d/ffmpeg.sh"
 mkdir -p $(dirname $PROFILE_PATH)
-echo 'export PATH="$PATH:${HOME}/vendor/ffmpeg"' >> $PROFILE_PATH
+echo 'export PATH="./"' >> $PROFILE_PATH
 
 echo "Installation successful" | output

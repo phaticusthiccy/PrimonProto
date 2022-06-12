@@ -1078,6 +1078,7 @@ async function Primon() {
                       })
                     }
                 
+                    console.log(downs)
                     const response = await axios({
                       method: "GET",
                       url: downs[0],
