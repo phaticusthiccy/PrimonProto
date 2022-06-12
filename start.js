@@ -416,7 +416,6 @@ async function Primon() {
   store?.bind(Proto.ev)
   var message,
     isreplied,
-    reply_key,
     isimage,
     isvideo,
     issound,
@@ -428,6 +427,7 @@ async function Primon() {
     btnid,
     sudo1,
     meid,
+    reply_key = [],
     sudo = [];
   Proto.ev.on("group-participants.update", async (st) => {
     var re = PrimonDB;
