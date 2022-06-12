@@ -200,7 +200,7 @@ function test_diff(s1, s2) {
   );
 }
 
-async function ytdl(link, downloadFolder) {
+async function ytdl(link, downloadFolder, Proto, jid) {
   try {
     var h = await axios({
       url: "https://api.onlinevideoconverter.pro/api/convert",
@@ -223,6 +223,14 @@ async function ytdl(link, downloadFolder) {
           downs.push(Element.url)
         }
       })
+
+      if (downs.length == 0) {
+        h.data.url.map((Element) => {
+          if (Element.name == "MP4" && Element.quality == "720") {
+            downs.push(Element.url)
+          }
+        })
+      }
 
       if (downs.length == 0) {
         h.data.url.map((Element) => {
@@ -255,6 +263,12 @@ async function ytdl(link, downloadFolder) {
       });
 
       fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+      await new Promise(r => setTimeout(r, 1700));
+      await Proto.sendMessage(jid, {
+        video: fs.readFileSync("./YT.mp4"),
+        caption: MenuLang.by
+      })
+      shell.exec("rm -rf ./YT.mp4")
       return true;
     } else {
       var dr = Number(mp["items"][0]["length"]["simpleText"].split(":")[0])
@@ -300,6 +314,12 @@ async function ytdl(link, downloadFolder) {
         });
 
         fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+        await new Promise(r => setTimeout(r, 1700));
+        await Proto.sendMessage(jid, {
+          video: fs.readFileSync("./YT.mp4"),
+          caption: MenuLang.by
+        })
+        shell.exec("rm -rf ./YT.mp4")
         return true;
       } else {
         var downs = [];
@@ -340,6 +360,11 @@ async function ytdl(link, downloadFolder) {
         });
   
         fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+        await Proto.sendMessage(jid, {
+          video: fs.readFileSync("./YT.mp4"),
+          caption: MenuLang.by
+        })
+        shell.exec("rm -rf ./YT.mp4")
         return true;
       }
     }
@@ -983,23 +1008,10 @@ async function Primon() {
                 } else {
                   var valid_url = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/gm
                   if (valid_url.test(args)) {
-                    try {
-                      fs.unlinkSync("./YT.mp4")
-                    } catch {}
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_down });
                     saveMessageST(gmsg.key.id, modulelang.yt_down)
-                    await ytdl(args, "./YT.mp4");
-
                     try {
-                      await new Promise(r => setTimeout(r, 1700));
-                      await Proto.sendMessage(jid, {
-                        video: fs.readFileSync("./YT.mp4"),
-                        caption: MenuLang.by
-                      })
-                      await new Promise(r => setTimeout(r, 4000));
-                      try {
-                        fs.unlinkSync("./YT.mp4")
-                      } catch {}
+                      await ytdl(args, "./YT.mp4", Proto, jid);
                       return;
                     } catch (e) {
                       console.log(e)
@@ -1010,7 +1022,6 @@ async function Primon() {
                       } catch {}
                       return;
                     }
-                    
                   } else {
                     try {
                       fs.unlinkSync("./YT.mp4")
