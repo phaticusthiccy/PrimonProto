@@ -987,8 +987,7 @@ async function Primon() {
                     try {
                       fs.unlinkSync("./YT.mp4")
                     } catch {}
-                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_down }, reply_key[0]);
-                    reply_key = []
+                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_down });
                     saveMessageST(gmsg.key.id, modulelang.yt_down)
                     await ytdl(args, "./YT.mp4");
 
