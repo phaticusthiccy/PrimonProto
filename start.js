@@ -2202,12 +2202,18 @@ async function Primon() {
               else if (attr == "update") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 var cmmts = await axios.get("https://api.github.com/users/phaticusthiccy/events/public")
+                cmmts = cmmts.data
                 var news = [];
                 var author_cmts = [];
-                cmmts.data.map((Element) => {
+                cmmts.map((Element) => {
                   if (Element.repo.name == "phaticusthiccy/PrimonProto") {
-                    news.push(Element.payload.commits[0].message)
-                    author_cmts.push(Element.payload.commits[0].author.name)
+                    try {
+                      news.push(Element.payload.commits[0].message)
+                      author_cmts.push(Element.payload.commits[0].author.name)
+                    } catch {
+                      news.push("Protocol Update")
+                      author_cmts.push(Element.payload.commits[0].author.name)
+                    }
                   }
                 })
                 var msg = 
