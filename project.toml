@@ -10,15 +10,5 @@ uri = "heroku/nodejs-engine"
 [[build.buildpacks]]
 uri = "heroku/nodejs-npm"
 
-[project]
-id = "io.buildpacks.ffmpeg-script"
-name = "ffmpeg Script"
-version = "1.0.0"
-
-[build]
-exclude = [
-    "ffmpeg"
-]
-
-[[build.buildpacks]]
-uri = "ffmpeg/"
+[buildpacks]
+uri = "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
