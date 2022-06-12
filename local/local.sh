@@ -25,6 +25,7 @@ npm install chalk@4.1.2
 npm install qrcode-terminal
 yes | npm install shelljs
 yes | npm install axios
+rm -rf PrimonProto
 git clone https://github.com/phaticusthiccy/PrimonProto
 cd PrimonProto && cd local
 tsc local.ts
