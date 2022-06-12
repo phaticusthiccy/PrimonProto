@@ -76,7 +76,8 @@ const {
   GetListByKeyword,
 } = require("./add");
 
-const get_db = require("./db.json")
+const get_db = require("./db.json");
+const { isPromise } = require("util/types");
 var GITHUB_DB = process.env.GITHUB_DB == false ? false : process.env.GITHUB_DB;
 var GITHUB_AUTH =
   process.env.GITHUB_AUTH == false ? false : process.env.GITHUB_AUTH;
@@ -131,7 +132,7 @@ var command_list = [
   "textpro", "tagall", "ping", "welcome", 
   "goodbye", "alive", "get", "set", 
   "filter", "stop", "sticker", "update", 
-  "yt", "video", "term"
+  "yt", "video", "term", "song"
 ]
 var diff = [];
 
@@ -846,6 +847,14 @@ async function Primon() {
             cmdlang.info + modulelang.yt3 + "\n" +
             cmdlang.example + "\n\n" + modulelang.yt4.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
+            cmdlang.command + "```" + cmd[0] + "song" + "```" + "\n" +
+            cmdlang.info + modulelang.song_dsc + "\n" +
+            cmdlang.example + "\n\n" + modulelang.song_us.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+            cmdlang.command + "```" + cmd[0] + "sticker" + "```" + "\n" +
+            cmdlang.info + modulelang.sticker1 + "\n" +
+            cmdlang.example + "\n\n" + modulelang.sticker2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
             cmdlang.command + "```" + cmd[0] + "term" + "```" + "\n" +
             cmdlang.info + modulelang.term1 + "\n" +
             cmdlang.danger + modulelang.term3 + "\n" +
@@ -903,6 +912,14 @@ async function Primon() {
         cmdlang.command + "```" + cmd[0] + "video" + "```" + "\n" +
         cmdlang.info + modulelang.yt3 + "\n" +
         cmdlang.example + "\n\n" + modulelang.yt4.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+        cmdlang.command + "```" + cmd[0] + "song" + "```" + "\n" +
+        cmdlang.info + modulelang.song_dsc + "\n" +
+        cmdlang.example + "\n\n" + modulelang.song_us.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        
+        cmdlang.command + "```" + cmd[0] + "sticker" + "```" + "\n" +
+        cmdlang.info + modulelang.sticker1 + "\n" +
+        cmdlang.example + "\n\n" + modulelang.sticker2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
         cmdlang.command + "```" + cmd[0] + "term" + "```" + "\n" +
         cmdlang.info + modulelang.term1 + "\n" +
@@ -978,6 +995,66 @@ async function Primon() {
                 }
               }
 
+
+              // Sticker
+              else if (attr == "sticker") {
+                await Proto.sendMessage(jid, { delete: msgkey });
+                if (isreplied == false) {
+                  var gmsg = await Proto.sendMessage(jid, { text: modulelang.reply });
+                  saveMessageST(gmsg.key.id, modulelang.reply)
+                  return;
+                }
+                if (isvideo) {
+                  let buffer = Buffer.from([])
+                  const stream = await downloadContentFromMessage(
+                    m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.videoMessage, "video"
+                  )
+                  for await (const chunk of stream) {
+                    buffer = Buffer.concat([buffer, chunk])
+                  }
+                  fs.writeFileSync('./STICKER.mp4', buffer)
+                  ffmpeg("./STICKER.mp4")
+                    .outputOptions(["-y", "-vcodec libwebp", "-lossless 1", "-qscale 1", "-preset default", "-loop 0", "-an", "-vsync 0", "-s 600x600"])
+                    .videoFilters('scale=600:600:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=600:600:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1')
+                    .save('./sticker.webp')
+                    .on('end', async () => {
+                      await Proto.sendMessage(meid, {
+                        sticker: fs.readFileSync("./sticker.webp")
+                      })
+                      shell.exec("rm -rf ./sticker.webp")
+                      shell.exec("rm -rf ./STICKER.mp4")
+                      return;
+                  })
+                }
+                if (isimage) {
+                  let buffer = Buffer.from([])
+                  const stream = await downloadContentFromMessage(
+                    m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.imageMessage, "image"
+                  )
+                  for await (const chunk of stream) {
+                    buffer = Buffer.concat([buffer, chunk])
+                  }
+                  fs.writeFileSync('./STICKER.png', buffer)
+                  ffmpeg('./STICKER.png')
+                   .outputOptions(["-y", "-vcodec libwebp"])
+                   .videoFilters('scale=2000:2000:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=2000:2000:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1')
+                   .save('./st.webp')
+                   .on('end', async () => {
+                      await Proto.sendMessage(meid, {
+                        sticker: fs.readFileSync("./st.webp")
+                      })
+                      shell.exec("rm -rf ./st.webp")
+                      shell.exec("rm -rf ./STICKER.png")
+                      return;
+                  })
+                }
+                if (isimage == false && isvideo == false) {
+                  var gmsg = await Proto.sendMessage(jid, { text: modulelang.only_img_or_video });
+                  saveMessageST(gmsg.key.id, modulelang.only_img_or_video)
+                  return;
+                }
+              }
+
               // Term
               else if (attr == "term") {
                 await Proto.sendMessage(jid, { delete: msgkey });
@@ -986,7 +1063,7 @@ async function Primon() {
                   saveMessageST(gmsg.key.id, modulelang.need_cmd)
                   return;
                 } else {
-                  if (args.match("rm") !== null && args.match("unlink") !== null) {
+                  if (args.includes("rm ")) {
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.valid_cmd });
                     saveMessageST(gmsg.key.id, modulelang.valid_cmd)
                     return;
@@ -997,6 +1074,12 @@ async function Primon() {
                         var gmsg = await Proto.sendMessage(jid, { text: output.toString() });
                         saveMessageST(gmsg.key.id, output.toString())
                       })
+
+                      command_t.stderr.on('data', async (output2) => {
+                        var gmsg = await Proto.sendMessage(jid, { text: output2.toString() });
+                        saveMessageST(gmsg.key.id, output.toString())
+                      })
+
                       command_t.stdout.on('end', async () => {
                         var gmsg = await Proto.sendMessage(jid, { text: modulelang.done_cmd });
                         saveMessageST(gmsg.key.id, modulelang.done_cmd)
@@ -1194,6 +1277,17 @@ async function Primon() {
                     saveMessageST(gmsg.key.id, cmds(modulelang.ping, 2, cmd[0]))
                     return;
                   } else if (
+                    args == "sticker" ||
+                    args == "Sticker" ||
+                    args == "STICKER"
+                  ) {
+                    var gmsg = await Proto.sendMessage(
+                      jid,
+                      { text: cmds(modulelang.sticker3, 3, cmd[0]) }
+                    );
+                    saveMessageST(gmsg.key.id, cmds(modulelang.sticker3, 3, cmd[0]))
+                    return;
+                  } else if (
                     args == "goodbye" ||
                     args == "Goodbye" ||
                     args == "GOODBYE"
@@ -1291,6 +1385,17 @@ async function Primon() {
                       { text: cmds(modulelang.yt_src, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.yt_src, 3, cmd[0]))
+                    return;
+                  } else if (
+                    args == "song" ||
+                    args == "Song" ||
+                    args == "SONG"
+                  ) {
+                    var gmsg = await Proto.sendMessage(
+                      jid,
+                      { text: cmds(modulelang.song_fl, 3, cmd[0]) }
+                    );
+                    saveMessageST(gmsg.key.id, cmds(modulelang.song_fl, 3, cmd[0]))
                     return;
                   } else if (
                     args == "video" ||

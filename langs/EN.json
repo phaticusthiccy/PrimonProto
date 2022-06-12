@@ -142,7 +142,14 @@
       "term3": "_Please don't use it if you don't know about shell commands. You can break the bot._",
       "term4": "{%d1}```{%c}term``` \n{%d1}_Runs shell commands._ \n{%d1}_Please don't use it if you don't know about shell commands. You can break the bot._\n{%d1}\n\n```{%c}term ls```",
       "yt_src": "{%d1}```{%c}yt``` \n{%d1}_Searches on YouTube._ \n{%d1}\n\n```{%c}yt Thiccy - Vibe House```",
-      "yt_video": "{%d1}```{%c}yt``` \n{%d1}_Downloads videos from YouTube._ \n{%d1}\n\n```{%c}video https://www.youtube.com/watch?v=x-U1DhJGn1g```"
+      "yt_video": "{%d1}```{%c}yt``` \n{%d1}_Downloads videos from YouTube._ \n{%d1}\n\n```{%c}video https://www.youtube.com/watch?v=x-U1DhJGn1g```",
+      "song_dsc": "_Download songs from YouTube._",
+      "song_us": "```&song Thiccy - Vibe House```",
+      "song_fl": "{%d1}```{%c}song```\n{%d1}_Download songs from YouTube._ \n{%d1}\n\n```{%c}song Thiccy - Vibe House```",
+      "only_img_or_video": "*Please only reply to video or photo!*",
+      "sticker1": "_Converts video or photo to sticker._",
+      "sticker2": "```&sticker <reply a message>```",
+      "sticker3": "{%d1}```{%c}sticker```\n{%d1}_Converts video or photo to sticker._ \n{%d1}\n\n```{%c}sticker <reply a message>```"
     }
   }
 }
