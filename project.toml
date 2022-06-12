@@ -19,7 +19,6 @@ version = "1.0.0"
 exclude = [
     "ffmpeg"
 ]
-include = []
 
 [[build.buildpacks]]
 uri = "ffmpeg/"
