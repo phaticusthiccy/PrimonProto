@@ -416,6 +416,7 @@ async function Primon() {
   store?.bind(Proto.ev)
   var message,
     isreplied,
+    reply_key,
     isimage,
     isvideo,
     issound,
@@ -549,8 +550,10 @@ async function Primon() {
       var trs1 =
         m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage;
       isreplied = true;
+      reply_key = { quoted: m.messages[0].key }
     } catch {
       isreplied = false;
+      reply_key = { }
     }
 
     if (isreplied) {
@@ -742,7 +745,7 @@ async function Primon() {
         if (m.messages[0].key.fromMe) {
           return;
         }
-        var gmsg = await Proto.sendMessage(jid, { text: el.message }, {quoted: m.messages[0]})
+        var gmsg = await Proto.sendMessage(jid, { text: el.message }, reply_key)
         saveMessageST(gmsg.key.id, el.message)
         return;
       }
@@ -808,7 +811,7 @@ async function Primon() {
             cmdlang.example + "\n\n" + modulelang.term2.replace(/&/gi, cmd[0])
 
           },
-          { quoted: m.messages[0] }
+          reply_key 
         );
         saveMessageST(gmsg.key.id, cmdlang.command + "```" + cmd[0] + "alive" + "```" + "\n" +
         cmdlang.info + modulelang.alive2 + "\n\n\n" +
@@ -970,7 +973,7 @@ async function Primon() {
               else if (attr == "video") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
-                  var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt });
+                  var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt }, reply_key);
                   saveMessageST(gmsg.key.id, modulelang.need_yt)
                   return;
                 } else {
@@ -979,7 +982,7 @@ async function Primon() {
                     try {
                       fs.unlinkSync("./YT.mp4")
                     } catch {}
-                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_down });
+                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_down }, reply_key);
                     saveMessageST(gmsg.key.id, modulelang.yt_down)
                     await ytdl(args, "./YT.mp4");
 
@@ -987,15 +990,15 @@ async function Primon() {
                       return await Proto.sendMessage(jid, {
                         video: fs.readFileSync("./YT.mp4"),
                         caption: MenuLang.by
-                      })
+                      }, reply_key)
                     } catch {
-                      var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_not_found });
+                      var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_not_found }, reply_key);
                       saveMessageST(gmsg.key.id, modulelang.yt_not_found)
                       return;
                     }
                     
                   } else {
-                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt });
+                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt }, reply_key);
                     saveMessageST(gmsg.key.id, modulelang.need_yt)
                     return;
                   }
