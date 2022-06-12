@@ -977,8 +977,7 @@ async function Primon() {
               else if (attr == "video") {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
-                  var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt }, reply_key[0]);
-                  reply_key = []
+                  var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt });
                   saveMessageST(gmsg.key.id, modulelang.need_yt)
                   return;
                 } else {
@@ -992,22 +991,29 @@ async function Primon() {
                     await ytdl(args, "./YT.mp4");
 
                     try {
-                      return await Proto.sendMessage(jid, {
+                      await Proto.sendMessage(jid, {
                         video: fs.readFileSync("./YT.mp4"),
                         caption: MenuLang.by
-                      }, reply_key[0])
-                      reply_key = []
+                      })
+                      try {
+                        fs.unlinkSync("./YT.mp4")
+                      } catch {}
+                      return;
                     } catch {
-                      var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_not_found }, reply_key[0]);
+                      var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_not_found });
                       saveMessageST(gmsg.key.id, modulelang.yt_not_found)
-                      reply_key = []
+                      try {
+                        fs.unlinkSync("./YT.mp4")
+                      } catch {}
                       return;
                     }
                     
                   } else {
-                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt }, reply_key[0]);
+                    try {
+                      fs.unlinkSync("./YT.mp4")
+                    } catch {}
+                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt });
                     saveMessageST(gmsg.key.id, modulelang.need_yt)
-                    reply_key = []
                     return;
                   }
                 }
