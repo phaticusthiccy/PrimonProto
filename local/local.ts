@@ -248,9 +248,9 @@ var db = `{
 var pmsg = `
 
 ┌─────────────────────────────────┬──────────┐
-│ ${chalk.cyan("Primon Proto - Whatsapp Userbot")} │ Versiyon │
+│ ${chalk.blue("Primon Proto - Whatsapp Userbot")} │ Versiyon │
 ├─────────────────────────────────┼──────────┤
-│ ${chalk.cyan("Railway Otomatik Deploy")}         │      1.0 │
+│ ${chalk.blue("Railway Otomatik Deploy")}         │      1.0 │
 └─────────────────────────────────┴──────────┘
 
 
@@ -258,9 +258,9 @@ var pmsg = `
 var penmsg = `
 
 ┌─────────────────────────────────┬─────────┐
-│ ${chalk.cyan("Primon Proto - Whatsapp Userbot")} │ Version │
+│ ${chalk.blue("Primon Proto - Whatsapp Userbot")} │ Version │
 ├─────────────────────────────────┼─────────┤
-│ ${chalk.cyan("Railway Auto Deploy")}             │     1.0 │
+│ ${chalk.blue("Railway Auto Deploy")}             │     1.0 │
 └─────────────────────────────────┴─────────┘
 
 
