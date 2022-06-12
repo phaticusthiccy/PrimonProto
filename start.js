@@ -999,7 +999,8 @@ async function Primon() {
                         fs.unlinkSync("./YT.mp4")
                       } catch {}
                       return;
-                    } catch {
+                    } catch (e) {
+                      console.log(e)
                       var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_not_found });
                       saveMessageST(gmsg.key.id, modulelang.yt_not_found)
                       try {
