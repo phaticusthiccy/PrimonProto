@@ -368,7 +368,8 @@ async function ytdl(link, downloadFolder, Proto, jid) {
         return true;
       }
     }
-  } catch {
+  } catch (e) {
+    console.log(e)
     ytdl(link, downloadFolder);
   }
 }
