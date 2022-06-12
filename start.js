@@ -546,14 +546,16 @@ async function Primon() {
     }
 
 
+    var rsq = false
     try {
       var trs1 =
         m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage;
       isreplied = true;
-      reply_key = { quoted: m.messages[0] }
+      reply_key.push({ quoted: m.messages[0] })
+      rsq = true
     } catch {
       isreplied = false;
-      reply_key = { }
+      reply_key.push({})
     }
 
     if (isreplied) {
@@ -746,6 +748,7 @@ async function Primon() {
           return;
         }
         var gmsg = await Proto.sendMessage(jid, { text: el.message }, reply_key)
+        reply_key = []
         saveMessageST(gmsg.key.id, el.message)
         return;
       }
@@ -813,6 +816,7 @@ async function Primon() {
           },
           reply_key 
         );
+        reply_key = []
         saveMessageST(gmsg.key.id, cmdlang.command + "```" + cmd[0] + "alive" + "```" + "\n" +
         cmdlang.info + modulelang.alive2 + "\n\n\n" +
 
@@ -974,6 +978,7 @@ async function Primon() {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
                   var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt }, reply_key);
+                  reply_key = []
                   saveMessageST(gmsg.key.id, modulelang.need_yt)
                   return;
                 } else {
@@ -982,7 +987,8 @@ async function Primon() {
                     try {
                       fs.unlinkSync("./YT.mp4")
                     } catch {}
-                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_down });
+                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_down }, reply_key);
+                    reply_key = []
                     saveMessageST(gmsg.key.id, modulelang.yt_down)
                     await ytdl(args, "./YT.mp4");
 
@@ -991,15 +997,18 @@ async function Primon() {
                         video: fs.readFileSync("./YT.mp4"),
                         caption: MenuLang.by
                       }, reply_key)
+                      reply_key = []
                     } catch {
                       var gmsg = await Proto.sendMessage(jid, { text: modulelang.yt_not_found }, reply_key);
                       saveMessageST(gmsg.key.id, modulelang.yt_not_found)
+                      reply_key = []
                       return;
                     }
                     
                   } else {
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_yt }, reply_key);
                     saveMessageST(gmsg.key.id, modulelang.need_yt)
+                    reply_key = []
                     return;
                   }
                 }
