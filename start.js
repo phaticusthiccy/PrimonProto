@@ -1086,8 +1086,14 @@ async function Primon() {
                     saveMessageST(gmsg.key.id, modulelang.song_down)
 
 
-                    var uri = await GetListByKeyword(args,false,1)
-                    uri = "https://www.youtube.com/watch?v=" + uri.items[0].id
+                    var uri = await GetListByKeyword(args,false,5)
+                    var gts = [];
+                    uri.items.map((Element) => {
+                      if (Element.type == "video") {
+                        gts.push(Element.id)
+                      }
+                    })
+                    uri = "https://www.youtube.com/watch?v=" + gts[0]
                     var h = await axios({
                       url: "https://api.onlinevideoconverter.pro/api/convert",
                       method: "post",
@@ -1125,8 +1131,6 @@ async function Primon() {
                         }
                       })
                     }
-                
-                    console.log(downs)
                     const response = await axios({
                       method: "GET",
                       url: downs[0],
@@ -2257,7 +2261,6 @@ async function Primon() {
                 await Proto.sendMessage(jid, { delete: msgkey });
                 var cmmts = await axios.get("https://api.github.com/users/phaticusthiccy/events/public")
                 cmmts = cmmts.data
-                console.log(cmmts)
                 var news = [];
                 var author_cmts = [];
                 cmmts.map((Element) => {
