@@ -52,7 +52,6 @@ const { Octokit } = require("@octokit/core");
 const shell = require('shelljs');
 const { exec } = require("child_process");
 const Path = require('path')
-var ffmpeg = require('fluent-ffmpeg');
 
 const {
   getMessageST,
