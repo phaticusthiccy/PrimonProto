@@ -1028,7 +1028,7 @@ async function Primon() {
                   return;
                 } else {
                   try {
-                    fs.unlinkSync("./YT.mp4")
+                    fs.unlinkSync("./YT2.mp4")
                   } catch {}
                   try {
                     fs.unlinkSync("./YT2.m4a")
@@ -1085,14 +1085,15 @@ async function Primon() {
                       responseType: "arraybuffer"
                     });
                 
-                    fs.appendFileSync(downloadFolder, Buffer.from(response.data));
-                    ffmpeg(downloadFolder).save('./YT2.m4a').on('end', async () => {
+                    fs.appendFileSync("./YT2.mp4", Buffer.from(response.data));
+                    ffmpeg("./YT2.mp4").save('./YT2.m4a').on('end', async () => {
                       return await Proto.sendMessage(jid, {
                         url: "./YT2.m4a",
                         mimetype: "audio/m4a"
                       })
                     })
-                  } catch {
+                  } catch (e) {
+                    console.log(e)
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.song_not_found });
                     saveMessageST(gmsg.key.id, modulelang.song_not_found)
                     return;
