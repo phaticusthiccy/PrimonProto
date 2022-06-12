@@ -1018,7 +1018,7 @@ async function Primon() {
                     .videoFilters('scale=600:600:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=600:600:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1')
                     .save('./sticker.webp')
                     .on('end', async () => {
-                      await Proto.sendMessage(meid, {
+                      await Proto.sendMessage(jid, {
                         sticker: fs.readFileSync("./sticker.webp")
                       })
                       shell.exec("rm -rf ./sticker.webp")
@@ -1040,7 +1040,7 @@ async function Primon() {
                    .videoFilters('scale=2000:2000:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=2000:2000:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1')
                    .save('./st.webp')
                    .on('end', async () => {
-                      await Proto.sendMessage(meid, {
+                      await Proto.sendMessage(jid, {
                         sticker: fs.readFileSync("./st.webp")
                       })
                       shell.exec("rm -rf ./st.webp")
