@@ -550,7 +550,7 @@ async function Primon() {
       var trs1 =
         m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage;
       isreplied = true;
-      reply_key = { quoted: m.messages[0].key }
+      reply_key = { quoted: m.messages[0] }
     } catch {
       isreplied = false;
       reply_key = { }
