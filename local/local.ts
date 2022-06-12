@@ -1,3 +1,11 @@
+// Primon Proto 
+// Headless WebSocket, type-safe Whatsapp UserBot
+// 
+// Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
+// Multi-Device Lightweight ES5 Module (can usable with mjs)
+//
+// Phaticusthiccy - 2022
+
 import { Boom } from "@hapi/boom";
 import P from "pino";
 import makeWASocket, {
@@ -15,7 +23,6 @@ import { Octokit } from "@octokit/core";
 import axios from "axios";
 import neko from "@phaticusthiccy/open-apis";
 import { exec, spawn, execSync } from "child_process";
-import rw from "./railway";
 import shell from "shelljs";
 
 var db = `{
@@ -353,88 +360,85 @@ async function MAIN() {
     }
   }
   rl.question(
-    chalk.blue("Select A Language \n\n") +
-      chalk.yellow("[1]") +
+    "Select A Language \n\n" +
+      "[1]" +
       " :: Türkçe \n" +
-      chalk.yellow("[2]") +
+      "[2]" +
       " :: English\n\n>>> ",
     async (answer: number) => {
       FIRST_TIMESTEP = new Date().getTime();
       fs.writeFileSync("./time.txt", FIRST_TIMESTEP.toString());
       if (answer == 1) {
-        console.log(chalk.green("Türkçe Dili Seçildi!"));
+        console.log("Türkçe Dili Seçildi!");
         lang == "TR";
         fs.writeFileSync("./lang.txt", "TR");
         await delay(3000);
         console.clear();
         await delay(400);
         rl.question(
-          chalk.blue("\n\nNe Yapmak İstiyorsunuz? \n\n") +
-            chalk.yellow("[1]") +
+          "\n\nNe Yapmak İstiyorsunuz? \n\n" +
+            "[1]" +
             " :: Session Yenileme\n" +
-            chalk.yellow("[2]") +
+            "[2]" +
             " :: Bot Kurma" +
             "\n\n1) Session yenileme işlemi, yavaş çalışan botu hızlandırmak veya çıkış yapılan botu veri kaybı olmadan geri getirmek için kullanılır.\n>>> ",
           async (answer2: number) => {
             if (answer2 == 1) {
-              console.log(chalk.green("Session Yenileme Seçildi!"));
+              console.log("Session Yenileme Seçildi!");
               await delay(3000);
               console.clear();
               console.log(pmsg);
               await delay(1500);
-              console.log(chalk.green("Lütfen Veritabanı Kodunu giriniz."));
+              console.log("Lütfen Veritabanı Kodunu giriniz.");
               await delay(1500);
               console.log(
-                chalk.green("Bunu railway üzerindeki uygulamanızın") +
-                  chalk.yellow(" Variables ") +
-                  chalk.green("kısmından ") +
-                  chalk.yellow("GITHUB_DB ") +
-                  chalk.green("bölümünü görebilirsiniz.")
+                "Bunu railway üzerindeki uygulamanızın" +
+                  " Variables " +
+                  "kısmından " +
+                  "GITHUB_DB " +
+                  "bölümünü görebilirsiniz."
               );
               await delay(1500);
               console.log(
-                chalk.green(
                   "Bunu yapamıyorsanız, lütfen daha önceden kurmuş olduğunuz botun, kendi numaranıza göndermiş olduğu mesajı kontrol edin. "
-                ) +
-                  chalk.yellow("Veritabanı") +
-                  chalk.green(" ismindeki kodu ekrana yapıştırın. \n\n")
+                 +
+                  "Veritabanı" +
+                  " ismindeki kodu ekrana yapıştırın. \n\n"
               );
               await delay(1500);
               rl.question(
-                chalk.blue("Anahtarı Girin :: "),
+                "Anahtarı Girin :: ",
                 async (a1: string) => {
                   anahtar = a1;
-                  console.log(chalk.yellow("\n\nTeşekkürler"));
+                  console.log("\n\nTeşekkürler");
                   await delay(3000);
                   console.clear();
                   console.log(pmsg);
                   await delay(1500);
-                  console.log(chalk.green("Lütfen Token Kodunu giriniz."));
+                  console.log( "Lütfen Token Kodunu giriniz.");
                   await delay(1500);
                   console.log(
-                    chalk.green("Bunu railway üzerindeki uygulamanızın") +
-                      chalk.yellow(" Variables ") +
-                      chalk.green("kısmından ") +
-                      chalk.yellow("GITHUB_AUTH ") +
-                      chalk.green("bölümünü görebilirsiniz.")
+                     "Bunu railway üzerindeki uygulamanızın" +
+                      " Variables " +
+                       "kısmından " +
+                      "GITHUB_AUTH " +
+                       "bölümünü görebilirsiniz."
                   );
                   await delay(1500);
                   console.log(
-                    chalk.green(
+                     
                       "Bunu yapamıyorsanız, lütfen daha önceden kurmuş olduğunuz botun, kendi numaranıza göndermiş olduğu mesajı kontrol edin. "
-                    ) +
-                      chalk.yellow("Token") +
-                      chalk.green(" ismindeki kodu ekrana yapıştırın. \n\n")
+                    +
+                      "Token" +
+                       " ismindeki kodu ekrana yapıştırın. \n\n"
                   );
                   await delay(1500);
                   rl.question(
-                    chalk.blue("Anahtarı Girin :: "),
+                     "Anahtarı Girin :: ",
                     async (a2: string) => {
                       token = a2;
                       console.log(
-                        chalk.yellow(
                           "\n\nTeşekkürler, lütfen biraz bekleyin. Girdiğiniz kodların geçerli olup olmadığını kontrol ediyorum.."
-                        )
                       );
                       try {
                         var test1 = new Octokit({ auth: token });
@@ -444,33 +448,33 @@ async function MAIN() {
                       } catch {
                         console.clear();
                         console.log(
-                          chalk.red(
+                           
                             "\n\nÜzgünüm, girdiğniz değeler doğru değil. Lütfen tekrar kontrol ediniz."
-                          )
+                          
                         );
                         process.exit();
                       }
                       console.log(
-                        chalk.green("\n\nGirdiğiniz Bilgiler Doğru!")
+                         "\n\nGirdiğiniz Bilgiler Doğru!"
                       );
                       await delay(1500);
                       var octokit = new Octokit({ auth: token });
                       console.log(
-                        chalk.green(
+                         
                           "Şimdi ise WhatsApp uygulmanızı açın ve 'Bağlı Cihazlar' kısmına tıklayın."
-                        )
+                        
                       );
                       await delay(1500);
                       console.log(
-                        chalk.green(
+                         
                           "\n\nArdından 'Çoklu Cihaz' programını aktif edin."
-                        )
+                        
                       );
                       await delay(1500);
                       console.log(
-                        chalk.green(
+                         
                           "\n\nBunları yaptıktan sonra lütfen enter tuşuna basın."
-                        )
+                        
                       );
                       await delay(1500);
                       rl.question(
@@ -480,15 +484,15 @@ async function MAIN() {
                           console.log(pmsg);
                           await delay(1500);
                           console.log(
-                            chalk.green(
+                             
                               "Şimdi ise ekrana gelecek QR kodunu okutun."
-                            )
+                            
                           );
                           await delay(2800);
                           console.log(
-                            chalk.red("QR Okuttuktun Sonra Komut Satırına") +
-                              chalk.cyan("`node local.js`") +
-                              chalk.red("Yazın!")
+                             "QR Okuttuktun Sonra Komut Satırına" +
+                              "`node local.js`" +
+                               "Yazın!"
                           );
                           await delay(5000);
                           console.clear();
@@ -502,69 +506,69 @@ async function MAIN() {
                 }
               );
             } else if (answer2 == 2) {
-              console.log(chalk.green("Bot Kurma Seçildi!"));
+              console.log( "Bot Kurma Seçildi!");
               await delay(3000);
               console.clear();
               console.log(pmsg);
               await delay(1500);
               console.log(
-                chalk.green(
+                 
                   "İlk önce bir github hesabınız yoksa https://github.com adresine tıklayıp yeni bir hesap açın. Ardından mail adresinize e-posta ile hesabınızı onaylayın. Bu işlemi yaptıktan sonra enter tuşuna basıp devam ediniz.\n\n"
-                )
+                
               );
               rl.question("[Enter Tuşuna Bas]", async (answer3: string) => {
                 console.clear();
                 console.log(pmsg);
                 await delay(1500);
                 console.log(
-                  chalk.green(
+                   
                     "Hesap açtıktan sonra mail onayı için https://github.com/settings/emails bu adrese gidin ve 'Resend verification email' yazısına basın. Ardından mailinizi kontol edin. Bunları hali hazırda yapmış iseniz veya devam etmek için lütfen enter tuşuna basınız.\n\n"
-                  )
+                  
                 );
                 rl.question("[Enter Tuşuna Bas]", async (answer4: string) => {
                   console.clear();
                   console.log(pmsg);
                   await delay(1500);
                   console.log(
-                    chalk.green(
+                     
                       "Hesabınız onaylandığına göre şimdi token alalım. \n\n"
-                    )
+                    
                   );
                   await delay(3000);
                   console.log(
-                    chalk.green(
+                     
                       "Lütfen https://github.com/settings/tokens bu adrese gidin ve 'Personal access tokens' yazan kısıma basın. Bu işlemi yaptıktan sonra enter tuşuna basın.\n\n"
-                    )
+                    
                   );
                   rl.question("[Enter Tuşuna Bas]", async (answer5: string) => {
                     console.clear();
                     console.log(pmsg);
                     await delay(1500);
                     console.log(
-                      chalk.green(
+                       
                         "Burda ise 'Generate New Token' butonuna tıklayın.\n\n"
-                      )
+                      
                     );
                     await delay(3000);
                     console.log(
-                      chalk.green(
+                       
                         "Ve ayarlarımız şu şekide olsun: \n\nNOTE: Primon \n\nExpiration: No expiration\n\nDaha sonra ise aşağıda 'repo' ve 'gist' yazan kutucuğu işaretleyin.\n\n"
-                      )
+                      
                     );
                     await delay(3000);
                     console.log(
-                      chalk.green(
+                       
                         "Son olarak aşağıdaki 'Generate token' butonuna basın. Karşınıza gelecek anahtarı kopyalayın! İşlem bitene kadar bu anahtarı kaybetmeyin! Kopyaladıktan sonra ise ekrana gelecek giriş bölümüne yapıştırın.\n\n"
-                      )
+                      
                     );
                     rl.question(
-                      chalk.blue("Anahtarı Girin :: "),
+                       "Anahtarı Girin :: ",
                       async (answer6: string) => {
                         token = answer6;
                         console.log(
-                          chalk.yellow(
+                          
                             "\n\nTeşekkürler, lütfen biraz bekleyin. Girdiğiniz kodların geçerli olup olmadığını kontrol ediyorum.."
-                          )
+                          
                         );
                         try {
                           var test1 = new Octokit({ auth: token });
@@ -581,14 +585,14 @@ async function MAIN() {
                         } catch {
                           console.clear();
                           console.log(
-                            chalk.red(
+                             
                               "\n\nÜzgünüm, girdiğniz değeler doğru değil. Lütfen tekrar kontrol ediniz."
-                            )
+                            
                           );
                           process.exit();
                         }
                         console.log(
-                          chalk.green("\n\nGirdiğiniz Bilgiler Doğru!")
+                           "\n\nGirdiğiniz Bilgiler Doğru!"
                         );
                         await delay(1500);
                         fs.writeFileSync("./gh_auth.txt", token);
@@ -604,7 +608,7 @@ async function MAIN() {
                           gist_id: res.data.id,
                         });
                         console.log(
-                          chalk.green("\n\nVeritabanı Oluşturuluyor..\n\n")
+                           "\n\nVeritabanı Oluşturuluyor..\n\n"
                         );
                         var res = await octokit.request("POST /gists", {
                           description: "Primon Proto için Kalıcı Veritabanı",
@@ -651,32 +655,32 @@ async function MAIN() {
 
                         var step = Number(t2) - Number(t1);
                         console.log(
-                          chalk.green(
+                           
                             "Veritabanı Oluşturuldu! \nDatabase Hızı: " +
                               t3 +
                               "ms\n\n"
-                          )
+                          
                         );
                         await delay(5000);
                         console.clear();
                         console.log(pmsg);
                         await delay(1500);
                         console.log(
-                          chalk.green(
+                           
                             "Şimdi ise WhatsApp uygulmanızı açın ve 'Bağlı Cihazlar' kısmına tıklayın."
-                          )
+                          
                         );
                         await delay(1500);
                         console.log(
-                          chalk.green(
+                           
                             "\n\nArdından 'Çoklu Cihaz' programını aktif edin."
-                          )
+                          
                         );
                         await delay(1500);
                         console.log(
-                          chalk.green(
+                           
                             "\n\nBunları yaptıktan sonra lütfen enter tuşuna basın."
-                          )
+                          
                         );
                         await delay(1500);
                         rl.question(
@@ -686,15 +690,15 @@ async function MAIN() {
                             console.log(pmsg);
                             await delay(1500);
                             console.log(
-                              chalk.green(
+                               
                                 "Şimdi ise ekrana gelecek QR kodunu okutun."
-                              )
+                              
                             );
                             await delay(2800);
                             console.log(
-                              chalk.red("QR Okuttuktun Sonra Komut Satırına") +
-                                chalk.cyan("`node local.js`") +
-                                chalk.red("Yazın!")
+                               "QR Okuttuktun Sonra Komut Satırına" +
+                                "`node local.js`" +
+                                 "Yazın!"
                             );
                             await delay(5000);
                             console.clear();
@@ -709,79 +713,77 @@ async function MAIN() {
                 });
               });
             } else {
-              console.log(chalk.red("Sadece 1 veya 2 Yazın!"));
+              console.log( "Sadece 1 veya 2 Yazın!");
               process.exit();
             }
           }
         );
       } else if (answer == 2) {
-        console.log(chalk.green("English Language Selected!"));
+        console.log( "English Language Selected!");
         lang == "TR";
         fs.writeFileSync("./lang.txt", "TR");
         await delay(3000);
         console.clear();
         await delay(400);
         rl.question(
-          chalk.blue("\n\nWhat do you want to do? \n\n") +
-            chalk.yellow("[1]") +
+           "\n\nWhat do you want to do? \n\n" +
+            "[1]" +
             " :: Session Renewal\n" +
-            chalk.yellow("[2]") +
+            "[2]" +
             " :: Setup Bot" +
             "\n\n1) Session refresh is used to speed up a slow bot or to restore a logged out bot without data loss.\n>>> ",
           async (answer2: number) => {
             if (answer2 == 1) {
-              console.log(chalk.green("Session Renewal Selected!"));
+              console.log( "Session Renewal Selected!");
               await delay(3000);
               console.clear();
               console.log(penmsg);
               await delay(1500);
-              console.log(chalk.green("Please enter the Database Code."));
+              console.log( "Please enter the Database Code.");
               await delay(1500);
               console.log(
-                chalk.green("You can see this in the") +
-                  chalk.yellow(" Variables ") +
-                  chalk.green(
+                 "You can see this in the" +
+                  " Variables " +
+                   
                     "section of your application on the railway, in the"
-                  ) +
-                  chalk.yellow(" GITHUB_DB ") +
-                  chalk.green("section.")
+                   +
+                  " GITHUB_DB " +
+                   "section."
               );
               await delay(1500);
               console.log(
-                chalk.green(
+                 
                   "If you can't do this, please check the message that the bot you have previously set up has sent to your own number.\n\n"
-                )
+                
               );
-              rl.question(chalk.blue("Enter Key :: "), async (a1: string) => {
+              rl.question( "Enter Key :: ", async (a1: string) => {
                 anahtar = a1;
-                console.log(chalk.yellow("\n\nThank you!"));
+                console.log("\n\nThank you!");
                 await delay(3000);
                 console.clear();
                 console.log(penmsg);
                 await delay(1500);
-                console.log(chalk.green("Please enter the Token Code."));
+                console.log( "Please enter the Token Code.");
                 await delay(1500);
                 console.log(
-                  chalk.green("You can see this in the") +
-                    chalk.yellow(" Variables ") +
-                    chalk.green(
+                   "You can see this in the" +
+                    " Variables " +
+                     
                       "section of your application on the railway, in the"
-                    ) +
-                    chalk.yellow(" GITHUB_AUTH ") +
-                    chalk.green("section.")
+                     +
+                    " GITHUB_AUTH " +
+                     "section."
                 );
                 await delay(1500);
                 console.log(
-                  chalk.green(
+                   
                     "If you can't do this, please check the message that the bot you have previously set up has sent to your own number.\n\n"
-                  )
+                  
                 );
-                rl.question(chalk.blue("Enter Key :: "), async (a2: string) => {
+                rl.question( "Enter Key :: ", async (a2: string) => {
                   token = a2;
                   console.log(
-                    chalk.yellow(
                       "\n\nThank you, please wait a moment. Checking if the codes you entered are valid.."
-                    )
                   );
                   try {
                     var test1 = new Octokit({ auth: token });
@@ -791,29 +793,29 @@ async function MAIN() {
                   } catch {
                     console.clear();
                     console.log(
-                      chalk.red(
+                       
                         "\n\nSorry, the value you entered is not correct. Please check again."
-                      )
+                      
                     );
                     process.exit();
                   }
                   console.log(
-                    chalk.green("\n\nThe Information You Entered Is Correct!")
+                     "\n\nThe Information You Entered Is Correct!"
                   );
                   await delay(1500);
                   var octokit = new Octokit({ auth: token });
                   console.log(
-                    chalk.green(
+                     
                       "Now open your WhatsApp application and click on 'Connected Devices'."
-                    )
+                    
                   );
                   await delay(1500);
                   console.log(
-                    chalk.green("\n\nThen activate the 'Multi-Device' program.")
+                     "\n\nThen activate the 'Multi-Device' program."
                   );
                   await delay(1500);
                   console.log(
-                    chalk.green("\n\nAfter doing these, please press enter.")
+                     "\n\nAfter doing these, please press enter."
                   );
                   await delay(1500);
                   rl.question(
@@ -823,15 +825,15 @@ async function MAIN() {
                       console.log(penmsg);
                       await delay(1500);
                       console.log(
-                        chalk.green(
+                         
                           "Now read the QR code that will appear on the screen.."
-                        )
+                        
                       );
                       await delay(2800);
                       console.log(
-                        chalk.red("\n\nPlease Type Command Prompt") +
-                          chalk.cyan(" `node local.js` ") +
-                          chalk.red("After The Scanning the QR!")
+                         "\n\nPlease Type Command Prompt" +
+                         " `node local.js` " +
+                           "After The Scanning the QR!"
                       );
                       await delay(5000);
                       console.clear();
@@ -843,69 +845,67 @@ async function MAIN() {
                 });
               });
             } else if (answer2 == 2) {
-              console.log(chalk.green("Bot Setup Selected!"));
+              console.log( "Bot Setup Selected!");
               await delay(3000);
               console.clear();
               console.log(penmsg);
               await delay(1500);
               console.log(
-                chalk.green(
+                 
                   "First, if you don't have a github account, click https://github.com and create a new one. Then confirm your account by e-mail to your e-mail address. After doing this, press enter and continue.\n\n"
-                )
+                
               );
               rl.question("[Press Enter Key]", async (answer3: string) => {
                 console.clear();
                 console.log(penmsg);
                 await delay(1500);
                 console.log(
-                  chalk.green(
+                   
                     "After creating an account, go to https://github.com/settings/emails for mail confirmation and press 'Resend verification email'. Then check your mail. If you have already done these or please press enter to continue.\n\n"
-                  )
+                  
                 );
                 rl.question("[Press Enter Key]", async (answer4: string) => {
                   console.clear();
                   console.log(penmsg);
                   await delay(1500);
                   console.log(
-                    chalk.green(
+                     
                       "Now that your account has been approved, let's get tokens. \n\n"
-                    )
+                    
                   );
                   await delay(3000);
                   console.log(
-                    chalk.green(
+                     
                       "Please go to https://github.com/settings/tokens and press 'Personal access tokens'. After doing this, press the enter key.\n\n"
-                    )
+                    
                   );
                   rl.question("[Press Enter Key]", async (answer5: string) => {
                     console.clear();
                     console.log(penmsg);
                     await delay(1500);
                     console.log(
-                      chalk.green(
+                       
                         "Here, click the 'Generate New Token' button.\n\n"
-                      )
+                      
                     );
                     await delay(3000);
                     console.log(
-                      chalk.green(
+                       
                         "And our settings are as follows: \n\nNOTE: Primon \n\nExpiration: No expiration\n\nThen check the box that says 'repo' and 'gist' below.\n\n"
-                      )
+                      
                     );
                     await delay(3000);
                     console.log(
-                      chalk.green(
+                       
                         "Finally, press the 'Generate token' button below. Copy the key that will appear in front of you! Do not lose this key until the process is finished! After copying, paste it into the input section that will appear on the screen..\n\n"
-                      )
+                      
                     );
                     rl.question(
-                      chalk.blue("Enter Key :: "),
+                       "Enter Key :: ",
                       async (answer6: string) => {
                         token = answer6;
                         console.log(
-                          chalk.yellow(
                             "\n\nThank you, please wait a moment. Checking if the codes you entered are valid.."
-                          )
                         );
                         try {
                           var test1 = new Octokit({ auth: token });
@@ -922,16 +922,16 @@ async function MAIN() {
                         } catch {
                           console.clear();
                           console.log(
-                            chalk.red(
+                             
                               "\n\nSorry, the value you entered is not correct. Please check again."
-                            )
+                            
                           );
                           process.exit();
                         }
                         console.log(
-                          chalk.green(
+                           
                             "\n\nThe Information You Entered Is Correct!"
-                          )
+                          
                         );
                         await delay(1500);
                         fs.writeFileSync("./gh_auth.txt", token);
@@ -946,7 +946,7 @@ async function MAIN() {
                         await octokit.request("DELETE /gists/{gist_id}", {
                           gist_id: res.data.id,
                         });
-                        console.log(chalk.green("\n\nCreating Database..\n\n"));
+                        console.log( "\n\nCreating Database..\n\n");
                         var res = await octokit.request("POST /gists", {
                           description: "Persistent Database for Primon Proto",
                           files: {
@@ -989,32 +989,32 @@ async function MAIN() {
 
                         var step = Number(t2) - Number(t1);
                         console.log(
-                          chalk.green(
+                           
                             "Database Created! \n\nDatabase Speed: " +
                               t3 +
                               "ms\n\n"
-                          )
+                          
                         );
                         await delay(5000);
                         console.clear();
                         console.log(penmsg);
                         await delay(1500);
                         console.log(
-                          chalk.green(
+                           
                             "Now open your WhatsApp application and click on 'Connected Devices'."
-                          )
+                          
                         );
                         await delay(1500);
                         console.log(
-                          chalk.green(
+                           
                             "\n\nThen activate the 'Multi-Device' program."
-                          )
+                        
                         );
                         await delay(1500);
                         console.log(
-                          chalk.green(
+                           
                             "\n\nAfter doing these, please press enter."
-                          )
+                          
                         );
                         await delay(1500);
                         rl.question(
@@ -1024,15 +1024,15 @@ async function MAIN() {
                             console.log(penmsg);
                             await delay(1500);
                             console.log(
-                              chalk.green(
+                               
                                 "Now read the QR code that will appear on the screen."
-                              )
+                              
                             );
                             await delay(2800);
                             console.log(
-                              chalk.red("\n\nPlease Type Command Prompt") +
-                                chalk.cyan(" `node local.js` ") +
-                                chalk.red("After The Scanning the QR!")
+                               "\n\nPlease Type Command Prompt" +
+                                " `node local.js` " +
+                                 "After The Scanning the QR!"
                             );
                             await delay(5000);
                             console.clear();
@@ -1047,7 +1047,7 @@ async function MAIN() {
                 });
               });
             } else {
-              console.log(chalk.red("Just Write 1 or 2!"));
+              console.log( "Just Write 1 or 2!");
               process.exit();
             }
           }
@@ -1093,14 +1093,14 @@ async function after_tr() {
     console.clear();
     console.log(pmsg);
     await delay(1500);
-    console.log(chalk.green("QR Okutma İşlemi Başarılı!"));
+    console.log( "QR Okutma İşlemi Başarılı!");
     await delay(1500);
-    console.log(chalk.green("\n\nŞimdi ise tek bir adım kaldı."));
+    console.log( "\n\nŞimdi ise tek bir adım kaldı.");
     await delay(3000);
     console.log(
-      chalk.green(
+       
         "\n\nLütfen aşağıda çıkacak olan bağlantı ile Railway hesabınıza giriş yapın. Bu işlem otomatik olarak app oluşturacaktır."
-      )
+      
     );
     await delay(5000);
     console.clear();
@@ -1110,36 +1110,36 @@ async function after_tr() {
       console.log(output.toString());
     });
     command.stdout.on("end", async () => {
-      console.log(chalk.green("Railway Hesabına Giriş Yapıldı!"));
+      console.log( "Railway Hesabına Giriş Yapıldı!");
       await delay(1500);
       console.clear();
       console.log(pmsg);
       await delay(1500);
       console.log(
-        chalk.green("Lütfen https://railway.app/new bu adrese gidip ") +
-          chalk.yellow("Empty project ") +
-          chalk.green(
+         "Lütfen https://railway.app/new bu adrese gidip " +
+          "Empty project " +
+           
             "butonuna tıklayın. Ardından enter tuşuna basın. Daha sonra gelen ekranda ortadaki"
-          ) +
-          chalk.yellow(" Add Servive ") +
-          chalk.green("kısmına tıklayp tekrar") +
-          chalk.yellow(" Empty Service ") +
-          chalk.green("bölümüne basalım.")
+           +
+          " Add Servive " +
+           "kısmına tıklayp tekrar" +
+          " Empty Service " +
+           "bölümüne basalım."
       );
       rl.question("\n\n[Enter Tuşuna Bas]", async () => {
         console.clear();
         console.log(pmsg);
         await delay(1500);
         console.log(
-          chalk.green(
+           
             "Şimdi ise 'Setting' kısmından 'Project ID' yazan kodu kopyalayın ve buraya yapıştırın."
-          )
+          
         );
         rl.question("\n\nAnahtarı Girin :: ", async (proj: string) => {
           console.clear();
           console.log(pmsg);
           await delay(1500);
-          console.log(chalk.green("Uygulama Oluşturuluyor.."));
+          console.log( "Uygulama Oluşturuluyor..");
           if (fs.existsSync("./PrimonProto")) {
             fs.rmSync("./PrimonProto", { recursive: true, force: true });
           }
@@ -1217,9 +1217,9 @@ async function after_tr() {
           await delay(1500);
           console.clear();
           console.log(pmsg);
-          console.log(chalk.green("Uygulama Oluşturuldu!"));
+          console.log( "Uygulama Oluşturuldu!");
           await delay(1500);
-          console.log(chalk.green("Depo, Railway Adresine Aktarılıyor.."));
+          console.log( "Depo, Railway Adresine Aktarılıyor..");
           await delay(1500);
           console.clear();
           console.log(pmsg);
@@ -1227,16 +1227,16 @@ async function after_tr() {
           await delay(1500);
           console.clear();
           console.log(pmsg);
-          console.log(chalk.green("Başarıyla Aktarıldı!\n\n"));
+          console.log( "Başarıyla Aktarıldı!\n\n");
           await delay(1500);
           console.log(
-            chalk.yellow("Primon Proto Kullandığınız İçin Teşekkürler!\n")
+            "Primon Proto Kullandığınız İçin Teşekkürler!\n"
           );
           await delay(1500);
           console.log(
-            chalk.green("Lütfen ") +
-              chalk.blue("https://railway.app/project/" + proj) +
-              chalk.green(" linkini kontrol ediniz.\n")
+             "Lütfen " +
+               "https://railway.app/project/" + proj +
+               " linkini kontrol ediniz.\n"
           );
           await delay(1500);
           var tst = new Date().getTime();
@@ -1244,9 +1244,9 @@ async function after_tr() {
             (tst - Number(fs.readFileSync("./time.txt").toString()) - 102000) /
             1000;
           console.log(
-            chalk.green("Primon'u ") +
-              chalk.yellow(fins) +
-              chalk.green(" saniye sürede kurdunuz.")
+             "Primon'u " +
+              fins +
+               " saniye sürede kurdunuz."
           );
           try {
             fs.unlinkSync("./auth_info_multi.json");
@@ -1315,15 +1315,15 @@ async function after_tr() {
     console.log(pmsg);
     await delay(1500);
     console.log(
-      chalk.green(
+       
         "Şimdi ise 'Setting' kısmından 'Project ID' yazan kodu kopyalayın ve buraya yapıştırın."
-      )
+      
     );
     rl.question("\n\nAnahtarı Girin :: ", async (proj: string) => {
       console.clear();
       console.log(pmsg);
       await delay(1500);
-      console.log(chalk.green("Uygulama Oluşturuluyor.."));
+      console.log( "Uygulama Oluşturuluyor..");
       if (fs.existsSync("./PrimonProto")) {
         fs.rmSync("./PrimonProto", { recursive: true, force: true });
       }
@@ -1396,9 +1396,9 @@ async function after_tr() {
       await delay(1500);
       console.clear();
       console.log(pmsg);
-      console.log(chalk.green("Uygulama Oluşturuldu!"));
+      console.log( "Uygulama Oluşturuldu!");
       await delay(1500);
-      console.log(chalk.green("Depo, Railway Adresine Aktarılıyor.."));
+      console.log( "Depo, Railway Adresine Aktarılıyor..");
       await delay(1500);
       console.clear();
       console.log(pmsg);
@@ -1406,14 +1406,14 @@ async function after_tr() {
       await delay(1500);
       console.clear();
       console.log(pmsg);
-      console.log(chalk.green("Başarıyla Aktarıldı!\n\n"));
+      console.log( "Başarıyla Aktarıldı!\n\n");
       await delay(1500);
-      console.log(chalk.yellow("Primon Proto Kullandığınız İçin Teşekkürler!"));
+      console.log("Primon Proto Kullandığınız İçin Teşekkürler!");
       await delay(1500);
       console.log(
-        chalk.green("Lütfen ") +
-          chalk.blue("https://railway.app/project/" + proj) +
-          chalk.green(" linkini kontrol ediniz.")
+         "Lütfen " +
+           "https://railway.app/project/" + proj +
+           " linkini kontrol ediniz."
       );
       await delay(1500);
       var tst = new Date().getTime();
@@ -1421,9 +1421,9 @@ async function after_tr() {
         (tst - Number(fs.readFileSync("./time.txt").toString()) - 102000) /
         1000;
       console.log(
-        chalk.green("Primon'u ") +
-          chalk.yellow(fins) +
-          chalk.green(" saniye sürede kurdunuz.")
+         "Primon'u "+
+          fins +
+           " saniye sürede kurdunuz."
       );
       try {
         fs.unlinkSync("./auth_info_multi.json");
@@ -1493,14 +1493,14 @@ async function after_en() {
     console.clear();
     console.log(penmsg);
     await delay(1500);
-    console.log(chalk.green("QR Scanning Successful!"));
+    console.log( "QR Scanning Successful!");
     await delay(1500);
-    console.log(chalk.green("\n\nNow there is only one step left."));
+    console.log( "\n\nNow there is only one step left.");
     await delay(3000);
     console.log(
-      chalk.green(
+       
         "\n\nPlease login to your Railway account with the link below. This action will automatically create the app."
-      )
+      
     );
     await delay(5000);
     console.clear();
@@ -1510,38 +1510,38 @@ async function after_en() {
       console.log(output.toString());
     });
     command.stdout.on("end", async () => {
-      console.log(chalk.green("Logged In Railway Account!"));
+      console.log( "Logged In Railway Account!");
       await delay(1500);
       console.clear();
       console.log(penmsg);
       await delay(1500);
       console.log(
-        chalk.green(
+         
           "Please go to this address https://railway.app/new and click "
-        ) +
-          chalk.yellow("Empty project ") +
-          chalk.green(
+         +
+          "Empty project " +
+           
             "button. Then press enter. On the next screen, click on the"
-          ) +
-          chalk.yellow("Add Servive") +
-          chalk.green("section in the middle and press the") +
-          chalk.yellow(" Empty Service ") +
-          chalk.green("section again.")
+           +
+          "Add Servive" +
+           "section in the middle and press the" +
+          " Empty Service " +
+           "section again."
       );
       rl.question("\n\n[Press Enter Key]", async () => {
         console.clear();
         console.log(penmsg);
         await delay(1500);
         console.log(
-          chalk.green(
+           
             "Now copy the code that says 'Project ID' from the 'Setting' section and paste it here."
-          )
+          
         );
         rl.question("\n\nEnter Key :: ", async (proj: string) => {
           console.clear();
           console.log(penmsg);
           await delay(1500);
-          console.log(chalk.green("Creating Application.."));
+          console.log( "Creating Application..");
           if (fs.existsSync("./PrimonProto")) {
             fs.rmSync("./PrimonProto", { recursive: true, force: true });
           }
@@ -1619,10 +1619,10 @@ async function after_en() {
           await delay(1500);
           console.clear();
           console.log(penmsg);
-          console.log(chalk.green("Application Created!"));
+          console.log( "Application Created!");
           await delay(1500);
           console.log(
-            chalk.green("The Repo is Transferred to the Railway Address..")
+             "The Repo is Transferred to the Railway Address.."
           );
           await delay(1500);
           console.clear();
@@ -1631,13 +1631,13 @@ async function after_en() {
           await delay(1500);
           console.clear();
           console.log(pmsg);
-          console.log(chalk.green("Successfully Transferred!\n\n"));
+          console.log( "Successfully Transferred!\n\n");
           await delay(1500);
-          console.log(chalk.yellow("Thanks For Using Primon Proto!"));
+          console.log("Thanks For Using Primon Proto!");
           await delay(1500);
           console.log(
-            chalk.green("Please check the ") +
-              chalk.blue("https://railway.app/project/" + proj)
+             "Please check the " +
+               "https://railway.app/project/" + proj
           );
           await delay(1500);
           var tst = new Date().getTime();
@@ -1645,9 +1645,9 @@ async function after_en() {
             (tst - Number(fs.readFileSync("./time.txt").toString()) - 102000) /
             1000;
           console.log(
-            chalk.green("Installed Primon within ") +
-              chalk.yellow(fins) +
-              chalk.green(" second")
+             "Installed Primon within " +
+              fins +
+               " second"
           );
           try {
             fs.unlinkSync("./auth_info_multi.json");
@@ -1716,15 +1716,15 @@ async function after_en() {
     console.log(pmsg);
     await delay(1500);
     console.log(
-      chalk.green(
+       
         "Now copy the code that says 'Project ID' from the 'Setting' section and paste it here."
-      )
+      
     );
     rl.question("\n\nEnter Key :: ", async (proj: string) => {
       console.clear();
       console.log(pmsg);
       await delay(1500);
-      console.log(chalk.green("Creating Application.."));
+      console.log( "Creating Application..");
       if (fs.existsSync("./PrimonProto")) {
         fs.rmSync("./PrimonProto", { recursive: true, force: true });
       }
@@ -1794,10 +1794,10 @@ async function after_en() {
       await delay(1500);
       console.clear();
       console.log(pmsg);
-      console.log(chalk.green("Application Created!"));
+      console.log( "Application Created!");
       await delay(1500);
       console.log(
-        chalk.green("The Repo is Transferred to the Railway Address..")
+         "The Repo is Transferred to the Railway Address.."
       );
       await delay(1500);
       console.clear();
@@ -1806,13 +1806,13 @@ async function after_en() {
       await delay(1500);
       console.clear();
       console.log(pmsg);
-      console.log(chalk.green("Transferred Successfully!\n\n"));
+      console.log( "Transferred Successfully!\n\n");
       await delay(1500);
-      console.log(chalk.yellow("Thanks For Using Primon Proto!"));
+      console.log("Thanks For Using Primon Proto!");
       await delay(1500);
       console.log(
-        chalk.green("Please check the ") +
-          chalk.blue("https://railway.app/project/" + proj)
+         "Please check the " +
+           "https://railway.app/project/" + proj
       );
       await delay(1500);
       var tst = new Date().getTime();
@@ -1820,9 +1820,9 @@ async function after_en() {
         (tst - Number(fs.readFileSync("./time.txt").toString()) - 102000) /
         1000;
       console.log(
-        chalk.green("Installed Primon within ") +
-          chalk.yellow(fins) +
-          chalk.green(" second")
+         "Installed Primon within " +
+          fins +
+           " second"
       );
       try {
         fs.unlinkSync("./auth_info_multi.json");
@@ -1953,7 +1953,7 @@ async function PRIMON_PROTO2() {
         fs.unlinkSync("./baileys_store_multi.json");
         fs.writeFileSync("./break.txt", s1);
         fs.writeFileSync("./sudo.txt", sock.authState.creds.me.id);
-        console.log(chalk.red("Lütfen Komut Satırına ") + chalk.cyan("`node local.js` ") + chalk.red("Yazın!"));
+        console.log( "Lütfen Komut Satırına " + "`node local.js` " +  "Yazın!");
         await delay(1000);
         process.exit();
       }
@@ -2015,7 +2015,7 @@ async function PRIMON_PROTO3() {
         fs.unlinkSync("./baileys_store_multi.json");
         fs.writeFileSync("./break.txt", s1);
         fs.writeFileSync("./cont.txt", "1");
-        console.log(chalk.red("Lütfen Komut Satırına ") + chalk.cyan("`node local.js` ") + chalk.red("Yazın!"));
+        console.log( "Lütfen Komut Satırına " + "`node local.js` " +  "Yazın!");
         await delay(1000);
         process.exit();
       }
@@ -2077,7 +2077,7 @@ async function PRIMON_PROTO4() {
         fs.unlinkSync("./baileys_store_multi.json");
         fs.writeFileSync("./break.txt", s1);
         fs.writeFileSync("./sudo.txt", sock.authState.creds.me.id);
-        console.log(chalk.red("Please Type ") + chalk.cyan("`node local.js` ") + chalk.red("To Command Prompt!"));
+        console.log("Please Type " + "`node local.js` " + "To Command Prompt!");
         await delay(1000);
         process.exit();
       }
@@ -2139,7 +2139,7 @@ async function PRIMON_PROTO5() {
         fs.unlinkSync("./baileys_store_multi.json");
         fs.writeFileSync("./break.txt", s1);
         fs.writeFileSync("./cont.txt", "1");
-        console.log(chalk.red("Please Type ") + chalk.cyan("`node local.js` ") + chalk.red("To Command Prompt!"));
+        console.log("Please Type " + "`node local.js` " + "To Command Prompt!");
         await delay(1000);
         process.exit();
       }
@@ -2200,7 +2200,7 @@ async function PRIMON_PROTO6() {
         fs.unlinkSync("./auth_info_multi.json");
         fs.unlinkSync("./baileys_store_multi.json");
         fs.writeFileSync("./break_session.txt", s1);
-        console.log(chalk.red("Lütfen Komut Satırına ") + chalk.cyan("`node local.js` ") + chalk.red("Yazın!"));
+        console.log("Lütfen Komut Satırına " + "`node local.js` " + "Yazın!");
         await delay(1000);
         process.exit();
       }
@@ -2261,7 +2261,7 @@ async function PRIMON_PROTO7() {
         fs.unlinkSync("./auth_info_multi.json");
         fs.unlinkSync("./baileys_store_multi.json");
         fs.writeFileSync("./break_session.txt", s1);
-        console.log(chalk.red("Lütfen Komut Satırına ") + chalk.cyan("`node local.js` ") + chalk.red("Yazın!"));
+        console.log("Lütfen Komut Satırına " + "`node local.js` " + "Yazın!");
         await delay(1000);
         process.exit();
       }
@@ -2322,7 +2322,7 @@ async function PRIMON_PROTO8() {
         fs.unlinkSync("./auth_info_multi.json");
         fs.unlinkSync("./baileys_store_multi.json");
         fs.writeFileSync("./break_session.txt", s1);
-        console.log(chalk.red("Please Type ") + chalk.cyan("`node local.js` ") + chalk.red("To Command Prompt!"));
+        console.log("Please Type " + "`node local.js` " + "To Command Prompt!");
         await delay(1000);
         process.exit();
       }
@@ -2383,7 +2383,7 @@ async function PRIMON_PROTO9() {
         fs.unlinkSync("./auth_info_multi.json");
         fs.unlinkSync("./baileys_store_multi.json");
         fs.writeFileSync("./break_session.txt", s1);
-        console.log(chalk.red("Please Type ") + chalk.cyan("`node local.js` ") + chalk.red("To Command Prompt!"));
+        console.log("Please Type " + "`node local.js` " + "To Command Prompt!");
         await delay(1000);
         process.exit();
       }
@@ -2409,4 +2409,245 @@ async function PRIMON_PROTO9() {
   return sock;
 }
 
-MAIN();
+
+async function after_s_tr() {
+    console.clear()
+    console.log(pmsg)
+    await delay(1500)
+    console.log("QR Kod Başarıyla Okutuldu!")
+    await delay(1500)
+    console.log("Şimdi ise SESSION yenilemek için lütfen Railway hesabınıza giriş yapın. Az sonra giriş linki altta belirecek.")
+    await delay(5000)
+    console.clear()
+    console.log(pmsg)
+    const command = exec("railway login")
+    command.stdout.on('data', output => {
+      console.log(output.toString())
+    })
+    command.stdout.on("end", async () => {
+      console.log("Railway Hesabına Giriş Yapıldı!")
+      await delay(1500)
+      console.clear()
+      console.log(pmsg)
+      await delay(1500)
+      console.log("Şimdi ise botun kurulu olduğu uygulamaya girin. Ardından 'Settings' kısmından 'Project ID' yazan kodu kopyalayın ve buraya yapıştırın.")
+      rl.question("\n\nAnahtarı Girin :: ", async (proj) => {
+        console.clear()
+        console.log(pmsg)
+        await delay(1500)
+        shell.exec('rm -rf PrimonProto')
+        var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
+        var prj = shell.exec("cd PrimonProto && railway link " + proj)
+        var tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,9000}/g)
+        if (tkn.length > 4) {
+          if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+          if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+          if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+          if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+          if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+        }
+        if (tkn.length < 4) {
+          tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,7000}/g)
+          if (tkn.length < 4) {
+            tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,5000}/g)
+            if (tkn.length > 4) {
+              if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+              if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+              if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+              if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+              if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+            }
+          } else {
+            if (tkn !== 4) {
+              if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+              if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+              if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+              if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+              if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+            }
+          }
+        }
+        if (tkn[3] == undefined || tkn[3] == "undefined") {
+          tkn[3] = ""
+        }
+        shell.exec("cd PrimonProto/ && railway variables set SESSION=" + tkn[0])
+        shell.exec("cd PrimonProto/ && railway variables set SESSION2=" + tkn[1])
+        shell.exec("cd PrimonProto/ && railway variables set SESSION3=" + tkn[2])
+        shell.exec("cd PrimonProto/ && railway variables set SESSION4=" + tkn[3])
+        await delay(1500)
+        console.clear()
+        console.log(pmsg)
+        var sh7 = shell.exec("cd PrimonProto/ && yes n | railway up")
+        await delay(1500)
+        console.clear()
+        console.log(pmsg)
+        console.log("SESSION Yenilendi! Veri kaybı olmadan eski ayarlar geri getirildi.\n\n")
+        console.log("Primon Proto Kullandığınız İçin Teşekkürler!\n\n")
+        await delay(1500)
+        console.log("Lütfen " + "https://railway.app/project/" + proj + " linkini kontrol ediniz.")
+        try {
+          fs.unlinkSync("./auth_info_multi.json")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./gb_db.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./gh_auth.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./break.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./lang.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./baileys_store_multi.json")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./cont.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./time.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./sudo.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./break_session.txt")
+        } catch {
+        }
+        process.exit()
+      })
+    })
+  }
+  
+  async function after_s_en() {
+    console.clear()
+    console.log(pmsg)
+    await delay(1500)
+    console.log("QR Code Read Successfully!")
+    await delay(1500)
+    console.log("Now, please login to your Railway account to renew the SESSION. The login link will appear below.")
+    await delay(5000)
+    console.clear()
+    console.log(pmsg)
+    const command = exec("railway login")
+    command.stdout.on('data', output => {
+      console.log(output.toString())
+    })
+    command.stdout.on("end", async () => {
+      console.log("Logged In Railway Account!")
+      await delay(1500)
+      console.clear()
+      console.log(pmsg)
+      await delay(1500)
+      console.log("Now go to the application where the bot is installed. Then copy the code that says 'Project ID' from 'Settings' and paste it here.")
+      rl.question("\n\nEnter Key :: ", async (proj) => {
+        console.clear()
+        console.log(pmsg)
+        await delay(1500)
+        shell.exec('rm -rf PrimonProto')
+        var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
+        var prj = shell.exec("cd PrimonProto && railway link " + proj)
+        var tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,10000}/g)
+        if (tkn.length > 4) {
+          if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+          if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+          if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+          if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+          if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+        }
+        if (tkn.length < 4) {
+          tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,7000}/g)
+          if (tkn.length < 4) {
+            tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,5000}/g)
+            if (tkn.length > 4) {
+              if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+              if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+              if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+              if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+              if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+            }
+          } else {
+            if (tkn !== 4) {
+              if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+              if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+              if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+              if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+              if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+            }
+          }
+        }
+        if (tkn[3] == undefined || tkn[3] == "undefined") {
+          tkn[3] = ""
+        }
+        shell.exec("cd PrimonProto/ && railway variables set SESSION=" + tkn[0])
+        shell.exec("cd PrimonProto/ && railway variables set SESSION2=" + tkn[1])
+        shell.exec("cd PrimonProto/ && railway variables set SESSION3=" + tkn[2])
+        shell.exec("cd PrimonProto/ && railway variables set SESSION4=" + tkn[3])
+        await delay(1500)
+        console.clear()
+        console.log(penmsg)
+        var sh7 = shell.exec("cd PrimonProto/ && yes n | railway up")
+        await delay(1500)
+        console.clear()
+        console.log(penmsg)
+        console.log("SESSION Renewed! Restored old settings without data loss.\n\n")
+        console.log("Thanks For Using Primon Proto!\n\n")
+        await delay(1500)
+        console.log("Please check the " + "https://railway.app/project/" + proj)
+        try {
+          fs.unlinkSync("./auth_info_multi.json")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./gb_db.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./gh_auth.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./break.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./lang.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./baileys_store_multi.json")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./cont.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./sudo.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./time.txt")
+        } catch {
+        }
+        try {
+          fs.unlinkSync("./break_session.txt")
+        } catch {
+        }
+        process.exit()
+      })
+    })
+  }
+
+ MAIN();
