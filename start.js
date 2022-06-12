@@ -391,7 +391,7 @@ async function ytaudio(link, downloadFolder) {
     });
 
     fs.appendFileSync(downloadFolder, Buffer.from(response.data));
-    ffmpeg(downloadFolder).save('./YT.m4a').on('end', async () => {
+    ffmpeg(downloadFolder).save('./YT2.mp3').on('end', async () => {
       return true;
     })
   } catch {
@@ -1019,6 +1019,35 @@ async function Primon() {
                 }
               }
 
+              // YT Music
+              else if (attr == "song") {
+                await Proto.sendMessage(jid, { delete: msgkey });
+                if (args == "") {
+                  var gmsg = await Proto.sendMessage(jid, { text: modulelang.need_qs });
+                  saveMessageST(gmsg.key.id, modulelang.need_qs)
+                  return;
+                } else {
+                  try {
+                    fs.unlinkSync("./YT.mp4")
+                  } catch {}
+                  try {
+                    fs.unlinkSync("./YT2.mp3")
+                  } catch {}
+                  var gmsg = await Proto.sendMessage(jid, { text: modulelang.song_down });
+                  saveMessageST(gmsg.key.id, modulelang.song_down)
+                  await ytaudio(args, "./YT.mp4");
+                  try {
+                    return await Proto.sendMessage(jid, {
+                      url: "./YT2.mp3",
+                      mimetype: "audio/ogg"
+                    })
+                  } catch {
+                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.song_not_found });
+                    saveMessageST(gmsg.key.id, modulelang.song_not_found)
+                    return;
+                  }
+                }
+              }
               // Menu
               else if (attr == "menu") {
                 await Proto.sendMessage(jid, { delete: msgkey });
