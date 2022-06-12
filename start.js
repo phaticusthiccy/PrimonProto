@@ -1092,7 +1092,7 @@ async function Primon() {
                     fs.appendFileSync("./YT2.mp4", Buffer.from(response.data));
                     ffmpeg("./YT2.mp4").save('./YT2.ogg').on('end', async () => {
                       return await Proto.sendMessage(jid, {
-                        url: "./YT2.ogg",
+                        audio: fs.readFileSync("./YT2.ogg"),
                         mimetype: "audio/ogg"
                       })
                     })
