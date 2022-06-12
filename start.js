@@ -205,45 +205,140 @@ async function ytdl(link, downloadFolder) {
         url: link,
       },
     });
-    var downs = [];
-    h.data.url.map((Element) => {
-      if (Element.downloadable == true && Element.name == "MP4") {
-        downs.push(Element.url)
+
+    try {
+      var mp = await GetListByKeyword(link, false, 1)
+    } catch {
+      var mp = false
+    }
+    
+    if (mp == false) {
+      var downs = [];
+      h.data.url.map((Element) => {
+        if (Element.downloadable == true && Element.name == "MP4") {
+          downs.push(Element.url)
+        }
+      })
+
+      if (downs.length == 0) {
+        h.data.url.map((Element) => {
+          if (Element.name == "MP4" && Element.quality == "360") {
+            downs.push(Element.url)
+          }
+        })
       }
-    })
 
-    if (downs.length == 0) {
-      h.data.url.map((Element) => {
-        if (Element.name == "MP4" && Element.quality == "360") {
-          downs.push(Element.url)
+      if (downs.length == 0) {
+        h.data.url.map((Element) => {
+          if (Element.name == "MP4" && Element.quality == "240") {
+            downs.push(Element.url)
+          }
+        })
+      }
+
+      if (downs.length == 0) {
+        h.data.url.map((Element) => {
+          if (Element.name == "MP4" && Element.quality == "144") {
+            downs.push(Element.url)
+          }
+        })
+      }
+
+      const response = await axios({
+        method: "GET",
+        url: downs[0],
+        responseType: "arraybuffer"
+      });
+
+      fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+      return true;
+    } else {
+      var dr = Number(mp["items"][0]["length"]["simpleText"].split(":")[0])
+      if (dr > 5) dr = true;
+      else dr = false
+      
+      if (dr == true) {
+        var downs = [];
+        h.data.url.map((Element) => {
+          if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "360") {
+            downs.push(Element.url)
+          }
+        })
+
+        if (downs.length == 0) {
+          h.data.url.map((Element) => {
+            if (Element.name == "MP4" && Element.quality == "360") {
+              downs.push(Element.url)
+            }
+          })
         }
-      })
-    }
 
-    if (downs.length == 0) {
-      h.data.url.map((Element) => {
-        if (Element.name == "MP4" && Element.quality == "240") {
-          downs.push(Element.url)
+        if (downs.length == 0) {
+          h.data.url.map((Element) => {
+            if (Element.name == "MP4" && Element.quality == "240") {
+              downs.push(Element.url)
+            }
+          })
         }
-      })
-    }
 
-    if (downs.length == 0) {
-      h.data.url.map((Element) => {
-        if (Element.name == "MP4" && Element.quality == "144") {
-          downs.push(Element.url)
+        if (downs.length == 0) {
+          h.data.url.map((Element) => {
+            if (Element.name == "MP4" && Element.quality == "144") {
+              downs.push(Element.url)
+            }
+          })
         }
-      })
+
+        const response = await axios({
+          method: "GET",
+          url: downs[0],
+          responseType: "arraybuffer"
+        });
+
+        fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+        return true;
+      } else {
+        var downs = [];
+        h.data.url.map((Element) => {
+          if (Element.downloadable == true && Element.name == "MP4") {
+            downs.push(Element.url)
+          }
+        })
+  
+        if (downs.length == 0) {
+          h.data.url.map((Element) => {
+            if (Element.name == "MP4" && Element.quality == "360") {
+              downs.push(Element.url)
+            }
+          })
+        }
+  
+        if (downs.length == 0) {
+          h.data.url.map((Element) => {
+            if (Element.name == "MP4" && Element.quality == "240") {
+              downs.push(Element.url)
+            }
+          })
+        }
+  
+        if (downs.length == 0) {
+          h.data.url.map((Element) => {
+            if (Element.name == "MP4" && Element.quality == "144") {
+              downs.push(Element.url)
+            }
+          })
+        }
+  
+        const response = await axios({
+          method: "GET",
+          url: downs[0],
+          responseType: "arraybuffer"
+        });
+  
+        fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+        return true;
+      }
     }
-
-    const response = await axios({
-      method: "GET",
-      url: downs[0],
-      responseType: "arraybuffer"
-    });
-
-    fs.appendFileSync(downloadFolder, Buffer.from(response.data));
-    return true;
   } catch {
     ytdl(link, downloadFolder);
   }
@@ -267,7 +362,7 @@ async function ytaudio(link, downloadFolder) {
 
     if (downs.length == 0) {
       h.data.url.map((Element) => {
-        if (Element.name == "MP4" && Element.quality == "360") {
+        if (Element.name == "MP4" && Element.quality == "144") {
           downs.push(Element.url)
         }
       })
@@ -283,7 +378,7 @@ async function ytaudio(link, downloadFolder) {
 
     if (downs.length == 0) {
       h.data.url.map((Element) => {
-        if (Element.name == "MP4" && Element.quality == "144") {
+        if (Element.name == "MP4" && Element.quality == "360") {
           downs.push(Element.url)
         }
       })
