@@ -1,3 +1,4 @@
+clear
 echo "┌─────────────────────────────────┬─────────┐
 │ Primon Proto - Whatsapp Userbot │ Version │
 ├─────────────────────────────────┼─────────┤
@@ -15,7 +16,6 @@ apt update | true
 apt upgrade | true
 pkg update
 pkg upgrade
-apt install nodejs | pkg install nodejs
 pkg install nodejs
 npm install @railway/cli
 npm install -g typescript
