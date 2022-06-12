@@ -12,19 +12,19 @@ echo "┌───────────────────────�
 |                                           |
 └───────────────────────────────────────────┘
 "
-yes n | pkg update
-yes n | pkg upgrade
-yes n | pkg install nodejs
-yes n | npm install @railway/cli
-yes n | npm install -g typescript
+yes | pkg update
+yes | pkg upgrade
+yes | pkg install nodejs
+npm i -g @railway/cli
+yes | npm install -g typescript
 npm install pino
-yes n | npm install @hapi/boom
-yes n | npm install @adiwajshing/baileys
-yes n | npm install @adiwajshing/keyed-db
+yes | npm install @hapi/boom
+yes | npm install @adiwajshing/baileys
+yes | npm install @adiwajshing/keyed-db
 npm install chalk@4.1.2
 npm install qrcode-terminal
-yes n | npm install shelljs
-yes n | npm install axios
+yes | npm install shelljs
+yes | npm install axios
 git clone https://github.com/phaticusthiccy/PrimonProto
 cd PrimonProto && cd local
 tsc local.ts
