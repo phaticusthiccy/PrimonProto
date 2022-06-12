@@ -1041,7 +1041,8 @@ async function Primon() {
                       url: "./YT2.mp3",
                       mimetype: "audio/ogg"
                     })
-                  } catch {
+                  } catch (e) {
+                    console.log(e)
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.song_not_found });
                     saveMessageST(gmsg.key.id, modulelang.song_not_found)
                     return;
