@@ -1031,18 +1031,63 @@ async function Primon() {
                     fs.unlinkSync("./YT.mp4")
                   } catch {}
                   try {
-                    fs.unlinkSync("./YT2.mp3")
+                    fs.unlinkSync("./YT2.m4a")
                   } catch {}
-                  var gmsg = await Proto.sendMessage(jid, { text: modulelang.song_down });
-                  saveMessageST(gmsg.key.id, modulelang.song_down)
-                  await ytaudio(args, "./YT.mp4");
                   try {
-                    return await Proto.sendMessage(jid, {
-                      url: "./YT2.mp3",
-                      mimetype: "audio/ogg"
+                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.song_down });
+                    saveMessageST(gmsg.key.id, modulelang.song_down)
+                    var h = await axios({
+                      url: "https://api.onlinevideoconverter.pro/api/convert",
+                      method: "post",
+                      data: {
+                        url: link,
+                      },
+                    });
+                    var downs = [];
+                    h.data.url.map((Element) => {
+                      if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "360") {
+                        downs.push(Element.url)
+                      }
                     })
-                  } catch (e) {
-                    console.log(e)
+                
+                    if (downs.length == 0) {
+                      h.data.url.map((Element) => {
+                        if (Element.name == "MP4" && Element.quality == "144") {
+                          downs.push(Element.url)
+                        }
+                      })
+                    }
+                
+                    if (downs.length == 0) {
+                      h.data.url.map((Element) => {
+                        if (Element.name == "MP4" && Element.quality == "240") {
+                          downs.push(Element.url)
+                        }
+                      })
+                    }
+                
+                    if (downs.length == 0) {
+                      h.data.url.map((Element) => {
+                        if (Element.name == "MP4" && Element.quality == "360") {
+                          downs.push(Element.url)
+                        }
+                      })
+                    }
+                
+                    const response = await axios({
+                      method: "GET",
+                      url: downs[0],
+                      responseType: "arraybuffer"
+                    });
+                
+                    fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+                    ffmpeg(downloadFolder).save('./YT2.m4a').on('end', async () => {
+                      return await Proto.sendMessage(jid, {
+                        url: "./YT2.m4a",
+                        mimetype: "audio/m4a"
+                      })
+                    })
+                  } catch {
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.song_not_found });
                     saveMessageST(gmsg.key.id, modulelang.song_not_found)
                     return;
