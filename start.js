@@ -52,7 +52,7 @@ const { Octokit } = require("@octokit/core");
 const shell = require('shelljs');
 const { exec } = require("child_process");
 const Path = require('path')
-
+var ffmpeg = require('fluent-ffmpeg');
 
 const {
   getMessageST,
@@ -250,6 +250,60 @@ async function ytdl(link, downloadFolder) {
   }
 }
 
+async function ytaudio(link, downloadFolder) {
+  try {
+    var h = await axios({
+      url: "https://api.onlinevideoconverter.pro/api/convert",
+      method: "post",
+      data: {
+        url: link,
+      },
+    });
+    var downs = [];
+    h.data.url.map((Element) => {
+      if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "360") {
+        downs.push(Element.url)
+      }
+    })
+
+    if (downs.length == 0) {
+      h.data.url.map((Element) => {
+        if (Element.name == "MP4" && Element.quality == "360") {
+          downs.push(Element.url)
+        }
+      })
+    }
+
+    if (downs.length == 0) {
+      h.data.url.map((Element) => {
+        if (Element.name == "MP4" && Element.quality == "240") {
+          downs.push(Element.url)
+        }
+      })
+    }
+
+    if (downs.length == 0) {
+      h.data.url.map((Element) => {
+        if (Element.name == "MP4" && Element.quality == "144") {
+          downs.push(Element.url)
+        }
+      })
+    }
+
+    const response = await axios({
+      method: "GET",
+      url: downs[0],
+      responseType: "arraybuffer"
+    });
+
+    fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+    ffmpeg(downloadFolder).save('./YT.m4a').on('end', async () => {
+      return true;
+    })
+  } catch {
+    ytdl(link, downloadFolder);
+  }
+}
 async function Primon() {
 
   var { version } = await fetchLatestBaileysVersion();
@@ -367,19 +421,6 @@ async function Primon() {
     meid = Proto.user.id.split(":")[0] + "@s.whatsapp.net";
   } catch {
     meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
-  }
-  var cmd1_f = PrimonDB.handler;
-  var cmd_f;
-  if (cmd1_f.length > 1) {
-    cmd_f = cmd1_f.split("");
-  } else {
-    cmd_f = [cmd1_f];
-  }
-  if (c_num_cnt == 0) {
-    var gmsg = await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd_f[0]) });
-    c_num_cnt = c_num_cnt + 1;
-    saveMessageST(gmsg.key.id, startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]))
-    return;
   }
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message                                                                ) return;
@@ -747,6 +788,12 @@ async function Primon() {
         saveMessageST(gmsg.key.id, modulelang.star)
         return;
       }
+    }
+    if (c_num_cnt == 0) {
+      var gmsg = await Proto.sendMessage(meid, { text: startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]) });
+      c_num_cnt = c_num_cnt + 1;
+      saveMessageST(gmsg.key.id, startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]))
+      return;
     }
     if (message !== undefined) {
       if (m.type == "notify") {
@@ -2000,7 +2047,7 @@ async function Primon() {
                 "*◽ " + author_cmts[2] + "* :: _" + news[2] + "_"
                 var gmsg = await Proto.sendMessage(jid, { text: modulelang.update + msg})
                 saveMessageST(gmsg.key.id, modulelang.update + msg)
-                return shell.exec("npm start")
+                process.exit(1)
               }
 
               // Alive
