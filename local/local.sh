@@ -18,6 +18,7 @@ yes | pkg install nodejs
 npm i -g @railway/cli
 yes | npm install -g typescript
 npm install pino
+yes | npm install @octokit/core
 yes | npm install @hapi/boom
 yes | npm install @adiwajshing/baileys
 yes | npm install @adiwajshing/keyed-db
