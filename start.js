@@ -1035,7 +1035,7 @@ async function Primon() {
                     fs.unlinkSync("./YT2.mp4")
                   } catch {}
                   try {
-                    fs.unlinkSync("./YT2.ogg")
+                    fs.unlinkSync("./YT2.mp3")
                   } catch {}
                   try {
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.song_down });
@@ -1090,10 +1090,9 @@ async function Primon() {
                     });
                 
                     fs.appendFileSync("./YT2.mp4", Buffer.from(response.data));
-                    ffmpeg("./YT2.mp4").save('./YT2.ogg').on('end', async () => {
+                    ffmpeg("./YT2.mp4").save('./YT2.mp3').on('end', async () => {
                       return await Proto.sendMessage(jid, {
-                        audio: fs.readFileSync("./YT2.ogg"),
-                        mimetype: "audio/ogg"
+                        audio: fs.readFileSync("./YT2.mp3")
                       })
                     })
                   } catch (e) {
