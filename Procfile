@@ -1,0 +1,1 @@
+web: bash ffmpeg/compile && bash pri.sh

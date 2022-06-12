@@ -7,4 +7,4 @@
 # Phaticusthiccy - 2022
 
 
-rm -rf PrimonProto && git clone https://github.com/phaticusthiccy/PrimonProto && cd PrimonProto && bash ffmpeg/compile && node save.js && node save_db_store.js && node start.js
+rm -rf PrimonProto && git clone https://github.com/phaticusthiccy/PrimonProto && cd PrimonProto && node save.js && node save_db_store.js && node start.js
