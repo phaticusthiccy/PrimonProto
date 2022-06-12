@@ -991,10 +991,12 @@ async function Primon() {
                     await ytdl(args, "./YT.mp4");
 
                     try {
+                      await new Promise(r => setTimeout(r, 1700));
                       await Proto.sendMessage(jid, {
                         video: fs.readFileSync("./YT.mp4"),
                         caption: MenuLang.by
                       })
+                      await new Promise(r => setTimeout(r, 4000));
                       try {
                         fs.unlinkSync("./YT.mp4")
                       } catch {}
