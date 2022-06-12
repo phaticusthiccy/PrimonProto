@@ -27,7 +27,11 @@ const {
   proto,
   AnyMediaMessageContent,
 } = require("@adiwajshing/baileys");
-const ffmpeg = require("fluent-ffmpeg");
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffprobePath = require('@ffprobe-installer/ffprobe').path;
+const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
 const P = require("pino");
 const { Boom } = require("@hapi/boom");
 const fs = require("fs");
