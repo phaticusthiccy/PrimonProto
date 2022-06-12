@@ -271,7 +271,11 @@ async function ytdl(link, downloadFolder, Proto, jid) {
       shell.exec("rm -rf ./YT.mp4")
       return true;
     } else {
-      var dr = Number(mp["items"][0]["length"]["simpleText"].split(":")[0])
+      try {
+        var dr = Number(mp["items"][0]["length"]["simpleText"].split(":")[0])
+      } catch {
+        var dr = 4
+      }
       if (dr > 5) dr = true;
       else dr = false
       
@@ -329,6 +333,14 @@ async function ytdl(link, downloadFolder, Proto, jid) {
           }
         })
   
+        if (downs.length == 0) {
+          h.data.url.map((Element) => {
+            if (Element.name == "MP4" && Element.quality == "720") {
+              downs.push(Element.url)
+            }
+          })
+        }
+
         if (downs.length == 0) {
           h.data.url.map((Element) => {
             if (Element.name == "MP4" && Element.quality == "360") {
