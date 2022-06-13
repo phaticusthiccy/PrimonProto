@@ -195,7 +195,7 @@ store.writeToFile("./baileys_store_multi.json");
 setInterval(async () => {
   try {
     store.writeToFile("./baileys_store_multi.json");
-    PrimonDB.chats = JSON.stringify(JSON.parse(fs.readFileSync("./baileys_store_multi.json").toString()), null, 2)
+    PrimonDB.chats = JSON.stringify(JSON.parse(fs.readFileSync("./baileys_store_multi.json").toString()), null, 2).replace(/\\n/g, "\\n")
     await octokit.request("PATCH /gists/{gist_id}", {
       gist_id: process.env.GITHUB_DB,
       description: "Primon Proto için Kalıcı Veritabanı",
@@ -206,12 +206,12 @@ setInterval(async () => {
         },
       },
     });
-    fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats, null, 2))
+    fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats, null, 2).replace(/\\n/g, "\\n"))
     store.readFromFile("./baileys_store_multi.json");
   } catch {
     try {
       store?.writeToFile("./baileys_store_multi.json");
-      PrimonDB.chats = JSON.stringify(JSON.parse(fs.readFileSync("./baileys_store_multi.json").toString()), null, 2)
+      PrimonDB.chats = JSON.stringify(JSON.parse(fs.readFileSync("./baileys_store_multi.json").toString()), null, 2).replace(/\\n/g, "\\n")
       await octokit.request("PATCH /gists/{gist_id}", {
         gist_id: process.env.GITHUB_DB,
         description: "Primon Proto için Kalıcı Veritabanı",
@@ -222,7 +222,7 @@ setInterval(async () => {
           },
         },
       });
-      fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats, null, 2))
+      fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats, null, 2).replace(/\\n/g, "\\n"))
       store?.readFromFile("./baileys_store_multi.json");
     } catch {}
   }
