@@ -2611,9 +2611,7 @@ async function Primon() {
       let reason = new Boom(lastDisconnect?.error)?.output.statusCode;
       if (reason === DisconnectReason.badSession) {
         console.log(sessionlang.bad);
-        fs.unlinkSync("./session.json");
-        fs.unlinkSync("./baileys_store_multi.json");
-        Proto.logout();
+        Primon();
       } else if (reason === DisconnectReason.connectionClosed) {
         console.log(sessionlang.recon);
         Primon();
