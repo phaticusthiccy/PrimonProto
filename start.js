@@ -226,7 +226,7 @@ setInterval(async () => {
       store?.readFromFile("./baileys_store_multi.json");
     } catch {}
   }
-}, 10_000);
+}, 5000);
 
 var command_list = [
   "textpro", "tagall", "ping", "welcome", 
@@ -661,6 +661,7 @@ async function Primon() {
     meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
   }
   Proto.ev.on("messages.upsert", async (m) => {
+    console.log(m.messages[0])
     if (!m.messages[0].message                                                                ) return;
     if (Object.keys(m.messages[0].message)[0] == "protocolMessage"                            ) return;
     if (Object.keys(m.messages[0].message)[0] == "reactionMessage"                            ) return;
@@ -677,7 +678,6 @@ async function Primon() {
     if (Object.keys(m.messages[0].message)[0] == "pollUpdateMessage"                          ) return;
     if (m.messages[0].key.remoteJid           == "status@broadcast"                           ) return;
     jid = m.messages[0].key.remoteJid;
-    
     try {
       var once_msg = Object.keys(m.messages[0].message);
     } catch {
