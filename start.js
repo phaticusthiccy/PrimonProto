@@ -146,7 +146,7 @@ const store = makeInMemoryStore({
 });
 
 store?.writeToFile("./baileys_store_multi.json");
-fs.writeFileSync("./baileys_store_multi.json", PrimonDB.chats)
+fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats))
 store?.readFromFile("./baileys_store_multi.jsons");
 
 setInterval(async () => {
@@ -163,7 +163,7 @@ setInterval(async () => {
         },
       },
     });
-    fs.writeFileSync("./baileys_store_multi.json", PrimonDB.chats)
+    fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats))
     store.readFromFile("./baileys_store_multi.json");
   } catch {
     try {
@@ -179,7 +179,7 @@ setInterval(async () => {
           },
         },
       });
-      fs.writeFileSync("./baileys_store_multi.json", PrimonDB.chats)
+      fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats))
       store?.readFromFile("./baileys_store_multi.json");
     } catch {}
   }
