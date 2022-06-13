@@ -116,17 +116,16 @@ const retryMessageHandler = async message => {
 }
 
 const store = makeInMemoryStore({
-  logger: P().child({
-    level: "silent",
-    stream: "store",
-  }),
+  logger: P({ level: 'silent'})
 });
 
-store.writeToFile("./baileys_store_multi.json");
+store?.readFromFile("./baileys_store_multi.json");
 
 setInterval(() => {
   store.writeToFile("./baileys_store_multi.json");
-}, 10000);
+  store.readFromFile("./baileys_store_multi.json");
+
+}, 10_000);
 
 var command_list = [
   "textpro", "tagall", "ping", "welcome", 

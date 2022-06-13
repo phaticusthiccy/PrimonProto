@@ -458,7 +458,7 @@ async function MAIN() {
                           await delay(2800);
                           console.log(
                              "QR Okuttuktun Sonra Komut Satırına" +
-                              "`node local.js`" +
+                              "`node PrimonProto/local/local.js`" +
                                "Yazın!"
                           );
                           await delay(5000);
@@ -664,7 +664,7 @@ async function MAIN() {
                             await delay(2800);
                             console.log(
                                "QR Okuttuktun Sonra Komut Satırına" +
-                                "`node local.js`" +
+                                "`node PrimonProto/local/local.js`" +
                                  "Yazın!"
                             );
                             await delay(5000);
@@ -799,7 +799,7 @@ async function MAIN() {
                       await delay(2800);
                       console.log(
                          "\n\nPlease Type Command Prompt" +
-                         " `node local.js` " +
+                         " `node PrimonProto/local/local.js` " +
                            "After The Scanning the QR!"
                       );
                       await delay(5000);
@@ -998,7 +998,7 @@ async function MAIN() {
                             await delay(2800);
                             console.log(
                                "\n\nPlease Type Command Prompt" +
-                                " `node local.js` " +
+                                " `node PrimonProto/local/local.js` " +
                                  "After The Scanning the QR!"
                             );
                             await delay(5000);
