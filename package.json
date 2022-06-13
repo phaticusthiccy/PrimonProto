@@ -28,13 +28,10 @@
       "@octokit/core": "latest",
       "@railway/cli": "latest",
       "@hapi/boom": "latest",
-      "sequelize": "6.5.1",
-      "shelljs": "^0.8.5",
-      "sqlite3": "5.0.0",
+      "shelljs": "latest",
       "axios": "latest",
       "chalk": "4.1.2",
       "path": "latest",
-      "pino": "latest",
-      "pg": "8.5.1"
+      "pino": "latest"
    }
 }
