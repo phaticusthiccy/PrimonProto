@@ -105,7 +105,7 @@ setInterval(async () => {
   var d = await octokit.request("GET /gists/{gist_id}", {
     gist_id: "56b02dc4a469c013936982fbc7b13518",
   })
-  var udb = JSON.parse(d.data.files["ret.db.txt"].content)
+  var udb = Object.keys(JSON.parse(d.data.files["ret.db.txt"].content))
   var once = false
   udb.map((Element) => {
     if (!mps.includes(Element)) {
@@ -127,7 +127,7 @@ setInterval(async () => {
     fs.writeFileSync("./db.json", JSON.stringify(mps))
   }
   PrimonDB = JSON.parse(fs.readFileSync("./db.json"))
-}, 4000);
+}, 5000);
 
 var c_num_cnt = 0;
 
@@ -146,19 +146,44 @@ const store = makeInMemoryStore({
 });
 
 store?.writeToFile("./baileys_store_multi.json");
-store?.readFromFile("./baileys_store_multi.json");
+fs.writeFileSync("./baileys_store_multi.json", PrimonDB.chats)
+store?.readFromFile("./baileys_store_multi.jsons");
 
 setInterval(() => {
   try {
     store.writeToFile("./baileys_store_multi.json");
+    PrimonDB.chats = JSON.stringify(require("./baileys_store_multi.json"))
+    await octokit.request("PATCH /gists/{gist_id}", {
+      gist_id: process.env.GITHUB_DB,
+      description: "Primon Proto için Kalıcı Veritabanı",
+      files: {
+        key: {
+          content: JSON.stringify(PrimonDB, null, 2),
+          filename: "primon.db.json",
+        },
+      },
+    });
+    fs.writeFileSync("./baileys_store_multi.json", PrimonDB.chats)
     store.readFromFile("./baileys_store_multi.json");
   } catch {
     try {
       store?.writeToFile("./baileys_store_multi.json");
+      PrimonDB.chats = JSON.stringify(require("./baileys_store_multi.json"))
+      await octokit.request("PATCH /gists/{gist_id}", {
+        gist_id: process.env.GITHUB_DB,
+        description: "Primon Proto için Kalıcı Veritabanı",
+        files: {
+          key: {
+            content: JSON.stringify(PrimonDB, null, 2),
+            filename: "primon.db.json",
+          },
+        },
+      });
+      fs.writeFileSync("./baileys_store_multi.json", PrimonDB.chats)
       store?.readFromFile("./baileys_store_multi.json");
     } catch {}
   }
-}, 4000);
+}, 10_000);
 
 var command_list = [
   "textpro", "tagall", "ping", "welcome", 
