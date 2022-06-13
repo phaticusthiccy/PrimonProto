@@ -543,11 +543,10 @@ async function ytaudio(link, downloadFolder) {
 }
 async function Primon() {
 
-  var { version } = await fetchLatestBaileysVersion();
   const Proto = makeWASocket({
     auth: state,
     logger: P({ level: PrimonDB.debug === true ? "debug" : "silent" }),
-    version,
+    version: [3, 3234, 9],
     browser: ["Primon Proto", "Chrome", "1.0.0"],
     msgRetryCounterMap,
     getMessage: retryMessageHandler
