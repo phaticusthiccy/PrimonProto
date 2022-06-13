@@ -588,6 +588,10 @@ function cmds(text, arguments = 3, cmd) {
   return payload;
 }
 
+function randombtwtwointegers(min, max) { 
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 module.exports = {
   dictEmojis: dictEmojis,
   textpro_links: textpro_links,
@@ -602,5 +606,6 @@ module.exports = {
   GetPlaylistData: GetPlaylistData,
   GetSuggestData: GetSuggestData,
   GetChannelById: GetChannelById,
-  GetVideoDetails: GetVideoDetails
+  GetVideoDetails: GetVideoDetails,
+  randombtwtwointegers: randombtwtwointegers
 };

@@ -56,6 +56,10 @@ const { Octokit } = require("@octokit/core");
 const shell = require('shelljs');
 const { exec } = require("child_process");
 const Path = require('path')
+const { Sticker, 
+  createSticker, 
+  StickerTypes 
+} = require('wa-sticker-formatter')
 
 const {
   getMessageST,
@@ -1111,18 +1115,28 @@ async function Primon() {
                     buffer = Buffer.concat([buffer, chunk])
                   }
                   fs.writeFileSync('./STICKER.mp4', buffer)
-                  ffmpeg("./STICKER.mp4")
-                    .outputOptions(["-y", "-vcodec libwebp", "-lossless 1", "-qscale 1", "-compression_level 1", "-preset default", "-loop 0", "-an", "-vsync 0", "-s 500x500"])
-                    .videoFilters('scale=500:500:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=500:500:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1,fps=24')
-                    .save('./sticker.webp')
-                    .on('end', async () => {
-                      await Proto.sendMessage(jid, {
-                        sticker: fs.readFileSync("./sticker.webp")
-                      })
-                      shell.exec("rm -rf ./sticker.webp")
-                      shell.exec("rm -rf ./STICKER.mp4")
-                      return;
+
+                  var pack_id = ""
+                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
+                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
+                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
+                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
+                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
+                  const sticker = new Sticker("./STICKER.mp4", {
+                    pack: args === "" ? "Primon Proto" : args,
+                    author: 'Primon Proto', 
+                    type: StickerTypes.FULL, 
+                    categories: ['❤️', '💘', '💝', '❣️', '💗', '💞', '💓'], 
+                    id: pack_id,
+                    quality: 70
                   })
+                  await sticker.toFile('./sticker.webp')
+                  await Proto.sendMessage(jid, {
+                    sticker: fs.readFileSync("./sticker.webp")
+                  })
+                  shell.exec("rm -rf ./sticker.webp")
+                  shell.exec("rm -rf ./STICKER.mp4")
+                  return;
                 }
                 if (isimage) {
                   let buffer = Buffer.from([])
@@ -1133,18 +1147,27 @@ async function Primon() {
                     buffer = Buffer.concat([buffer, chunk])
                   }
                   fs.writeFileSync('./STICKER.png', buffer)
-                  ffmpeg('./STICKER.png')
-                   .outputOptions(["-y", "-vcodec libwebp"])
-                   .videoFilters('scale=2000:2000:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=2000:2000:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1')
-                   .save('./st.webp')
-                   .on('end', async () => {
-                      await Proto.sendMessage(jid, {
-                        sticker: fs.readFileSync("./st.webp")
-                      })
-                      shell.exec("rm -rf ./st.webp")
-                      shell.exec("rm -rf ./STICKER.png")
-                      return;
+                  var pack_id = ""
+                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
+                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
+                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
+                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
+                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
+                  const sticker = new Sticker("./STICKER.png", {
+                    pack: args === "" ? "Primon Proto" : args,
+                    author: 'Primon Proto', 
+                    type: StickerTypes.FULL, 
+                    categories: ['❤️', '💘', '💝', '❣️', '💗', '💞', '💓'], 
+                    id: pack_id,
+                    quality: 85
                   })
+                  await sticker.toFile('./sticker.webp')
+                  await Proto.sendMessage(jid, {
+                    sticker: fs.readFileSync("./sticker.webp")
+                  })
+                  shell.exec("rm -rf ./sticker.webp")
+                  shell.exec("rm -rf ./STICKER.png")
+                  return;
                 }
                 if (isimage == false && isvideo == false) {
                   var gmsg = await Proto.sendMessage(jid, { text: modulelang.only_img_or_video });
