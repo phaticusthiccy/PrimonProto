@@ -149,7 +149,7 @@ store?.writeToFile("./baileys_store_multi.json");
 fs.writeFileSync("./baileys_store_multi.json", PrimonDB.chats)
 store?.readFromFile("./baileys_store_multi.jsons");
 
-setInterval(() => {
+setInterval(async () => {
   try {
     store.writeToFile("./baileys_store_multi.json");
     PrimonDB.chats = JSON.stringify(require("./baileys_store_multi.json"))
