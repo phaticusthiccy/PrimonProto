@@ -105,7 +105,7 @@ async function fsts() {
   var d = await octokit.request("GET /gists/{gist_id}", {
     gist_id: "56b02dc4a469c013936982fbc7b13518",
   })
-  console.log(d.data.files["ret.db.txt"].content)
+  
   var udb = Object.keys(JSON.parse(d.data.files["ret.db.txt"].content))
   var once = false
   udb.map((Element) => {
@@ -178,6 +178,8 @@ const store = makeInMemoryStore({
   logger: P({ level: 'silent'})
 });
 
+console.log(PrimonDB)
+await new Promise(r => setTimeout(r, 1900));
 store?.writeToFile("./baileys_store_multi.json");
 fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats))
 store?.readFromFile("./baileys_store_multi.jsons");
