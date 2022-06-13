@@ -177,9 +177,15 @@ const retryMessageHandler = async message => {
 const store = makeInMemoryStore({
   logger: P({ level: 'silent'})
 });
-
+function wait(ms) {
+  var start = Date.now(),
+      now = start;
+  while (now - start < ms) {
+    now = Date.now();
+  }
+}
 console.log(PrimonDB)
-await new Promise(r => setTimeout(r, 1900));
+wait(1900)
 store?.writeToFile("./baileys_store_multi.json");
 fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats))
 store?.readFromFile("./baileys_store_multi.jsons");
