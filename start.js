@@ -101,6 +101,32 @@ var PrimonDB = get_db;
 setInterval(async () => {
   var sh1 = shell.exec("node ./save_db_store.js")
   PrimonDB = JSON.parse(fs.readFileSync("./db.json"))
+  var mps = Object.keys(require("./db.json"))
+  var d = await octokit.request("GET /gists/{gist_id}", {
+    gist_id: "56b02dc4a469c013936982fbc7b13518",
+  })
+  var udb = JSON.parse(d.data.files["ret.db.txt"].content)
+  var once = false
+  udb.map((Element) => {
+    if (!mps.includes(Element)) {
+      mps[Element] = udb[Element]
+      once = true
+    }
+  })
+  if (once == true) {
+    await octokit.request("PATCH /gists/{gist_id}", {
+      gist_id: process.env.GITHUB_DB,
+      description: "Primon Proto için Kalıcı Veritabanı",
+      files: {
+        key: {
+          content: JSON.stringify(mps, null, 2),
+          filename: "primon.db.json",
+        },
+      },
+    });
+    fs.writeFileSync("./db.json", JSON.stringify(mps))
+  }
+  PrimonDB = JSON.parse(fs.readFileSync("./db.json"))
 }, 4000);
 
 var c_num_cnt = 0;
@@ -1083,7 +1109,7 @@ async function Primon() {
 
                       command_t.stderr.on('data', async (output2) => {
                         var gmsg = await Proto.sendMessage(jid, { text: output2.toString() });
-                        saveMessageST(gmsg.key.id, output.toString())
+                        saveMessageST(gmsg.key.id, output2.toString())
                       })
 
                       command_t.stdout.on('end', async () => {
