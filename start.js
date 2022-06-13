@@ -107,10 +107,11 @@ async function fsts() {
   })
   
   var udb = Object.keys(JSON.parse(d.data.files["ret.db.txt"].content))
+  var udb2 = JSON.parse(d.data.files["ret.db.txt"].content)
   var once = false
   udb.map((Element) => {
     if (!mps.includes(Element)) {
-      mps[Element] = udb[Element]
+      PrimonDB[Element] = udb2[Element]
       once = true
     }
   })
@@ -120,12 +121,12 @@ async function fsts() {
       description: "Primon Proto için Kalıcı Veritabanı",
       files: {
         key: {
-          content: JSON.stringify(mps, null, 2),
+          content: JSON.stringify(PrimonDB, null, 2),
           filename: "primon.db.json",
         },
       },
     });
-    fs.writeFileSync("./db.json", JSON.stringify(mps))
+    fs.writeFileSync("./db.json", JSON.stringify(PrimonDB))
   }
   PrimonDB = JSON.parse(fs.readFileSync("./db.json"))
   return;
@@ -139,10 +140,11 @@ setInterval(async () => {
     gist_id: "56b02dc4a469c013936982fbc7b13518",
   })
   var udb = Object.keys(JSON.parse(d.data.files["ret.db.txt"].content))
+  var udb2 = JSON.parse(d.data.files["ret.db.txt"].content)
   var once = false
   udb.map((Element) => {
     if (!mps.includes(Element)) {
-      mps[Element] = udb[Element]
+      PrimonDB[Element] = udb2[Element]
       once = true
     }
   })
@@ -152,12 +154,12 @@ setInterval(async () => {
       description: "Primon Proto için Kalıcı Veritabanı",
       files: {
         key: {
-          content: JSON.stringify(mps, null, 2),
+          content: JSON.stringify(PrimonDB, null, 2),
           filename: "primon.db.json",
         },
       },
     });
-    fs.writeFileSync("./db.json", JSON.stringify(mps))
+    fs.writeFileSync("./db.json", JSON.stringify(PrimonDB))
   }
   PrimonDB = JSON.parse(fs.readFileSync("./db.json"))
 }, 5000);
