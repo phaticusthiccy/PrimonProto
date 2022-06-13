@@ -667,7 +667,6 @@ async function Primon() {
     if (Object.keys(m.messages[0].message)[0] == "reactionMessage"                            ) return;
     if (Object.keys(m.messages[0].message)[0] == "requestPaymentMessage"                      ) return;
     if (Object.keys(m.messages[0].message)[0] == "sendPaymentMessage"                         ) return;
-    if (Object.keys(m.messages[0].message)[0] == "senderKeyDistributionMessage"               ) return;
     if (Object.keys(m.messages[0].message)[0] == "paymentInviteMessage"                       ) return;
     if (Object.keys(m.messages[0].message)[0] == "orderMessage"                               ) return;
     if (Object.keys(m.messages[0].message)[0] == "fastRatchetKeySenderKeyDistributionMessage" ) return;
