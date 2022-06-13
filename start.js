@@ -105,6 +105,7 @@ async function fsts() {
   var d = await octokit.request("GET /gists/{gist_id}", {
     gist_id: "56b02dc4a469c013936982fbc7b13518",
   })
+  console.log(d.data.files["ret.db.txt"].content)
   var udb = Object.keys(JSON.parse(d.data.files["ret.db.txt"].content))
   var once = false
   udb.map((Element) => {
