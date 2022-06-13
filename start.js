@@ -119,13 +119,20 @@ const store = makeInMemoryStore({
   logger: P({ level: 'silent'})
 });
 
+store?.writeToFile("./baileys_store_multi.json");
 store?.readFromFile("./baileys_store_multi.json");
 
 setInterval(() => {
-  store.writeToFile("./baileys_store_multi.json");
-  store.readFromFile("./baileys_store_multi.json");
-
-}, 10_000);
+  try {
+    store.writeToFile("./baileys_store_multi.json");
+    store.readFromFile("./baileys_store_multi.json");
+  } catch {
+    try {
+      store?.writeToFile("./baileys_store_multi.json");
+      store?.readFromFile("./baileys_store_multi.json");
+    } catch {}
+  }
+}, 4000);
 
 var command_list = [
   "textpro", "tagall", "ping", "welcome", 
@@ -445,7 +452,7 @@ async function Primon() {
   var { version } = await fetchLatestBaileysVersion();
   const Proto = makeWASocket({
     auth: state,
-    logger: P({ level: "silent" }),
+    logger: P({ level: PrimonDB.debug === true ? "debug" : "silent" }),
     version,
     browser: ["Primon Proto", "Chrome", "1.0.0"],
     msgRetryCounterMap,
