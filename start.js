@@ -186,11 +186,11 @@ function wait(ms) {
     now = Date.now();
   }
 }
-console.log(PrimonDB)
-wait(1900)
-store?.writeToFile("./baileys_store_multi.json");
-fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats))
-store?.readFromFile("./baileys_store_multi.jsons");
+// wait(1900)
+store.writeToFile("./baileys_store_multi.json");
+//store?.writeToFile("./baileys_store_multi.json");
+//fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats))
+//store?.readFromFile("./baileys_store_multi.jsons");
 
 setInterval(async () => {
   try {
