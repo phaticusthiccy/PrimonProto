@@ -176,8 +176,6 @@ setInterval(async () => {
 
 var c_num_cnt = 0;
 
-const { state, saveCreds } = useMultiFileAuthState("./session");
-
 const retryMessageHandler = async message => {
   let text = getMessageST(message.id)
   deleteMessageST(message.id)
@@ -527,7 +525,7 @@ async function ytaudio(link, downloadFolder) {
   }
 }
 async function Primon() {
-
+  const { state, saveCreds } = await useMultiFileAuthState("./session");
   const Proto = makeWASocket({
     auth: state,
     logger: P({ level: PrimonDB.debug === true ? "debug" : "silent" }),
