@@ -1168,7 +1168,7 @@ async function Primon() {
                       type: StickerTypes.FULL, 
                       categories: ['❤️', '💘', '💝', '❣️', '💗', '💞', '💓'], 
                       id: pack_id,
-                      quality: 85
+                      quality: 100
                     })
                     await sticker.toFile('./sticker.webp')
                     await Proto.sendMessage(jid, {
