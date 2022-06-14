@@ -535,7 +535,7 @@ async function Primon() {
     msgRetryCounterMap,
     getMessage: retryMessageHandler
   });
-  Proto.setMaxListeners(0)
+  Proto.ev.setMaxListeners(0)
   store.bind(Proto.ev)
   var message,
     isreplied,
