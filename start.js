@@ -81,6 +81,10 @@ const {
   randombtwtwointegers
 } = require("./add");
 
+if (!Date.now) {
+  Date.now = function() { return new Date().getTime(); }
+}
+
 const get_db = require("./db.json");
 const { isPromise } = require("util/types");
 var GITHUB_DB = process.env.GITHUB_DB == false ? false : process.env.GITHUB_DB;
@@ -531,6 +535,7 @@ async function Primon() {
     msgRetryCounterMap,
     getMessage: retryMessageHandler
   });
+  Proto.setMaxListeners(0)
   store.bind(Proto.ev)
   var message,
     isreplied,
