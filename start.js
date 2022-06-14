@@ -538,6 +538,8 @@ async function Primon() {
     isvideo,
     issticker,
     issound,
+    isviewoncevideo,
+    isviewonceimage,
     repliedmsg,
     jid,
     msgid,
@@ -687,9 +689,24 @@ async function Primon() {
       }
       if (nort) {
         if (once_msg2.includes("extendedTextMessage")) {
-          repliedmsg =
-            m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
-              .extendedTextMessage.text;
+
+          if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage)[0] == "viewOnceMessage") {
+            if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "imageMessage") {
+              if (m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.imageMessage.hasOwnProperty('caption')) {
+                repliedmsg = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.imageMessage.caption
+              } else {
+                repliedmsg = ""
+              }
+            } else if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "videoMessage") {
+              if (m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.videoMessage.hasOwnProperty('caption')) {
+                repliedmsg = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.videoMessage.caption
+              } else {
+                repliedmsg = ""
+              }
+            }
+          } else {
+            repliedmsg = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.extendedTextMessage.text;
+          }
         } else if (once_msg2.includes("conversation")) {
           repliedmsg =
             m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
@@ -723,10 +740,24 @@ async function Primon() {
       message = m.messages[0].message.conversation;
       isbutton = false;
       isimage = false;
+      isviewonceimage = false;
+      isviewoncevideo = false;
       isvideo = false;
       issound = false;
       issticker = false;
     } else if (once_msg.includes("extendedTextMessage")) {
+      if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage)[0] == "viewOnceMessage") {
+        if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "imageMessage") {
+          isviewonceimage = true;
+          isviewoncevideo = false;
+        } else if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "videoMessage") {
+          isviewonceimage = false;
+          isviewoncevideo = true;
+        } else {
+          isviewonceimage = false;
+          isviewoncevideo = false;
+        }
+      }
       isbutton = false;
       isimage = false;
       isvideo = false;
@@ -737,6 +768,8 @@ async function Primon() {
       message = m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
       isbutton = true;
       isimage = false;
+      isviewonceimage = false;
+      isviewoncevideo = false;
       isvideo = false;
       issticker = false;
       issound = false;
@@ -745,12 +778,16 @@ async function Primon() {
         message = m.messages[0].message.imageMessage.caption;
         isimage = true
         isvideo = false
+        isviewonceimage = false;
+        isviewoncevideo = false;
         issticker = false;
         issound = false
       } catch {
         message = "";
         isimage = true;
         issticker = false;
+        isviewonceimage = false;
+        isviewoncevideo = false;
         isvideo = false;
         issound = false;
       }
@@ -760,10 +797,14 @@ async function Primon() {
         message = m.messages[0].message.videoMessage.caption;
         isimage = false
         isvideo = true
+        isviewonceimage = false;
+        isviewoncevideo = false;
         issticker = false;
         issound = false
       } catch {
         message = "";
+        isviewonceimage = false;
+        isviewoncevideo = false;
         isimage = false;
         isvideo = true;
         issticker = false;
@@ -774,6 +815,8 @@ async function Primon() {
       isimage = false
       isvideo = false
       issound = true
+      isviewonceimage = false;
+      isviewoncevideo = false;
       issticker = false;
       isbutton = false;
       message = ""
@@ -781,6 +824,8 @@ async function Primon() {
       isimage = false
       isvideo = false
       issound = true
+      isviewonceimage = false;
+      isviewoncevideo = false;
       issticker = true;
       isbutton = false;
       message = ""
@@ -794,21 +839,41 @@ async function Primon() {
         isimage = true
         isvideo = false
         issound = false
+        isviewonceimage = false;
+        isviewoncevideo = false;
         issticker = false
       } else if (once_msg2.includes("videoMessage")) {
         isimage = false
+        isviewonceimage = false;
+        isviewoncevideo = false;
         isvideo = true
         issound = false
         issticker = false
       } else if (once_msg2.includes("audioMessage")) {
         isimage = false
         isvideo = false
+        isviewonceimage = false;
+        isviewoncevideo = false;
         issticker = false
         issound = true
       } else if (once_msg2.includes("stickerMessage")) {
         isimage = false
+        isviewonceimage = false;
+        isviewoncevideo = false;
         isvideo = false
         issticker = true
+        issound = false
+      } else if (once_msg2.includes("viewOnceMessage")) {
+        if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "imageMessage") {
+          isviewonceimage = true;
+          isviewoncevideo = false;
+        } else if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "videoMessage") {
+          isviewonceimage = false;
+          isviewoncevideo = true;
+        }
+        isimage = false;
+        isvideo = false
+        issticker = false
         issound = false
       }
     }
@@ -1203,6 +1268,70 @@ async function Primon() {
                     return;
                   }
                 }
+
+                if (isviewoncevideo) {
+                  let buffer = Buffer.from([])
+                  const stream = await downloadContentFromMessage(
+                    m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.videoMessage, "video"
+                  )
+                  for await (const chunk of stream) {
+                    buffer = Buffer.concat([buffer, chunk])
+                  }
+                  fs.writeFileSync('./STICKER.mp4', buffer)
+
+                  ffmpeg("./STICKER.mp4")
+                    .outputOptions(["-y", "-vcodec libwebp", "-lossless 1", "-qscale 1", "-preset default", "-loop 0", "-an", "-vsync 0", "-s 400x400"])
+                    .videoFilters('scale=400:400:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=400:400:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1,fps=24')
+                    .save('./sticker.webp')
+                    .on('end', async () => {
+                      await Proto.sendMessage(jid, {
+                        sticker: fs.readFileSync("./sticker.webp")
+                      })
+                      shell.exec("rm -rf ./sticker.webp")
+                      shell.exec("rm -rf ./STICKER.mp4")
+                      return;
+                    })
+                    .on("error", async () => {
+                      var gmsg = await Proto.sendMessage(jid, { text: modulelang.sticker_error_vid });
+                      saveMessageST(gmsg.key.id, modulelang.sticker_error_vid)
+                      shell.exec("rm -rf ./sticker.webp")
+                      shell.exec("rm -rf ./STICKER.mp4")
+                      return;
+                    })
+                }
+
+                if (isviewonceimage) {
+                  let buffer = Buffer.from([])
+                  const stream = await downloadContentFromMessage(
+                    m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.imageMessage, "image"
+                  )
+                  for await (const chunk of stream) {
+                    buffer = Buffer.concat([buffer, chunk])
+                  }
+                  fs.writeFileSync('./STICKER.mp4', buffer)
+
+                  ffmpeg("./STICKER.mp4")
+                    .outputOptions(["-y", "-vcodec libwebp", "-lossless 1", "-qscale 1", "-preset default", "-loop 0", "-an", "-vsync 0", "-s 400x400"])
+                    .videoFilters('scale=400:400:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=400:400:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1,fps=24')
+                    .save('./sticker.webp')
+                    .on('end', async () => {
+                      await Proto.sendMessage(jid, {
+                        sticker: fs.readFileSync("./sticker.webp")
+                      })
+                      shell.exec("rm -rf ./sticker.webp")
+                      shell.exec("rm -rf ./STICKER.mp4")
+                      return;
+                    })
+                    .on("error", async () => {
+                      var gmsg = await Proto.sendMessage(jid, { text: modulelang.sticker_error_vid });
+                      saveMessageST(gmsg.key.id, modulelang.sticker_error_vid)
+                      shell.exec("rm -rf ./sticker.webp")
+                      shell.exec("rm -rf ./STICKER.mp4")
+                      return;
+                    })
+                }
+
+
                 if (isimage == false && isvideo == false && issticker == false) {
                   var gmsg = await Proto.sendMessage(jid, { text: modulelang.only_img_or_video });
                   saveMessageST(gmsg.key.id, modulelang.only_img_or_video)
