@@ -4,6 +4,7 @@ USER root
 
 RUN apt-get update
 
+RUN apt-get install -y git
 
 ENV NODE_VERSION=16.13.0
 
