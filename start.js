@@ -196,7 +196,7 @@ store.writeToFile("./baileys_store_multi.json");
 //store?.writeToFile("./baileys_store_multi.json");
 store?.readFromFile("./baileys_store_multi.jsons");
 
-setInterval(async () => {
+setInterval(() => {
   try {
     store.writeToFile("./baileys_store_multi.json");
     store.readFromFile("./baileys_store_multi.json");
