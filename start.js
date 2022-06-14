@@ -1195,7 +1195,7 @@ async function Primon() {
                   for await (const chunk of stream) {
                     buffer = Buffer.concat([buffer, chunk])
                   }
-                  if (stcs.isAnimated == true) {
+                  if (stcs.isAnimated == true || stcs.stickerMessage.isAnimated == true) {
                     fs.writeFileSync('./IMAGE.mp4', buffer)
                     await Proto.sendMessage(jid, {
                       video: fs.readFileSync("./IMAGE.mp4"),
