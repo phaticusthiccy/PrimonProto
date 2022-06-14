@@ -21,6 +21,7 @@ const {
   prepareWAMessageMedia,
   generateWAMessageFromContent,
   generateMessageID,
+  useMultiFileAuthState,
   downloadContentFromMessage,
   makeInMemoryStore,
   jidDecode,
@@ -175,7 +176,7 @@ setInterval(async () => {
 
 var c_num_cnt = 0;
 
-const { state, saveState } = useSingleFileAuthState("./session.json");
+const { state, saveCreds } = useMultiFileAuthState("./session");
 
 const retryMessageHandler = async message => {
   let text = getMessageST(message.id)
@@ -2823,7 +2824,7 @@ async function Primon() {
         Primon();
       } else if (reason === DisconnectReason.loggedOut) {
         console.log(sessionlang.out);
-        fs.unlinkSync("./session.json");
+        shell.exec("rm ./session")
         fs.unlinkSync("./baileys_store_multi.json");
         Proto.logout();
       } else if (reason === DisconnectReason.restartRequired) {
@@ -2838,7 +2839,7 @@ async function Primon() {
     }
     return console.log(sessionlang.run);
   });
-  Proto.ev.on("creds.update", saveState);
+  Proto.ev.on("creds.update", saveCreds);
   return Proto;
 }
 try {
