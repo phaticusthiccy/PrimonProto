@@ -4,6 +4,6 @@
   
 Configurational ESM Lightweigth WebSocket Tool. Uses side clients to connect firewall bridge.
  
-A.K.A Primon Proto Whatsapp Bot
+A.K.A Primon Proto Bot
   </center>
 </html>
