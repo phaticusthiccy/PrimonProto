@@ -8,7 +8,7 @@
 
 clear
 echo "┌─────────────────────────────────┬─────────┐
-│ Primon Proto - Whatsapp Userbot │ Version │
+│ Primon Proto - Whatsapp Bot     │ Version │
 ├─────────────────────────────────┼─────────┤
 │ Railway Auto Deploy             │     1.0 │
 └─────────────────────────────────┴─────────┘
