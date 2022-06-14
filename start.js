@@ -1188,13 +1188,14 @@ async function Primon() {
 
                 if (issticker) {
                   let buffer = Buffer.from([])
+                  var stcs = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
                   const stream = await downloadContentFromMessage(
-                    m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.stickerMessage, "sticker"
+                    stcs.stickerMessage, "sticker"
                   )
                   for await (const chunk of stream) {
                     buffer = Buffer.concat([buffer, chunk])
                   }
-                  if (m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.isAnimated == true) {
+                  if (stcs.isAnimated == true) {
                     fs.writeFileSync('./IMAGE.mp4', buffer)
                     await Proto.sendMessage(jid, {
                       video: fs.readFileSync("./IMAGE.mp4"),
