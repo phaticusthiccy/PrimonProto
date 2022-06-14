@@ -6,11 +6,11 @@ RUN apt-get update && apt-get install -y ffmpeg
 
 RUN apt-get install -y git
 
-RUN yes n | apt-get install curl 
+RUN apt-get install -y curl 
 
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash
 
-RUN apt-get install nodejs
+RUN apt-get install -y nodejs
 
 RUN git clone https://github.com/phaticusthiccy/PrimonProto
 
