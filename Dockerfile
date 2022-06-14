@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y ffmpeg
 
 RUN apt-get install -y git
 
-RUN apt-get install curl 
+RUN yes n | apt-get install curl 
 
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash
 
