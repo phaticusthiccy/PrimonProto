@@ -880,6 +880,9 @@ async function Primon() {
         } else if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "videoMessage") {
           isviewonceimage = false;
           isviewoncevideo = true;
+        } else {
+          isviewonceimage = false;
+          isviewoncevideo = false;
         }
         isimage = false;
         isvideo = false
