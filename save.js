@@ -23,7 +23,9 @@ async function save2() {
   sn = Buffer.from(process.env.SESSION + process.env.SESSION2 + process.env.SESSION3 + process.env.SESSION4, "base64").toString()
   var sn2 = sn.split("&&&&&&&")
   sn2.map((Element) => {
-    fs.writeFileSync("./session/" + sn4[sayac], Element)
+    if (Element !== "" || Element !== " ") {
+      fs.writeFileSync("./session/" + sn4[sayac], Element)
+    }
     sayac = sayac + 1
   })
   console.log("Primon Session Updated!")
