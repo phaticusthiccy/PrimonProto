@@ -78,6 +78,7 @@ const {
   String,
   react,
   GetListByKeyword,
+  randombtwtwointegers
 } = require("./add");
 
 const get_db = require("./db.json");
@@ -530,7 +531,7 @@ async function Primon() {
     msgRetryCounterMap,
     getMessage: retryMessageHandler
   });
-  store?.bind(Proto.ev)
+  store.bind(Proto.ev)
   var message,
     isreplied,
     isimage,
