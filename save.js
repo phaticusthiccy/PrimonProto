@@ -11,6 +11,9 @@ const fs = require("fs")
 require('util').inspect.defaultOptions.depth = null
 
 async function save2() {
+  try {
+    fs.unlinkSync("./session/test")
+  } catch {}
   var sn = ""
   var name = Buffer.from(process.env.SESSION5, "base64").toString()
   var sn3 = name.split("&&&&&&&")
