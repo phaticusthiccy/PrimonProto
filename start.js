@@ -190,43 +190,18 @@ function wait(ms) {
     now = Date.now();
   }
 }
-// wait(1900)
+wait(1900)
 store.writeToFile("./baileys_store_multi.json");
 //store?.writeToFile("./baileys_store_multi.json");
-//fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats))
-//store?.readFromFile("./baileys_store_multi.jsons");
+store?.readFromFile("./baileys_store_multi.jsons");
 
 setInterval(async () => {
   try {
     store.writeToFile("./baileys_store_multi.json");
-    PrimonDB.chats = JSON.stringify(JSON.parse(fs.readFileSync("./baileys_store_multi.json").toString()), null, 2).replace(/\\n/g, "\\n")
-    await octokit.request("PATCH /gists/{gist_id}", {
-      gist_id: process.env.GITHUB_DB,
-      description: "Primon Proto için Kalıcı Veritabanı",
-      files: {
-        key: {
-          content: JSON.stringify(PrimonDB, null, 2),
-          filename: "primon.db.json",
-        },
-      },
-    });
-    fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats, null, 2).replace(/\\n/g, "\\n"))
     store.readFromFile("./baileys_store_multi.json");
   } catch {
     try {
       store?.writeToFile("./baileys_store_multi.json");
-      PrimonDB.chats = JSON.stringify(JSON.parse(fs.readFileSync("./baileys_store_multi.json").toString()), null, 2).replace(/\\n/g, "\\n")
-      await octokit.request("PATCH /gists/{gist_id}", {
-        gist_id: process.env.GITHUB_DB,
-        description: "Primon Proto için Kalıcı Veritabanı",
-        files: {
-          key: {
-            content: JSON.stringify(PrimonDB, null, 2),
-            filename: "primon.db.json",
-          },
-        },
-      });
-      fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(PrimonDB.chats, null, 2).replace(/\\n/g, "\\n"))
       store?.readFromFile("./baileys_store_multi.json");
     } catch {}
   }
