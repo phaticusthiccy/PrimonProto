@@ -1116,35 +1116,25 @@ async function Primon() {
                   }
                   fs.writeFileSync('./STICKER.mp4', buffer)
 
-                  var pack_id = ""
-                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
-                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
-                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
-                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
-                  pack_id = pack_id + randombtwtwointegers(1,9).toString()
-                  try {
-                    const sticker = new Sticker("./STICKER.mp4", {
-                      pack: args === "" ? "Primon Proto" : args,
-                      author: 'Primon Proto', 
-                      type: StickerTypes.FULL, 
-                      categories: ['❤️', '💘', '💝', '❣️', '💗', '💞', '💓'], 
-                      id: pack_id,
-                      quality: 50
+                  ffmpeg("./STICKER.mp4")
+                    .outputOptions(["-y", "-vcodec libwebp", "-lossless 1", "-qscale 1", "-preset default", "-loop 0", "-an", "-vsync 0", "-s 400x400"])
+                    .videoFilters('scale=400:400:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=400:400:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1,fps=24')
+                    .save('./sticker.webp')
+                    .on('end', async () => {
+                      await Proto.sendMessage(jid, {
+                        sticker: fs.readFileSync("./sticker.webp")
+                      })
+                      shell.exec("rm -rf ./sticker.webp")
+                      shell.exec("rm -rf ./STICKER.mp4")
+                      return;
                     })
-                    await sticker.toFile('./sticker.webp')
-                    await Proto.sendMessage(jid, {
-                      sticker: fs.readFileSync("./sticker.webp")
+                    .on("error", async () => {
+                      var gmsg = await Proto.sendMessage(jid, { text: modulelang.sticker_error_vid });
+                      saveMessageST(gmsg.key.id, modulelang.sticker_error_vid)
+                      shell.exec("rm -rf ./sticker.webp")
+                      shell.exec("rm -rf ./STICKER.mp4")
+                      return;
                     })
-                    shell.exec("rm -rf ./sticker.webp")
-                    shell.exec("rm -rf ./STICKER.mp4")
-                    return;
-                  } catch {
-                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.sticker_error_vid });
-                    saveMessageST(gmsg.key.id, modulelang.sticker_error_vid)
-                    shell.exec("rm -rf ./sticker.webp")
-                    shell.exec("rm -rf ./STICKER.mp4")
-                    return;
-                  }
                 }
                 if (isimage) {
                   let buffer = Buffer.from([])
