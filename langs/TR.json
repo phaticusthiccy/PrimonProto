@@ -146,10 +146,12 @@
       "song_dsc": "_YouTube üzerinden şarkı indirir._",
       "song_us": "```&song Thiccy - Vibe House```",
       "song_fl": "{%d1}```{%c}song```\n{%d1}_YouTube üzerinden şarkı indirir._ \n{%d1}\n\n```{%c}song Thiccy - Vibe House```",
-      "only_img_or_video": "*Lütfen sadece video veya fotoğrafa yanıt verin!*",
-      "sticker1": "_Videoyu veya fotoğrafı sticker'a çevirir._",
-      "sticker2": "```&sticker <mesaja yanıt ver>```",
-      "sticker3": "{%d1}```{%c}sticker```\n{%d1}_Videoyu veya fotoğrafı sticker'a çevirir._ \n{%d1}\n\n```{%c}sticker <mesaja yanıt ver>```"
+      "only_img_or_video": "*Lütfen sadece video, fotoğraf veya sticker'a yanıt verin!*",
+      "sticker1": "_Videoyu veya fotoğrafı stickera çevirir. Eğer sticker yanıtlanırsa fotoğrafa veya videoya çevirir._",
+      "sticker2": "```&sticker <mesaja yanıt ver>```\n```&sticker <Sticker ismi> <mesaja yanıt ver>```",
+      "sticker3": "{%d1}```{%c}sticker```\n{%d1}_Videoyu veya fotoğrafı sticker'a çevirir. Eğer sticker yanıtlanırsa fotoğrafa veya videoya çevirir._ \n{%d1}\n\n```{%c}sticker <mesaja yanıt ver>```\n```{%c}sticker <Sticker ismi> <mesaja yanıt ver>```",
+      "sticker_error_vid": "_Bu video sticker yapmak için çok uzun veya boyutu çok fazla._",
+      "sticker_error_img": "_Bu fotoğraf sticker yapmak için çok uzun veya boyutu çok fazla._"
     }
   }
 }

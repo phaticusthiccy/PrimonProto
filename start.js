@@ -536,6 +536,7 @@ async function Primon() {
     isreplied,
     isimage,
     isvideo,
+    issticker,
     issound,
     repliedmsg,
     jid,
@@ -724,27 +725,32 @@ async function Primon() {
       isimage = false;
       isvideo = false;
       issound = false;
+      issticker = false;
     } else if (once_msg.includes("extendedTextMessage")) {
       isbutton = false;
       isimage = false;
       isvideo = false;
       issound = false;
+      issticker = false;
       message = m.messages[0].message.extendedTextMessage.text;
     } else if (once_msg.includes("buttonsResponseMessage")) {
       message = m.messages[0].message.buttonsResponseMessage.selectedDisplayText;
       isbutton = true;
       isimage = false;
       isvideo = false;
+      issticker = false;
       issound = false;
     } else if (once_msg.includes("imageMessage")) {
       try {
         message = m.messages[0].message.imageMessage.caption;
         isimage = true
         isvideo = false
+        issticker = false;
         issound = false
       } catch {
         message = "";
         isimage = true;
+        issticker = false;
         isvideo = false;
         issound = false;
       }
@@ -754,11 +760,13 @@ async function Primon() {
         message = m.messages[0].message.videoMessage.caption;
         isimage = false
         isvideo = true
+        issticker = false;
         issound = false
       } catch {
         message = "";
         isimage = false;
         isvideo = true;
+        issticker = false;
         issound = false;
       }
       isbutton = false;
@@ -766,9 +774,17 @@ async function Primon() {
       isimage = false
       isvideo = false
       issound = true
+      issticker = false;
       isbutton = false;
       message = ""
-    } else {
+    } else if (once_msg.includes("stickerMessage")) {
+      isimage = false
+      isvideo = false
+      issound = true
+      issticker = true;
+      isbutton = false;
+      message = ""
+    }  else {
       isbutton = false;
       message = undefined;
     }
@@ -778,18 +794,26 @@ async function Primon() {
         isimage = true
         isvideo = false
         issound = false
+        issticker = false
       } else if (once_msg2.includes("videoMessage")) {
         isimage = false
         isvideo = true
         issound = false
+        issticker = false
       } else if (once_msg2.includes("audioMessage")) {
         isimage = false
         isvideo = false
+        issticker = false
         issound = true
+      } else if (once_msg2.includes("stickerMessage")) {
+        isimage = false
+        isvideo = false
+        issticker = true
+        issound = false
       }
     }
 
-    if ((isimage && isreplied) || (isvideo && isreplied) || (issound && isreplied)) {
+    if ((isimage && isreplied) || (isvideo && isreplied) || (issound && isreplied) || (issticker && isreplied)) {
       var reply_download_key = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
     }
     
@@ -887,56 +911,56 @@ async function Primon() {
 
             cmdlang.command + "```" + cmd[0] + "tagall" + "```" + "\n" +
             cmdlang.info + modulelang.tagall2 + "\n" +
-            cmdlang.example + "\n\n" + modulelang.tagall3.replace(/&/gi, cmd[0]) + "\n\n\n" +
+            cmdlang.example + "\n" + modulelang.tagall3.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
             cmdlang.command + "```" + cmd[0] + "textpro" + "```" + "\n" +
             cmdlang.info + modulelang.textpro2 + "\n" +
-            cmdlang.example + "\n\n" + modulelang.textpro3.replace(/&/gi, cmd[0]) + "\n\n\n" +
+            cmdlang.example + "\n" + modulelang.textpro3.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
             cmdlang.command + "```" + cmd[0] + "welcome" + "```" + "\n" +
             cmdlang.info + modulelang.welcome2 + "\n" +
-            cmdlang.example + "\n\n" + modulelang.welcome3.replace(/&/gi, cmd[0]) + "\n\n\n" +
+            cmdlang.example + "\n" + modulelang.welcome3.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
             cmdlang.command + "```" + cmd[0] + "goodbye" + "```" + "\n" +
             cmdlang.info + modulelang.goodbye2 + "\n" +
-            cmdlang.example + "\n\n" + modulelang.goodbye3.replace(/&/gi, cmd[0]) + "\n\n\n" +
+            cmdlang.example + "\n" + modulelang.goodbye3.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
             cmdlang.command + "```" + cmd[0] + "get" + "```" + "\n" +
             cmdlang.info + modulelang.get + "\n" +
-            cmdlang.example + "\n\n" + modulelang.get2.replace(/&/gi, cmd[0]) + "\n\n\n" +
+            cmdlang.example + "\n" + modulelang.get2.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
             cmdlang.command + "```" + cmd[0] + "set" + "```" + "\n" +
             cmdlang.info + modulelang.set + "\n" +
-            cmdlang.example + "\n\n" + modulelang.set2.replace(/&/gi, cmd[0]) + "\n\n\n" +
+            cmdlang.example + "\n" + modulelang.set2.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
             cmdlang.command + "```" + cmd[0] + "filter" + "```" + "\n" +
             cmdlang.info + modulelang.filter + "\n" +
-            cmdlang.example + "\n\n" + modulelang.filter2.replace(/&/gi, cmd[0]) + "\n\n\n" +
+            cmdlang.example + "\n" + modulelang.filter2.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
             cmdlang.command + "```" + cmd[0] + "stop" + "```" + "\n" +
             cmdlang.info + modulelang.stop + "\n" +
-            cmdlang.example + "\n\n" + modulelang.stop2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+            cmdlang.example + "\n" + modulelang.stop2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
             cmdlang.command + "```" + cmd[0] + "yt" + "```" + "\n" +
             cmdlang.info + modulelang.yt1 + "\n" +
-            cmdlang.example + "\n\n" + modulelang.yt2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+            cmdlang.example + "\n" + modulelang.yt2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
             cmdlang.command + "```" + cmd[0] + "video" + "```" + "\n" +
             cmdlang.info + modulelang.yt3 + "\n" +
-            cmdlang.example + "\n\n" + modulelang.yt4.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+            cmdlang.example + "\n" + modulelang.yt4.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
             cmdlang.command + "```" + cmd[0] + "song" + "```" + "\n" +
             cmdlang.info + modulelang.song_dsc + "\n" +
-            cmdlang.example + "\n\n" + modulelang.song_us.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+            cmdlang.example + "\n" + modulelang.song_us.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
             cmdlang.command + "```" + cmd[0] + "sticker" + "```" + "\n" +
             cmdlang.info + modulelang.sticker1 + "\n" +
-            cmdlang.example + "\n\n" + modulelang.sticker2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+            cmdlang.example + "\n" + modulelang.sticker2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
             cmdlang.command + "```" + cmd[0] + "term" + "```" + "\n" +
             cmdlang.info + modulelang.term1 + "\n" +
             cmdlang.danger + modulelang.term3 + "\n" +
-            cmdlang.example + "\n\n" + modulelang.term2.replace(/&/gi, cmd[0])
+            cmdlang.example + "\n" + modulelang.term2.replace(/&/gi, cmd[0])
 
           },
           reply_key[0]
@@ -953,56 +977,56 @@ async function Primon() {
 
         cmdlang.command + "```" + cmd[0] + "tagall" + "```" + "\n" +
         cmdlang.info + modulelang.tagall2 + "\n" +
-        cmdlang.example + "\n\n" + modulelang.tagall3.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        cmdlang.example + "\n" + modulelang.tagall3.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
         cmdlang.command + "```" + cmd[0] + "textpro" + "```" + "\n" +
         cmdlang.info + modulelang.textpro2 + "\n" +
-        cmdlang.example + "\n\n" + modulelang.textpro3.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        cmdlang.example + "\n" + modulelang.textpro3.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
         cmdlang.command + "```" + cmd[0] + "welcome" + "```" + "\n" +
         cmdlang.info + modulelang.welcome2 + "\n" +
-        cmdlang.example + "\n\n" + modulelang.welcome3.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        cmdlang.example + "\n" + modulelang.welcome3.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
         cmdlang.command + "```" + cmd[0] + "goodbye" + "```" + "\n" +
         cmdlang.info + modulelang.goodbye2 + "\n" +
-        cmdlang.example + "\n\n" + modulelang.goodbye3.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        cmdlang.example + "\n" + modulelang.goodbye3.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
         cmdlang.command + "```" + cmd[0] + "get" + "```" + "\n" +
         cmdlang.info + modulelang.get + "\n" +
-        cmdlang.example + "\n\n" + modulelang.get2.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        cmdlang.example + "\n" + modulelang.get2.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
         cmdlang.command + "```" + cmd[0] + "set" + "```" + "\n" +
         cmdlang.info + modulelang.set + "\n" +
-        cmdlang.example + "\n\n" + modulelang.set2.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        cmdlang.example + "\n" + modulelang.set2.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
         cmdlang.command + "```" + cmd[0] + "filter" + "```" + "\n" +
         cmdlang.info + modulelang.filter + "\n" +
-        cmdlang.example + "\n\n" + modulelang.filter2.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        cmdlang.example + "\n" + modulelang.filter2.replace(/&/gi, cmd[0]) + "\n\n\n" +
 
         cmdlang.command + "```" + cmd[0] + "stop" + "```" + "\n" +
         cmdlang.info + modulelang.stop + "\n" +
-        cmdlang.example + "\n\n" + modulelang.stop2.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        cmdlang.example + "\n" + modulelang.stop2.replace(/&/gi, cmd[0]) + "\n\n\n" +
         
         cmdlang.command + "```" + cmd[0] + "yt" + "```" + "\n" +
         cmdlang.info + modulelang.yt1 + "\n" +
-        cmdlang.example + "\n\n" + modulelang.yt2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+        cmdlang.example + "\n" + modulelang.yt2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
         cmdlang.command + "```" + cmd[0] + "video" + "```" + "\n" +
         cmdlang.info + modulelang.yt3 + "\n" +
-        cmdlang.example + "\n\n" + modulelang.yt4.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+        cmdlang.example + "\n" + modulelang.yt4.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
         cmdlang.command + "```" + cmd[0] + "song" + "```" + "\n" +
         cmdlang.info + modulelang.song_dsc + "\n" +
-        cmdlang.example + "\n\n" + modulelang.song_us.replace(/&/gi, cmd[0]) + "\n\n\n" +
+        cmdlang.example + "\n" + modulelang.song_us.replace(/&/gi, cmd[0]) + "\n\n\n" +
         
         cmdlang.command + "```" + cmd[0] + "sticker" + "```" + "\n" +
         cmdlang.info + modulelang.sticker1 + "\n" +
-        cmdlang.example + "\n\n" + modulelang.sticker2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+        cmdlang.example + "\n" + modulelang.sticker2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
         cmdlang.command + "```" + cmd[0] + "term" + "```" + "\n" +
         cmdlang.info + modulelang.term1 + "\n" +
         cmdlang.danger + modulelang.term3 + "\n" +
-        cmdlang.example + "\n\n" + modulelang.term2.replace(/&/gi, cmd[0])
+        cmdlang.example + "\n" + modulelang.term2.replace(/&/gi, cmd[0])
         
         
         )
@@ -1098,21 +1122,29 @@ async function Primon() {
                   pack_id = pack_id + randombtwtwointegers(1,9).toString()
                   pack_id = pack_id + randombtwtwointegers(1,9).toString()
                   pack_id = pack_id + randombtwtwointegers(1,9).toString()
-                  const sticker = new Sticker("./STICKER.mp4", {
-                    pack: args === "" ? "Primon Proto" : args,
-                    author: 'Primon Proto', 
-                    type: StickerTypes.FULL, 
-                    categories: ['❤️', '💘', '💝', '❣️', '💗', '💞', '💓'], 
-                    id: pack_id,
-                    quality: 70
-                  })
-                  await sticker.toFile('./sticker.webp')
-                  await Proto.sendMessage(jid, {
-                    sticker: fs.readFileSync("./sticker.webp")
-                  })
-                  shell.exec("rm -rf ./sticker.webp")
-                  shell.exec("rm -rf ./STICKER.mp4")
-                  return;
+                  try {
+                    const sticker = new Sticker("./STICKER.mp4", {
+                      pack: args === "" ? "Primon Proto" : args,
+                      author: 'Primon Proto', 
+                      type: StickerTypes.FULL, 
+                      categories: ['❤️', '💘', '💝', '❣️', '💗', '💞', '💓'], 
+                      id: pack_id,
+                      quality: 70
+                    })
+                    await sticker.toFile('./sticker.webp')
+                    await Proto.sendMessage(jid, {
+                      sticker: fs.readFileSync("./sticker.webp")
+                    })
+                    shell.exec("rm -rf ./sticker.webp")
+                    shell.exec("rm -rf ./STICKER.mp4")
+                    return;
+                  } catch {
+                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.sticker_error_vid });
+                    saveMessageST(gmsg.key.id, modulelang.sticker_error_vid)
+                    shell.exec("rm -rf ./sticker.webp")
+                    shell.exec("rm -rf ./STICKER.mp4")
+                    return;
+                  }
                 }
                 if (isimage) {
                   let buffer = Buffer.from([])
@@ -1129,23 +1161,58 @@ async function Primon() {
                   pack_id = pack_id + randombtwtwointegers(1,9).toString()
                   pack_id = pack_id + randombtwtwointegers(1,9).toString()
                   pack_id = pack_id + randombtwtwointegers(1,9).toString()
-                  const sticker = new Sticker("./STICKER.png", {
-                    pack: args === "" ? "Primon Proto" : args,
-                    author: 'Primon Proto', 
-                    type: StickerTypes.FULL, 
-                    categories: ['❤️', '💘', '💝', '❣️', '💗', '💞', '💓'], 
-                    id: pack_id,
-                    quality: 85
-                  })
-                  await sticker.toFile('./sticker.webp')
-                  await Proto.sendMessage(jid, {
-                    sticker: fs.readFileSync("./sticker.webp")
-                  })
-                  shell.exec("rm -rf ./sticker.webp")
-                  shell.exec("rm -rf ./STICKER.png")
-                  return;
+                  try {
+                    const sticker = new Sticker("./STICKER.png", {
+                      pack: args === "" ? "Primon Proto" : args,
+                      author: 'Primon Proto', 
+                      type: StickerTypes.FULL, 
+                      categories: ['❤️', '💘', '💝', '❣️', '💗', '💞', '💓'], 
+                      id: pack_id,
+                      quality: 85
+                    })
+                    await sticker.toFile('./sticker.webp')
+                    await Proto.sendMessage(jid, {
+                      sticker: fs.readFileSync("./sticker.webp")
+                    })
+                    shell.exec("rm -rf ./sticker.webp")
+                    shell.exec("rm -rf ./STICKER.png")
+                    return;
+                  } catch {
+                    var gmsg = await Proto.sendMessage(jid, { text: modulelang.sticker_error_img });
+                    saveMessageST(gmsg.key.id, modulelang.sticker_error_img)
+                    shell.exec("rm -rf ./sticker.webp")
+                    shell.exec("rm -rf ./STICKER.png")
+                    return;
+                  }
                 }
-                if (isimage == false && isvideo == false) {
+
+                if (issticker) {
+                  let buffer = Buffer.from([])
+                  const stream = await downloadContentFromMessage(
+                    m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.stickerMessage, "sticker"
+                  )
+                  for await (const chunk of stream) {
+                    buffer = Buffer.concat([buffer, chunk])
+                  }
+                  if (m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.isAnimated == true) {
+                    fs.writeFileSync('./IMAGE.mp4', buffer)
+                    await Proto.sendMessage(jid, {
+                      video: fs.readFileSync("./IMAGE.mp4"),
+                      caption: MenuLang.by
+                    })
+                    shell.exec("rm -rf ./IMAGE.mp4")
+                    return;
+                  } else {
+                    fs.writeFileSync('./IMAGE.png', buffer)
+                    await Proto.sendMessage(jid, {
+                      image: fs.readFileSync("./IMAGE.png"),
+                      caption: MenuLang.by
+                    })
+                    shell.exec("rm -rf ./IMAGE.png")
+                    return;
+                  }
+                }
+                if (isimage == false && isvideo == false && issticker == false) {
                   var gmsg = await Proto.sendMessage(jid, { text: modulelang.only_img_or_video });
                   saveMessageST(gmsg.key.id, modulelang.only_img_or_video)
                   return;
