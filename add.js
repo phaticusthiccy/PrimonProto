@@ -84,6 +84,32 @@ function textpro_links(type) {
   } else if (type == "robot") {
     url =
       "https://textpro.me/create-a-transformer-text-effect-online-1035.html";
+  } else if (type == "bp") {
+    url = "https://textpro.me/create-neon-light-blackpink-logo-text-effect-online-1081.html"
+  } else if (type == "bp2") {
+    url = "https://textpro.me/create-a-blackpink-logo-decorated-with-roses-online-free-1080.html"
+  } else if (type == "thunder") {
+    url = "https://textpro.me/online-thunder-text-effect-generator-1031.html"
+  } else if (type == "hp") {
+    url = "https://textpro.me/create-harry-potter-text-effect-online-1025.html"
+  } else if (type == "bear") {
+    url = "https://textpro.me/online-black-and-white-bear-mascot-logo-creation-1012.html"
+  } else if (type == "graffiti" || type == "grafiti") {
+    url = "https://textpro.me/create-wonderful-graffiti-art-text-effect-1011.html"
+  } else if (type == "bp3") {
+    url = "https://textpro.me/create-blackpink-logo-style-online-1001.html"
+  } else if (type == "neon4") {
+    url = "https://textpro.me/neon-light-text-effect-with-galaxy-style-981.html"
+  } else if (type == "joker") {
+    url = "https://textpro.me/create-logo-joker-online-934.html"
+  } else if (type == "lv") {
+    url = "https://textpro.me/natural-leaves-text-effect-931.html"
+  } else if (type == "fw") {
+    url = "https://textpro.me/firework-sparkle-text-effect-930.html"
+  } else if (type == "matrix") {
+    url = "https://textpro.me/matrix-style-text-effect-online-884.html"
+  } else if (type == "neon5") {
+    url = "https://textpro.me/neon-text-effect-online-879.html"
   } else {
     url = "";
   }

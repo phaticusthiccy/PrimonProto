@@ -648,7 +648,6 @@ async function Primon() {
     meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
   }
   Proto.ev.on("messages.upsert", async (m) => {
-    console.log(m.messages[0])
     if (!m.messages[0].message                                                                ) return;
     if (Object.keys(m.messages[0].message)[0] == "protocolMessage"                            ) return;
     if (Object.keys(m.messages[0].message)[0] == "reactionMessage"                            ) return;
@@ -664,6 +663,7 @@ async function Primon() {
     if (Object.keys(m.messages[0].message)[0] == "pollUpdateMessage"                          ) return;
     if (m.messages[0].key.remoteJid           == "status@broadcast"                           ) return;
     jid = m.messages[0].key.remoteJid;
+    console.log(m.messages[0])
     try {
       var once_msg = Object.keys(m.messages[0].message);
     } catch {
@@ -890,6 +890,15 @@ async function Primon() {
 
     if ((isimage && isreplied) || (isvideo && isreplied) || (issound && isreplied) || (issticker && isreplied)) {
       var reply_download_key = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
+    }
+    
+    if ((isviewonceimage && isreplied) || (isviewoncevideo && isreplied)) {
+      if (isviewonceimage) {
+        var reply_download_key = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.imageMessage
+      }
+      if (isviewoncevideo) {
+        var reply_download_key = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.videoMessage
+      }
     }
     
     var cmd1 = PrimonDB.handler;
@@ -1190,7 +1199,6 @@ async function Primon() {
                     buffer = Buffer.concat([buffer, chunk])
                   }
                   fs.writeFileSync('./STICKER.mp4', buffer)
-
                   ffmpeg("./STICKER.mp4")
                     .outputOptions(["-y", "-vcodec libwebp", "-lossless 1", "-qscale 1", "-preset default", "-loop 0", "-an", "-vsync 0", "-s 400x400"])
                     .videoFilters('scale=400:400:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=400:400:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1,fps=24')
@@ -1250,7 +1258,6 @@ async function Primon() {
                     return;
                   }
                 }
-
                 if (issticker) {
                   let buffer = Buffer.from([])
                   var stcs = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
@@ -1278,7 +1285,6 @@ async function Primon() {
                     return;
                   }
                 }
-
                 if (isviewoncevideo) {
                   let buffer = Buffer.from([])
                   const stream = await downloadContentFromMessage(
@@ -1288,7 +1294,6 @@ async function Primon() {
                     buffer = Buffer.concat([buffer, chunk])
                   }
                   fs.writeFileSync('./STICKER.mp4', buffer)
-
                   ffmpeg("./STICKER.mp4")
                     .outputOptions(["-y", "-vcodec libwebp", "-lossless 1", "-qscale 1", "-preset default", "-loop 0", "-an", "-vsync 0", "-s 400x400"])
                     .videoFilters('scale=400:400:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=400:400:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1,fps=24')
@@ -1309,7 +1314,6 @@ async function Primon() {
                       return;
                     })
                 }
-
                 if (isviewonceimage) {
                   let buffer = Buffer.from([])
                   const stream = await downloadContentFromMessage(
@@ -1319,7 +1323,6 @@ async function Primon() {
                     buffer = Buffer.concat([buffer, chunk])
                   }
                   fs.writeFileSync('./STICKER.mp4', buffer)
-
                   ffmpeg("./STICKER.mp4")
                     .outputOptions(["-y", "-vcodec libwebp", "-lossless 1", "-qscale 1", "-preset default", "-loop 0", "-an", "-vsync 0", "-s 400x400"])
                     .videoFilters('scale=400:400:flags=lanczos:force_original_aspect_ratio=decrease,format=rgba,pad=400:400:(ow-iw)/2:(oh-ih)/2:color=#00000000,setsar=1,fps=24')
@@ -1340,9 +1343,7 @@ async function Primon() {
                       return;
                     })
                 }
-
-
-                if (isimage == false && isvideo == false && issticker == false) {
+                if (isimage == false && isvideo == false && issticker == false && isviewonceimage == false && isviewoncevideo == false) {
                   var gmsg = await Proto.sendMessage(jid, { text: modulelang.only_img_or_video });
                   saveMessageST(gmsg.key.id, modulelang.only_img_or_video)
                   return;
@@ -1997,43 +1998,43 @@ async function Primon() {
                     return;
                   }
                 } else {
-                  if (repliedmsg == "alive") {
+                  if (args == "alive") {
                     var re = PrimonDB;
                     re = re.alive_msg
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.get_alive + re})
                     saveMessageST(gmsg.key.id, modulelang.get_alive + re)
                     return;
-                  } else if (repliedmsg == "afk") {
+                  } else if (args == "afk") {
                     var re = PrimonDB;
                     re = re.afk.message
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.get_afk + re})
                     saveMessageST(gmsg.key.id, modulelang.get_afk + re)
                     return;
-                  } else if (repliedmsg == "ban") {
+                  } else if (args == "ban") {
                     var re = PrimonDB;
                     re = re.ban_msg
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.get_ban + re})
                     saveMessageST(gmsg.key.id, modulelang.get_ban + re)
                     return;
-                  } else if (repliedmsg == "mute") {
+                  } else if (args == "mute") {
                     var re = PrimonDB;
                     re = re.mute_msg 
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.get_mute + re})
                     saveMessageST(gmsg.key.id, modulelang.get_mute + re)
                     return;
-                  } else if (repliedmsg == "unmute") {
+                  } else if (args == "unmute") {
                     var re = PrimonDB;
                     re = re.unmute_msg
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.get_unmute + re})
                     saveMessageST(gmsg.key.id, modulelang.get_unmute + re)
                     return;
-                  } else if (repliedmsg == "block") {
+                  } else if (args == "block") {
                     var re = PrimonDB;
                     re = re.block_msg
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.get_block + re})
                     saveMessageST(gmsg.key.id, modulelang.get_block + re)
                     return;
-                  } else if (repliedmsg == "unblock") {
+                  } else if (args == "unblock") {
                     var re = PrimonDB;
                     re = re.unblock_msg
                     var gmsg = await Proto.sendMessage(jid, { text: modulelang.get_unblock + re})

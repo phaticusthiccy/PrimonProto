@@ -6,6 +6,6 @@
 #
 # Phaticusthiccy - 2022
 
-
+FROM ubuntu:latest
 ARG EnvironmentVariable
-RAILWAY_DOCKERFILE_PATH = Dockerfile.origin
+ENV RAILWAY_DOCKERFILE_PATH = Dockerfile.origin
