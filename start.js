@@ -1229,6 +1229,7 @@ async function Primon() {
                         await new Promise(r => setTimeout(r, 800));
                         var gmsg = await Proto.sendMessage(jid, { text: output.toString() });
                         saveMessageST(gmsg.key.id, output.toString())
+                        await new Promise(r => setTimeout(r, 800));
                       })
 
                       command_t.stderr.on('data', async (output2) => {
