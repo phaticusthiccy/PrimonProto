@@ -16,5 +16,23 @@
    },
    "homepage": "https://github.com/phaticusthiccy/PrimonProto#readme",
    "dependencies": {
+      "@adiwajshing/baileys": "github:adiwajshing/baileys",
+      "@ffprobe-installer/ffprobe": "latest",
+      "@phaticusthiccy/open-apis": "latest",
+      "@ffmpeg-installer/ffmpeg": "latest",
+      "@adiwajshing/keyed-db": "latest",
+      "wa-sticker-formatter": "latest",
+      "qrcode-terminal": "latest",
+      "link-preview-js": "latest",
+      "child_process": "latest",
+      "fluent-ffmpeg": "latest",
+      "@octokit/core": "latest",
+      "@railway/cli": "latest",
+      "@hapi/boom": "latest",
+      "shelljs": "latest",
+      "axios": "latest",
+      "chalk": "4.1.2",
+      "path": "latest",
+      "pino": "latest"
    }
 }
