@@ -39,4 +39,6 @@ WORKDIR /PrimonProto
 
 RUN npm install 
 
+RUN yarn add github:adiwajshing/baileys
+
 CMD [ "bash","pri.sh" ]
