@@ -24,8 +24,8 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
 RUN git clone https://github.com/phaticusthiccy/PrimonProto
 
-RUN npm install 
-
 WORKDIR /PrimonProto
+
+RUN npm install 
 
 CMD [ "bash","pri.sh" ]
