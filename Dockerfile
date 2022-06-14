@@ -1,16 +1,14 @@
-FROM ubuntu:18.04
+FROM ubuntu:latest
 
-ENV DEBIAN_FRONTEND=noninteractive
+USER root
 
-RUN apt-get update && apt-get install -y ffmpeg
+RUN apt-get update
 
-RUN apt-get install -y git
+RUN apt-get -y install curl gnupg
 
-RUN apt-get install -y curl 
+RUN curl -sL https://deb.nodesource.com/setup_11.x  | bash -
 
-RUN curl -sL https://deb.nodesource.com/setup_4.x | bash
-
-RUN apt-get install -y nodejs
+RUN apt-get -y install nodejs
 
 RUN git clone https://github.com/phaticusthiccy/PrimonProto
 
