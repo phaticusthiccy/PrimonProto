@@ -751,17 +751,22 @@ async function Primon() {
       issound = false;
       issticker = false;
     } else if (once_msg.includes("extendedTextMessage")) {
-      if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage)[0] == "viewOnceMessage") {
-        if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "imageMessage") {
-          isviewonceimage = true;
-          isviewoncevideo = false;
-        } else if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "videoMessage") {
-          isviewonceimage = false;
-          isviewoncevideo = true;
-        } else {
-          isviewonceimage = false;
-          isviewoncevideo = false;
+      try {
+        if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage)[0] == "viewOnceMessage") {
+          if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "imageMessage") {
+            isviewonceimage = true;
+            isviewoncevideo = false;
+          } else if (Object.keys(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message)[0] == "videoMessage") {
+            isviewonceimage = false;
+            isviewoncevideo = true;
+          } else {
+            isviewonceimage = false;
+            isviewoncevideo = false;
+          }
         }
+      } catch {
+        isviewonceimage = false;
+        isviewoncevideo = false;
       }
       isbutton = false;
       isimage = false;
