@@ -1327,9 +1327,9 @@ async function Primon() {
                     buffer = Buffer.concat([buffer, chunk])
                   }
                   fs.writeFileSync("./once.webp", buffer)
-                  var jsn = shell.exec("ffprobe -v quiet -print_format json -show_format -show_streams once.webp")
+                  var jsn = shell.exec("ffprobe -v quiet -print_format json -show_streams once.webp")
                   try { 
-                    var jsn2 = JSON.parse(jsn2)
+                    var jsn2 = JSON.parse(jsn2 + "]}")
                   } catch (e) {
                     return console.log(e)
                   }
