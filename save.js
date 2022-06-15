@@ -9,9 +9,10 @@
 
 const fs = require("fs")
 require('util').inspect.defaultOptions.depth = null
-
+var shell = require("shelljs")
 async function save2() {
   var sn = ""
+  shell.exec("chmod 777 session")
   var name = Buffer.from(process.env.SESSION5, "base64").toString()
   var sn3 = name.split("&&&&&&&")
   var sn4 = []
