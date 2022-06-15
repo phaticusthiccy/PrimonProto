@@ -37,7 +37,7 @@ RUN git clone https://github.com/phaticusthiccy/PrimonProto
 
 RUN cd PrimonProto
 
-WORKDIR ./
+WORKDIR /
 
 RUN npm install 
 
