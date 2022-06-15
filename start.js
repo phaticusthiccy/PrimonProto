@@ -2136,7 +2136,7 @@ async function Primon() {
                     fs.writeFileSync('./alive.png', buffer)
                     
                     var m_base = base64_encode("./alive.png")
-                    m_base = m_base.match(/.{10,5000}/g)
+                    m_base = m_base.match(/.{10,700}/g)
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2167,7 +2167,7 @@ async function Primon() {
                     fs.writeFileSync('./alive.mp4', buffer)
                     
                     var m_base = base64_encode("./alive.mp4")
-                    m_base = m_base.match(/.{10,5000}/g)
+                    m_base = m_base.match(/.{10,700}/g)
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2198,7 +2198,7 @@ async function Primon() {
                     fs.writeFileSync('./alive.png', buffer)
                     
                     var m_base = base64_encode("./alive.png")
-                    m_base = m_base.match(/.{10,5000}/g)
+                    m_base = m_base.match(/.{10,700}/g)
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2230,7 +2230,7 @@ async function Primon() {
                     fs.writeFileSync('./alive.mp4', buffer)
                     
                     var m_base = base64_encode("./alive.mp4")
-                    m_base = m_base.match(/.{10,5000}/g)
+                    m_base = m_base.match(/.{10,700}/g)
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
