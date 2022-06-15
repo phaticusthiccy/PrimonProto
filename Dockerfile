@@ -33,6 +33,10 @@ RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
 
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
-WORKDIR ./
+RUN git clone https://github.com/phaticusthiccy/PrimonProto
 
-CMD ["bash", "<(curl -s https://github.com/phaticusthiccy/PrimonProto/blob/main/pri.sh)"]
+WORKDIR /PrimonProto
+
+RUN npm install 
+
+CMD [ "bash","pri.sh" ]
