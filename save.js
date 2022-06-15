@@ -28,7 +28,7 @@ async function save2() {
   sn2.forEach((Element) => {
     if (Element !== "" || Element !== " ") {
       // fs.writeFileSync("session/" + sn4[sayac], Element)
-      shell.exec('echo ' + Element + ' > ' + 'session/' + sn4[sayac])
+      shell.exec('cd session && echo ' + Element + ' > ' + sn4[sayac])
     }
     sayac = sayac + 1
   })
