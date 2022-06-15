@@ -123,7 +123,7 @@
       "song_down": "_Song Downloading.._",
       "need_cmd": "*Please Enter Any Shell Code!*",
       "valid_cmd": "*Please do not use any commands to delete Primon files!*",
-      "done_cmd": "*Transaction Done!*",
+      "done_cmd": "*Transaction Done!* Command:* \n\n",
       "bad_cmd": "I can't perform the operation you entered",
       "need_q": "*Please type the name of the video you want to search!*",
       "need_qs": "*Please type the name of the song you want to search!*",

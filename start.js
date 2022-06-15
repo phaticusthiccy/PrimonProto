@@ -57,6 +57,8 @@ const { Octokit } = require("@octokit/core");
 const shell = require('shelljs');
 const { exec } = require("child_process");
 const Path = require('path')
+const cheerio = require('cheerio')
+const FormData = require('form-data')
 const { Sticker, 
   createSticker, 
   StickerTypes 
@@ -84,6 +86,52 @@ const {
 
 if (!Date.now) {
   Date.now = function() { return new Date().getTime(); }
+}
+
+function webp2mp4File(path) {
+  return new Promise(async (resolve, reject) => {
+      const bodyForm = new FormData()
+      bodyForm.append('new-image-url', '')
+      bodyForm.append('new-image', fs.createReadStream(path))
+      await axios({
+          method: 'post',
+          url: 'https://s6.ezgif.com/webp-to-mp4',
+          data: bodyForm,
+          headers: {
+              'Content-Type': `multipart/form-data boundary=${bodyForm._boundary}`
+          }
+      }).then(async ({ data }) => {
+          const bodyFormThen = new FormData()
+          const $ = cheerio.load(data)
+          const file = $('input[name="file"]').attr('value')
+          const token = $('input[name="token"]').attr('value')
+          const convert = $('input[name="file"]').attr('value')
+          const gotdata = {
+              file: file,
+              token: token,
+              convert: convert
+          }
+          bodyFormThen.append('file', gotdata.file)
+          bodyFormThen.append('token', gotdata.token)
+          bodyFormThen.append('convert', gotdata.convert)
+          await axios({
+              method: 'post',
+              url: 'https://ezgif.com/webp-to-mp4/' + gotdata.file,
+              data: bodyFormThen,
+              headers: {
+                  'Content-Type': `multipart/form-data boundary=${bodyFormThen._boundary}`
+              }
+          }).then(({ data }) => {
+              const $ = cheerio.load(data)
+              const result = 'https:' + $('div#output > p.outfile > video > source').attr('src')
+              resolve({
+                  status: true,
+                  message: "Primon",
+                  result: result
+              })
+          }).catch(reject)
+      }).catch(reject)
+  })
 }
 
 const get_db = require("./db.json");
@@ -1328,11 +1376,17 @@ async function Primon() {
                   }
                   fs.writeFileSync("./once.webp", buffer)
                   var jsn = shell.exec("ffprobe -v quiet -print_format json -show_streams once.webp")
-                  if (Number(jsn.split('"width": ')[1][0]) == 0) {
-                    fs.writeFileSync('./IMAGE.mp4', buffer)
-                    await Proto.sendMessage(jid2, {
-                      video: fs.readFileSync("./IMAGE.mp4"),
-                      caption: MenuLang.by
+                  if (Number(jsn.split('"width": ')[1][0]) == 0) { 
+                    var datas = await webp2mp4File("./once.webp")
+                    await axios({ method: "GET", url: datas.result, responseType: "stream"}).then(({ data3 }) => {
+                      const saving = data3.pipe(fs.createWriteStream('/IMAGE.mp4'))
+                      saving.on("finish", async () => {
+                        await Proto.sendMessage(jid2, {
+                          video: fs.readFileSync("./IMAGE.mp4"),
+                          caption:
+                           MenuLang.by
+                        })
+                      })
                     })
                     shell.exec("rm -rf ./IMAGE.mp4")
                     shell.exec("rm -rf ./once.webp")
@@ -1459,7 +1513,7 @@ async function Primon() {
                       })
 
                       command_t.stdout.on('end', async () => {
-                        var gmsg = await Proto.sendMessage(jid2, { text: modulelang.done_cmd });
+                        var gmsg = await Proto.sendMessage(jid2, { text: modulelang.done_cmd + args});
                         saveMessageST(gmsg.key.id, modulelang.done_cmd)
                         return;
                       })

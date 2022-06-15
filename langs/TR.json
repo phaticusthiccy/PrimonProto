@@ -123,7 +123,7 @@
       "song_down": "_Şarkı İndiriliyor.._",
       "need_cmd": "*Lütfen Herhangi Bir Shell Kodu Girin!*",
       "valid_cmd": "*Lütfen Primon dosyalarını silmek için herhangi bir komut kullanmayın!*",
-      "done_cmd": "*İşlem Bitti!*",
+      "done_cmd": "*İşlem Bitti! Komut:* \n\n",
       "bad_cmd": "_Girdiğniz işlemi gerçekleştiremiyorum.._",
       "need_q": "*Lütfen aramak istediğiniz videonun ismini yazın!*",
       "need_qs": "*Lütfen aramak istediğiniz şarkının ismini yazın!*",
