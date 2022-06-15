@@ -12,7 +12,6 @@ require('util').inspect.defaultOptions.depth = null
 var shell = require("shelljs")
 async function save2() {
   var sn = ""
-  shell.exec("chmod 777 session")
   var name = Buffer.from(process.env.SESSION5, "base64").toString()
   var sn3 = name.split("&&&&&&&")
   var sn4 = []
@@ -28,7 +27,8 @@ async function save2() {
   console.log(sn2)
   sn2.forEach((Element) => {
     if (Element !== "" || Element !== " ") {
-      fs.writeFileSync("session/" + sn4[sayac], Element)
+      // fs.writeFileSync("session/" + sn4[sayac], Element)
+      shell.exec('echo ' + Element + ' > ' + 'session/' + sn4[sayac])
     }
     sayac = sayac + 1
   })
