@@ -8,7 +8,7 @@
 
 
 rm -rf PrimonProto/
-git clone https://github.com/phaticusthiccy/PrimonProto 
+git clone https://github.com/phaticusthiccy/PrimonProto -y
 cd PrimonProto 
 pwd
 npm install -y
