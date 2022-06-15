@@ -18,12 +18,16 @@ async function save2() {
   sn3.map((Element) => {
     if (Element !== "" || Element !== " ") {
       sn4.push(Element)
+      console.log(Element)
     } 
   })
-  console.log(sn4)
+  
   var sayac = 0
   sn = Buffer.from(process.env.SESSION + process.env.SESSION2 + process.env.SESSION3 + process.env.SESSION4, "base64").toString()
   var sn2 = sn.split("&&&&&&&")
+  sn2.map((Element) => {
+    console.log(Element)
+  })
   console.log(sn2)
   sn2.forEach((Element) => {
     if (Element !== "" || Element !== " ") {
