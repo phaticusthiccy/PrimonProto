@@ -33,7 +33,9 @@ sn2.map((Element2) => {
     var name = "session_record/" + sn4[sayac]
     console.log(name)
     if (name !== "session_record/" || name !== "session_record/ " || name !== "session_record/\n") {
-      fs.writeFileSync(name, Element2);
+      try {
+        fs.writeFileSync(name, Element2);
+      } catch {}
     }
   }
   sayac += 1;
