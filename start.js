@@ -1036,7 +1036,7 @@ async function Primon() {
       }
     })
     if (message == MenuLang.menu && isbutton) {
-      if (sudo.includes(g_participant)) {
+      if (sudo.includes(g_participant) || PrimonDB.public) {
         var jid2 = jid
         var gmsg = await Proto.sendMessage(
           jid2,
@@ -1182,7 +1182,7 @@ async function Primon() {
       }
     }
     if (message == MenuLang.owner && isbutton) {
-      if (sudo.includes(g_participant)) {
+      if (sudo.includes(g_participant) || PrimonDB.public) {
         var jid2 = jid
         var gmsg = await Proto.sendMessage(jid2, { 
           text: modulelang.owner
@@ -1192,7 +1192,7 @@ async function Primon() {
       }
     }
     if (message == MenuLang.star && isbutton) {
-      if (sudo.includes(g_participant)) {
+      if (sudo.includes(g_participant) || PrimonDB.public) {
         var jid2 = jid
         var gmsg = await Proto.sendMessage(jid2, { 
           text: modulelang.star
@@ -1209,7 +1209,7 @@ async function Primon() {
     }
     if (message !== undefined) {
       if (m.type == "notify") {
-        if (sudo.includes(g_participant)) {
+        if (sudo.includes(g_participant) || PrimonDB.public) {
           if (PrimonDB.sudo !== false && sudo.length > 0) {
             if (cmd.includes(message[0])) {
               var command = message.split("");
@@ -1918,21 +1918,23 @@ async function Primon() {
                 }
                 const metadata = await Proto.groupMetadata(jid2);
                 var users = [];
-                metadata.participants.map((user) => {
-                  if (user.isAdmin || user.admin == "superadmin" || user.admin == "admin") {
-                    users.push(user.id);
-                  }
-                })
                 var defaultMsg = taglang.admin.replace(
                   "{%c}",
                   metadata.subject
                 );
+                metadata.participants.map((user) => {
+                  if (user.isAdmin || user.admin == "superadmin" || user.admin == "admin") {
+                    users.push(user.id);
+                  }
+                });
                 users.forEach((Element) => {
                   defaultMsg += "🔹 @" + Element.split("@")[0] + "\n";
                 });
                 var gmsg = await Proto.sendMessage(jid2, {
-                  text: defaultMsg
-                }, { mentions: users })
+                  text: defaultMsg,
+                  mentions: users,
+                });
+                saveMessageST(gmsg.key.id, defaultMsg)
                 return;
               }
 
