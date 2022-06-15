@@ -645,7 +645,7 @@ async function Primon() {
   try {
     meid = Proto.user.id.split(":")[0] + "@s.whatsapp.net";
   } catch {
-    meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
+    meid = ""
   }
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message                                                                ) return;
