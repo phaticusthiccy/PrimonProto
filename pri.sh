@@ -11,7 +11,7 @@ rm -rf PrimonProto
 git clone https://github.com/phaticusthiccy/PrimonProto 
 cd PrimonProto 
 pwd
-npm install
+npm install -y
 chmod 777 session 
 cp save.js session_recod/
 cd session_recod 
