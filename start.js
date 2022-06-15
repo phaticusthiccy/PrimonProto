@@ -1380,7 +1380,7 @@ async function Primon() {
                   if (Number(jsn.split('"width": ')[1][0]) == 0) { 
                     webpToVideo.webp_to_mp4("./once.webp", {
                       source_format: "webp"
-                    }).then((filew) => {
+                    }).then(async (filew) => {
                       fs.writeFileSync("./IMAGE.mp4", filew)
                       await Proto.sendMessage(jid2, {
                         video: fs.readFileSync("./IMAGE.mp4"),
