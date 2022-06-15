@@ -695,7 +695,6 @@ async function Primon() {
       sudo.push(PrimonDB.sudo);
     }
   }
-  console.log(Proto)
   try {
     meid = Proto.user.id.split(":")[0] + "@s.whatsapp.net";
   } catch {
@@ -1918,6 +1917,7 @@ async function Primon() {
                   return;
                 }
                 const metadata = await Proto.groupMetadata(jid2);
+                console.log(metadata.participants)
                 var users = [];
                 metadata.participants.map((user) => {
                   if (user.isAdmin) {
@@ -1934,7 +1934,6 @@ async function Primon() {
                 var gmsg = await Proto.sendMessage(jid2, {
                   text: defaultMsg
                 }, { mentions: users })
-                saveMessageST(gmsg.key.id, defaultMsg)
                 return;
               }
 
