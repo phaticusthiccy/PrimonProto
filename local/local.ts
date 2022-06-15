@@ -87,7 +87,7 @@ var db = `{
     "alive_msg": "",
     "alive_msg_media": {
       "type": "",
-      "media": []
+      "media": ""
     },
     "db_url": "",
     "token_key": "",
