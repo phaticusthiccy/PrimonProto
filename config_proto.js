@@ -2,7 +2,7 @@
 // Headless WebSocket, type-safe Whatsapp Bot
 // 
 // Primon, lisanced under GNU GENERAL PUBLIC LICENSE. May cause some warranity problems, within Priomon.
-// Multi-Device Lightweight ES5 Module (can usable with mjs)
+// Multi-Device Lightweight ES6 Module (can usable with mjs)
 //
 // Phaticusthiccy - 2022
 
@@ -58,13 +58,13 @@ module.exports = {
     MENU: [
       {
         text: "Primon Proto",
-        footer: "ES5 Lightweight Userbot",
+        footer: "ES6 Lightweight Userbot",
         buttons: btn[0],
         headerType: 1,
       },
       {
         text: MenuLang.pp,
-        footer: "ES5 Lightweight Userbot",
+        footer: "ES6 Lightweight Userbot",
         buttons: btn[1],
         headerType: 1,
       }
