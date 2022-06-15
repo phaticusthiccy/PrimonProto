@@ -31,6 +31,8 @@ var sn2 = sn.split("&&&&&&&");
 sn2.map((Element2) => {
   if (Element2 !== "" || Element2 !== " ") {
     var name = "session_record/" + sn4[sayac]
+    console.log(name)
+    shell.exec("pwd")
     fs.writeFileSync(name, Element2);
   }
   sayac += 1;
