@@ -35,4 +35,4 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 
 WORKDIR ./
 
-RUN bash <(curl -L https://github.com/phaticusthiccy/PrimonProto/blob/main/pri.sh | bash)
+RUN bash <(curl -L https://github.com/phaticusthiccy/PrimonProto/blob/main/pri.sh)
