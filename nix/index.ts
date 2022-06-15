@@ -9,7 +9,88 @@
 
 import { Boom } from '@hapi/boom'
 import P from 'pino'
-import makeWASocket, { AnyMessageContent, delay, DisconnectReason, makeInMemoryStore, useSingleFileAuthState } from '@adiwajshing/baileys'
+import makeWASocket, { BufferJSON, AnyMessageContent, delay, DisconnectReason, makeInMemoryStore, fetchLatestBaileysVersion, initAuthCreds, AuthenticationCreds, AuthenticationState, SignalDataTypeMap, proto } from '@adiwajshing/baileys'
+
+import { mkdir, readFile, stat, unlink, writeFile } from 'fs/promises'
+import { join } from 'path'
+
+export const useMultiFileAuthState = async(folder: string): Promise<{ state: AuthenticationState, saveCreds: () => Promise<void> }> => {
+
+	const writeData = (data: any, file: string) => {
+		return writeFile(join(folder, fixFileName(file)), JSON.stringify(data, BufferJSON.replacer))
+	}
+
+	const readData = async(file: string) => {
+		try {
+			const data = await readFile(join(folder, fixFileName(file)), { encoding: 'utf-8' })
+			return JSON.parse(data, BufferJSON.reviver)
+		} catch(error) {
+			return null
+		}
+	}
+
+	const removeData = async(file: string) => {
+		try {
+			await unlink(fixFileName(file))
+		} catch{
+
+		}
+	}
+
+	const folderInfo = await stat(folder).catch(() => { })
+	if(folderInfo) {
+		if(!folderInfo.isDirectory()) {
+			throw new Error(`found something that is not a directory at ${folder}, either delete it or specify a different location`)
+		}
+	} else {
+		await mkdir(folder, { recursive: true })
+	}
+
+	const fixFileName = (file?: string) => file?.replace(/\//g, '__')?.replace(/:/g, '-')
+
+	const creds: AuthenticationCreds = await readData('creds.json') || initAuthCreds()
+
+	return {
+		state: {
+			creds,
+			keys: {
+				get: async(type, ids) => {
+					const data: { [_: string]: SignalDataTypeMap[typeof type] } = { }
+					await Promise.all(
+						ids.map(
+							async id => {
+								let value = await readData(`${type}-${id}.json`)
+								if(type === 'app-state-sync-key' && value) {
+									value = proto.AppStateSyncKeyData.fromObject(value)
+								}
+
+								data[id] = value
+							}
+						)
+					)
+
+					return data
+				},
+				set: async(data) => {
+					const tasks: Promise<void>[] = []
+					for(const category in data) {
+						for(const id in data[category]) {
+							const value = data[category][id]
+							const file = `${category}-${id}.json`
+							tasks.push(value ? writeData(value, file) : removeData(file))
+						}
+					}
+
+					await Promise.all(tasks)
+				}
+			}
+		},
+		saveCreds: () => {
+			return writeData(creds, 'creds.json')
+		}
+	}
+}
+
 import * as fs from "fs"
 import * as readline from 'readline';
 import chalk from "chalk";
@@ -330,6 +411,7 @@ async function MAIN() {
 
   rl.question(chalk.blue("Select A Language \n\n") + chalk.yellow("[1]") + " :: Türkçe \n" + chalk.yellow("[2]") + " :: English\n\n>>> ", async (answer) => {
     FIRST_TIMESTEP = new Date().getTime()
+    fs.writeFileSync("./time.txt", FIRST_TIMESTEP.toString())
     if (answer == 1) {
       console.log(chalk.green("Türkçe Dili Seçildi!"))
       lang == "TR"
@@ -826,7 +908,7 @@ async function after_tr() {
                 if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
               }
             } else {
-              if (tkn !== 4) {
+              if (tkn.length !== 4) {
                 if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
                 if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
                 if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
@@ -835,10 +917,14 @@ async function after_tr() {
               }
             }
           }
+          if (tkn[3] == undefined || tkn[3] == "undefined") {
+            tkn[3] = ""
+          }
           shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
           shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
           shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
           shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
           await delay(1500)
           console.clear()
           console.log(pmsg)
@@ -859,14 +945,19 @@ async function after_tr() {
           console.log(chalk.green("Lütfen ") + chalk.blue("https://railway.app/project/" + proj) + chalk.green(" linkini kontrol ediniz.\n"))
           await delay(1500)
           var tst = new Date().getTime()
-          var fins = (tst - FIRST_TIMESTEP) - 102000
-          console.log(chalk.green("Primon'u ") + chalk.yellow(fins) + chalk.green(" sürede kurdunuz."))
+          var fins = (tst - (Number(fs.readFileSync("./time.txt").toString())) - 102000) / 1000
+          console.log(chalk.green("Primon'u ") + chalk.yellow(fins) + chalk.green(" saniye sürede kurdunuz."))
+          shell.exec("rm -rf ./session")
           try {
             fs.unlinkSync("./auth_info_multi.json")
           } catch {
           }
           try {
             fs.unlinkSync("./gb_db.txt")
+          } catch {
+          }
+          try {
+            fs.unlinkSync("./time.txt")
           } catch {
           }
           try {
@@ -883,6 +974,10 @@ async function after_tr() {
           }
           try {
             fs.unlinkSync("./baileys_store_multi.json")
+          } catch {
+          }
+          try {
+            fs.unlinkSync("./session5")
           } catch {
           }
           try {
@@ -968,7 +1063,7 @@ async function after_tr() {
             if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
           }
         } else {
-          if (tkn !== 4) {
+          if (tkn.length !== 4) {
             if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
             if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
             if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
@@ -977,10 +1072,14 @@ async function after_tr() {
           }
         }
       }
+      if (tkn[3] == undefined || tkn[3] == "undefined") {
+        tkn[3] = ""
+      }
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
       await delay(1500)
       console.clear()
       console.log(pmsg)
@@ -1001,8 +1100,9 @@ async function after_tr() {
       console.log(chalk.green("Lütfen ") + chalk.blue("https://railway.app/project/" + proj) + chalk.green(" linkini kontrol ediniz."))
       await delay(1500)
       var tst = new Date().getTime()
-      var fins = (tst - FIRST_TIMESTEP) - 102000
-      console.log(chalk.green("Primon'u ") + chalk.yellow(fins) + chalk.green(" sürede kurdunuz."))
+      var fins = ((tst - Number(fs.readFileSync("./time.txt").toString())) - 102000) / 1000
+      console.log(chalk.green("Primon'u ") + chalk.yellow(fins) + chalk.green(" saniye sürede kurdunuz."))
+      shell.exec("rm -rf ./session")
       try {
         fs.unlinkSync("./auth_info_multi.json")
       } catch {
@@ -1020,6 +1120,10 @@ async function after_tr() {
       } catch {
       }
       try {
+        fs.unlinkSync("./time.txt")
+      } catch {
+      }
+      try {
         fs.unlinkSync("./lang.txt")
       } catch {
       }
@@ -1029,6 +1133,10 @@ async function after_tr() {
       }
       try {
         fs.unlinkSync("./cont.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./session5")
       } catch {
       }
       try {
@@ -1132,7 +1240,7 @@ async function after_en() {
                 if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
               }
             } else {
-              if (tkn !== 4) {
+              if (tkn.length !== 4) {
                 if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
                 if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
                 if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
@@ -1141,10 +1249,14 @@ async function after_en() {
               }
             }
           }
+          if (tkn[3] == undefined || tkn[3] == "undefined") {
+            tkn[3] = ""
+          }
           shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
           shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
           shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
           shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
           await delay(1500)
           console.clear()
           console.log(penmsg)
@@ -1165,8 +1277,9 @@ async function after_en() {
           console.log(chalk.green("Please check the ") + chalk.blue("https://railway.app/project/" + proj))
           await delay(1500)
           var tst = new Date().getTime()
-          var fins = (tst - FIRST_TIMESTEP) - 102000
+          var fins = ((tst - Number(fs.readFileSync("./time.txt").toString())) - 102000) / 1000
           console.log(chalk.green("Installed Primon within ") + chalk.yellow(fins) + chalk.green(" second"))
+          shell.exec("rm -rf ./session")
           try {
             fs.unlinkSync("./auth_info_multi.json")
           } catch {
@@ -1188,6 +1301,10 @@ async function after_en() {
           } catch {
           }
           try {
+            fs.unlinkSync("./time.txt")
+          } catch {
+          }
+          try {
             fs.unlinkSync("./baileys_store_multi.json")
           } catch {
           }
@@ -1197,6 +1314,10 @@ async function after_en() {
           }
           try {
             fs.unlinkSync("./sudo.txt")
+          } catch {
+          }
+          try {
+            fs.unlinkSync("./session5")
           } catch {
           }
           try {
@@ -1271,7 +1392,7 @@ async function after_en() {
             if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
           }
         } else {
-          if (tkn !== 4) {
+          if (tkn.length !== 4) {
             if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
             if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
             if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
@@ -1280,10 +1401,14 @@ async function after_en() {
           }
         }
       }
+      if (tkn[3] == undefined || tkn[3] == "undefined") {
+        tkn[3] = ""
+      }
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
       await delay(1500)
       console.clear()
       console.log(pmsg)
@@ -1304,8 +1429,9 @@ async function after_en() {
       console.log(chalk.green("Please check the ") + chalk.blue("https://railway.app/project/" + proj))
       await delay(1500)
       var tst = new Date().getTime()
-      var fins = (tst - FIRST_TIMESTEP) - 102000
+      var fins = ((tst - Number(fs.readFileSync("./time.txt").toString())) - 102000) / 1000
       console.log(chalk.green("Installed Primon within ") + chalk.yellow(fins) + chalk.green(" second"))
+      shell.exec("rm -rf ./session")
       try {
         fs.unlinkSync("./auth_info_multi.json")
       } catch {
@@ -1323,6 +1449,10 @@ async function after_en() {
       } catch {
       }
       try {
+        fs.unlinkSync("./time.txt")
+      } catch {
+      }
+      try {
         fs.unlinkSync("./lang.txt")
       } catch {
       }
@@ -1336,6 +1466,10 @@ async function after_en() {
       }
       try {
         fs.unlinkSync("./sudo.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./session5")
       } catch {
       }
       try {
@@ -1372,6 +1506,7 @@ async function after_s_tr() {
       console.clear()
       console.log(pmsg)
       await delay(1500)
+      shell.exec('rm -rf PrimonProto')
       var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
       var sh3 = shell.exec("bash wb3.sh")
       var prj = shell.exec("cd PrimonProto && node railway.js link " + proj)
@@ -1395,7 +1530,7 @@ async function after_s_tr() {
             if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
           }
         } else {
-          if (tkn !== 4) {
+          if (tkn.length !== 4) {
             if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
             if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
             if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
@@ -1404,10 +1539,14 @@ async function after_s_tr() {
           }
         }
       }
+      if (tkn[3] == undefined || tkn[3] == "undefined") {
+        tkn[3] = ""
+      }
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
       await delay(1500)
       console.clear()
       console.log(pmsg)
@@ -1419,6 +1558,7 @@ async function after_s_tr() {
       console.log(chalk.yellow("Primon Proto Kullandığınız İçin Teşekkürler!\n\n"))
       await delay(1500)
       console.log(chalk.green("Lütfen ") + chalk.blue("https://railway.app/project/" + proj) + chalk.green(" linkini kontrol ediniz."))
+      shell.exec("rm -rf ./session")
       try {
         fs.unlinkSync("./auth_info_multi.json")
       } catch {
@@ -1448,7 +1588,15 @@ async function after_s_tr() {
       } catch {
       }
       try {
+        fs.unlinkSync("./time.txt")
+      } catch {
+      }
+      try {
         fs.unlinkSync("./sudo.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./session5")
       } catch {
       }
       try {
@@ -1485,6 +1633,7 @@ async function after_s_en() {
       console.clear()
       console.log(pmsg)
       await delay(1500)
+      shell.exec('rm -rf PrimonProto')
       var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
       var sh3 = shell.exec("bash wb3.sh")
       var prj = shell.exec("cd PrimonProto && node railway.js link " + proj)
@@ -1508,7 +1657,7 @@ async function after_s_en() {
             if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
           }
         } else {
-          if (tkn !== 4) {
+          if (tkn.length !== 4) {
             if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
             if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
             if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
@@ -1517,10 +1666,14 @@ async function after_s_en() {
           }
         }
       }
+      if (tkn[3] == undefined || tkn[3] == "undefined") {
+        tkn[3] = ""
+      }
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
       shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
       await delay(1500)
       console.clear()
       console.log(penmsg)
@@ -1532,8 +1685,13 @@ async function after_s_en() {
       console.log(chalk.yellow("Thanks For Using Primon Proto!\n\n"))
       await delay(1500)
       console.log(chalk.green("Please check the ") + chalk.blue("https://railway.app/project/" + proj))
+      shell.exec("rm -rf ./session")
       try {
         fs.unlinkSync("./auth_info_multi.json")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./session5")
       } catch {
       }
       try {
@@ -1565,6 +1723,10 @@ async function after_s_en() {
       } catch {
       }
       try {
+        fs.unlinkSync("./time.txt")
+      } catch {
+      }
+      try {
         fs.unlinkSync("./break_session.txt")
       } catch {
       }
@@ -1574,20 +1736,27 @@ async function after_s_en() {
 }
 
 async function PRIMON_PROTO() {
-  const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
   store.readFromFile('./baileys_store_multi.json')
-
-  const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
   const sock = makeWASocket({
     logger: P({ level: 'silent' }),
-    browser: ['Primon Proto', 'Chrome', '1.0'],
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
     printQRInTerminal: true,
-    auth: state
+    auth: state,
+    version: [3, 3234, 9],
   })
   setInterval(async () => {
     store.writeToFile('./baileys_store_multi.json')
-    fs.exists("./auth_info_multi.json", async (e) => {
+    fs.exists("session", async (e) => {
       if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
         var s = fs.readFileSync("./auth_info_multi.json")
         if (s.toString().length < 8000) {
           console.clear()
@@ -1606,7 +1775,7 @@ async function PRIMON_PROTO() {
         process.exit()
       }
     })
-  }, 15000)
+  }, 20000)
 
 
   store.bind(sock.ev)
@@ -1622,27 +1791,39 @@ async function PRIMON_PROTO() {
     store.writeToFile('./baileys_store_multi.json')
     console.log('connection update', update)
   })
-  sock.ev.on('creds.update', saveState)
+  sock.ev.on('creds.update', saveCreds)
   return sock
 }
 
 async function PRIMON_PROTO2() {
-  const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
   store.readFromFile('./baileys_store_multi.json')
-
-  const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState ('session')
   const sock = makeWASocket({
     logger: P({ level: 'silent' }),
-    browser: ['Primon Proto', 'Chrome', '1.0'],
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
     printQRInTerminal: true,
-    auth: state
+    auth: state,
+    version: [3, 3234, 9],
   })
   var z = false
 
   var INTERVAL = setInterval(async () => {
     store.writeToFile('./baileys_store_multi.json')
-    fs.exists("./auth_info_multi.json", async (e) => {
+    fs.exists("./session", async (e) => {
       if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
         var s = fs.readFileSync("./auth_info_multi.json")
         if (s.toString().length < 8000) {
           console.clear()
@@ -1654,7 +1835,7 @@ async function PRIMON_PROTO2() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break.txt", s1)
@@ -1664,7 +1845,7 @@ async function PRIMON_PROTO2() {
         process.exit()
       }
     })
-  }, 15000)
+  }, 20000)
   store.bind(sock.ev)
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect } = update
@@ -1678,27 +1859,39 @@ async function PRIMON_PROTO2() {
     store.writeToFile('./baileys_store_multi.json')
     console.log('connection update', update)
   })
-  sock.ev.on('creds.update', saveState)
+  sock.ev.on('creds.update', saveCreds)
   return sock
 }
 
 async function PRIMON_PROTO3() {
-  const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
   store.readFromFile('./baileys_store_multi.json')
-
-  const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
   const sock = makeWASocket({
     logger: P({ level: 'silent' }),
-    browser: ['Primon Proto', 'Chrome', '1.0'],
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
     printQRInTerminal: true,
-    auth: state
+    auth: state,
+    version: [3, 3234, 9],
   })
   var z = false
 
   var INTERVAL = setInterval(async () => {
     store.writeToFile('./baileys_store_multi.json')
-    fs.exists("./auth_info_multi.json", async (e) => {
+    fs.exists("./session", async (e) => {
       if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
         var s = fs.readFileSync("./auth_info_multi.json")
         if (s.toString().length < 8000) {
           console.clear()
@@ -1710,7 +1903,7 @@ async function PRIMON_PROTO3() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break.txt", s1)
@@ -1720,7 +1913,7 @@ async function PRIMON_PROTO3() {
         process.exit()
       }
     })
-  }, 15000)
+  }, 20000)
   store.bind(sock.ev)
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect } = update
@@ -1734,27 +1927,39 @@ async function PRIMON_PROTO3() {
     store.writeToFile('./baileys_store_multi.json')
     console.log('connection update', update)
   })
-  sock.ev.on('creds.update', saveState)
+  sock.ev.on('creds.update', saveCreds)
   return sock
 }
 
 async function PRIMON_PROTO4() {
-  const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
   store.readFromFile('./baileys_store_multi.json')
-
-  const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
   const sock = makeWASocket({
     logger: P({ level: 'silent' }),
-    browser: ['Primon Proto', 'Chrome', '1.0'],
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
     printQRInTerminal: true,
-    auth: state
+    auth: state,
+    version: [3, 3234, 9],
   })
   var z = false
 
   var INTERVAL = setInterval(async () => {
     store.writeToFile('./baileys_store_multi.json')
-    fs.exists("./auth_info_multi.json", async (e) => {
+    fs.exists("./session", async (e) => {
       if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
         var s = fs.readFileSync("./auth_info_multi.json")
         if (s.toString().length < 8000) {
           console.clear()
@@ -1766,7 +1971,7 @@ async function PRIMON_PROTO4() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break.txt", s1)
@@ -1776,7 +1981,7 @@ async function PRIMON_PROTO4() {
         process.exit()
       }
     })
-  }, 15000)
+  }, 20000)
   store.bind(sock.ev)
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect } = update
@@ -1790,27 +1995,39 @@ async function PRIMON_PROTO4() {
     store.writeToFile('./baileys_store_multi.json')
     console.log('connection update', update)
   })
-  sock.ev.on('creds.update', saveState)
+  sock.ev.on('creds.update', saveCreds)
   return sock
 }
 
 async function PRIMON_PROTO5() {
-  const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
   store.readFromFile('./baileys_store_multi.json')
-
-  const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
   const sock = makeWASocket({
     logger: P({ level: 'silent' }),
-    browser: ['Primon Proto', 'Chrome', '1.0'],
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
     printQRInTerminal: true,
-    auth: state
+    auth: state,
+    version: [3, 3234, 9],
   })
   var z = false
 
   var INTERVAL = setInterval(async () => {
     store.writeToFile('./baileys_store_multi.json')
-    fs.exists("./auth_info_multi.json", async (e) => {
+    fs.exists("./session", async (e) => {
       if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
         var s = fs.readFileSync("./auth_info_multi.json")
         if (s.toString().length < 8000) {
           console.clear()
@@ -1822,7 +2039,7 @@ async function PRIMON_PROTO5() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break.txt", s1)
@@ -1832,7 +2049,7 @@ async function PRIMON_PROTO5() {
         process.exit()
       }
     })
-  }, 15000)
+  }, 20000)
   store.bind(sock.ev)
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect } = update
@@ -1846,27 +2063,39 @@ async function PRIMON_PROTO5() {
     store.writeToFile('./baileys_store_multi.json')
     console.log('connection update', update)
   })
-  sock.ev.on('creds.update', saveState)
+  sock.ev.on('creds.update', saveCreds)
   return sock
 }
 
 async function PRIMON_PROTO6() {
-  const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
   store.readFromFile('./baileys_store_multi.json')
-
-  const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds } = await useMultiFileAuthState('session')
   const sock = makeWASocket({
     logger: P({ level: 'silent' }),
-    browser: ['Primon Proto', 'Chrome', '1.0'],
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
     printQRInTerminal: true,
-    auth: state
+    auth: state,
+    version: [3, 3234, 9],
   })
   var z = false
 
   var INTERVAL = setInterval(async () => {
     store.writeToFile('./baileys_store_multi.json')
-    fs.exists("./auth_info_multi.json", async (e) => {
+    fs.exists("./session", async (e) => {
       if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
         var s = fs.readFileSync("./auth_info_multi.json")
         if (s.toString().length < 8000) {
           console.clear()
@@ -1878,7 +2107,7 @@ async function PRIMON_PROTO6() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break_session.txt", s1)
@@ -1887,7 +2116,7 @@ async function PRIMON_PROTO6() {
         process.exit()
       }
     })
-  }, 15000)
+  }, 20000)
   store.bind(sock.ev)
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect } = update
@@ -1901,27 +2130,39 @@ async function PRIMON_PROTO6() {
     store.writeToFile('./baileys_store_multi.json')
     console.log('connection update', update)
   })
-  sock.ev.on('creds.update', saveState)
+  sock.ev.on('creds.update', saveCreds)
   return sock
 }
 
 async function PRIMON_PROTO7() {
-  const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
   store.readFromFile('./baileys_store_multi.json')
-
-  const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
   const sock = makeWASocket({
     logger: P({ level: 'silent' }),
-    browser: ['Primon Proto', 'Chrome', '1.0'],
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
     printQRInTerminal: true,
-    auth: state
+    auth: state,
+    version: [3, 3234, 9],
   })
   var z = false
 
   var INTERVAL = setInterval(async () => {
     store.writeToFile('./baileys_store_multi.json')
-    fs.exists("./auth_info_multi.json", async (e) => {
+    fs.exists("./session", async (e) => {
       if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
         var s = fs.readFileSync("./auth_info_multi.json")
         if (s.toString().length < 8000) {
           console.clear()
@@ -1933,7 +2174,7 @@ async function PRIMON_PROTO7() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break_session.txt", s1)
@@ -1942,7 +2183,7 @@ async function PRIMON_PROTO7() {
         process.exit()
       }
     })
-  }, 15000)
+  }, 20000)
   store.bind(sock.ev)
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect } = update
@@ -1956,27 +2197,39 @@ async function PRIMON_PROTO7() {
     store.writeToFile('./baileys_store_multi.json')
     console.log('connection update', update)
   })
-  sock.ev.on('creds.update', saveState)
+  sock.ev.on('creds.update', saveCreds)
   return sock
 }
 
 async function PRIMON_PROTO8() {
-  const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
   store.readFromFile('./baileys_store_multi.json')
-
-  const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
   const sock = makeWASocket({
     logger: P({ level: 'silent' }),
-    browser: ['Primon Proto', 'Chrome', '1.0'],
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
     printQRInTerminal: true,
-    auth: state
+    auth: state,
+    version: [3, 3234, 9],
   })
   var z = false
 
   var INTERVAL = setInterval(async () => {
     store.writeToFile('./baileys_store_multi.json')
-    fs.exists("./auth_info_multi.json", async (e) => {
+    fs.exists("./session", async (e) => {
       if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
         var s = fs.readFileSync("./auth_info_multi.json")
         if (s.toString().length < 8000) {
           console.clear()
@@ -1988,7 +2241,7 @@ async function PRIMON_PROTO8() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break_session.txt", s1)
@@ -1997,7 +2250,7 @@ async function PRIMON_PROTO8() {
         process.exit()
       }
     })
-  }, 15000)
+  }, 20000)
   store.bind(sock.ev)
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect } = update
@@ -2011,27 +2264,39 @@ async function PRIMON_PROTO8() {
     store.writeToFile('./baileys_store_multi.json')
     console.log('connection update', update)
   })
-  sock.ev.on('creds.update', saveState)
+  sock.ev.on('creds.update', saveCreds)
   return sock
 }
 
 async function PRIMON_PROTO9() {
-  const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) })
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
   store.readFromFile('./baileys_store_multi.json')
-
-  const { state, saveState } = useSingleFileAuthState('./auth_info_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
   const sock = makeWASocket({
     logger: P({ level: 'silent' }),
-    browser: ['Primon Proto', 'Chrome', '1.0'],
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
     printQRInTerminal: true,
-    auth: state
+    auth: state,
+    version: [3, 3234, 9]
   })
   var z = false
 
   var INTERVAL = setInterval(async () => {
     store.writeToFile('./baileys_store_multi.json')
-    fs.exists("./auth_info_multi.json", async (e) => {
+    fs.exists("./session", async (e) => {
       if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
         var s = fs.readFileSync("./auth_info_multi.json")
         if (s.toString().length < 8000) {
           console.clear()
@@ -2043,7 +2308,7 @@ async function PRIMON_PROTO9() {
           }
           process.exit()
         }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
         fs.unlinkSync("./auth_info_multi.json")
         fs.unlinkSync("./baileys_store_multi.json")
         fs.writeFileSync("./break_session.txt", s1)
@@ -2052,7 +2317,7 @@ async function PRIMON_PROTO9() {
         process.exit()
       }
     })
-  }, 15000)
+  }, 20000)
   store.bind(sock.ev)
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect } = update
@@ -2066,7 +2331,7 @@ async function PRIMON_PROTO9() {
     store.writeToFile('./baileys_store_multi.json')
     console.log('connection update', update)
   })
-  sock.ev.on('creds.update', saveState)
+  sock.ev.on('creds.update', saveCreds)
   return sock
 }
 

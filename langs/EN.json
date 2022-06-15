@@ -48,7 +48,8 @@
       "run": "Primon Proto Running!"
     },
     "tagall": {
-      "msg": "🔸 Members of {%c} 🔸\n\n"
+      "msg": "🔸 *Members of* {%c} 🔸\n\n",
+      "admin": "🔸 *Admins of* {%c} 🔸\n\n"
     },
     "goodbye": {
       "not_set_goodbye": "_No goodbye messages are set for this chat._",
@@ -151,7 +152,9 @@
       "sticker2": "```&sticker <reply a message>```\n```&sticker <Sticker name> <reply a message>```",
       "sticker3": "{%d1}```{%c}sticker```\n{%d1}_Converts video or photo to sticker. If the sticker is answered it will turn it into a photo or video._ \n{%d1}\n\n```{%c}sticker <reply a message>```\n```{%c}sticker <Sticker name> <reply a message>```",
       "sticker_error_vid": "_This video is too long or too large for stickers._",
-      "sticker_error_img": "_This image is too long or too large for stickers._"
+      "sticker_error_img": "_This image is too long or too large for stickers._",
+      "tagadmin1": "{%d1}```{%c}tagadmin``` \n{%d1}_Tag the admins in the group!_",
+      "tagadmin2": "_Tag all admins in the group._"
     }
   }
 }

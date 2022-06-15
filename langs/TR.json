@@ -48,7 +48,8 @@
       "run": "Primon Proto Çalışıyor!"
     },
     "tagall": {
-      "msg": "🔸 {%c} *Grubunun Üyeleri* 🔸\n\n"
+      "msg": "🔸 {%c} *Grubunun Üyeleri* 🔸\n\n",
+      "admin": "🔸 {%c} *Grubunun Adminleri* 🔸\n\n"
     },
     "goodbye": {
       "not_set_goodbye": "_Bu sohbet için herhangi bir görüşürüz mesajı ayarlanmamış._",
@@ -151,7 +152,9 @@
       "sticker2": "```&sticker <mesaja yanıt ver>```\n```&sticker <Sticker ismi> <mesaja yanıt ver>```",
       "sticker3": "{%d1}```{%c}sticker```\n{%d1}_Videoyu veya fotoğrafı sticker'a çevirir. Eğer sticker yanıtlanırsa fotoğrafa veya videoya çevirir._ \n{%d1}\n\n```{%c}sticker <mesaja yanıt ver>```\n```{%c}sticker <Sticker ismi> <mesaja yanıt ver>```",
       "sticker_error_vid": "_Bu video sticker yapmak için çok uzun veya boyutu çok fazla._",
-      "sticker_error_img": "_Bu fotoğraf sticker yapmak için çok uzun veya boyutu çok fazla._"
+      "sticker_error_img": "_Bu fotoğraf sticker yapmak için çok uzun veya boyutu çok fazla._",
+      "tagadmin1": "{%d1}```{%c}tagadmin``` \n{%d1}_Gruptaki adminleri etiketleyin!_",
+      "tagadmin2": "_Gruptaki tüm adminleri etiketler._"
     }
   }
 }

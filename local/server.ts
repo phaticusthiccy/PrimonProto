@@ -14,6 +14,7 @@ import makeWASocket, {
   DisconnectReason,
   makeInMemoryStore,
   useSingleFileAuthState,
+  useMultiFileAuthState,
   fetchLatestBaileysVersion,
 } from "@adiwajshing/baileys";
 import * as fs from "fs";
@@ -284,10 +285,6 @@ octokit.request('POST /gists', {
 })
 */
 
-try {
-  fs.unlinkSync("./auth_info_multi.json");
-} catch {}
-
 let token: string = "";
 let st: string = "";
 let qst: string = "";
@@ -335,6 +332,7 @@ async function MAIN() {
     },
   });
   await PRIMON_PROTO()
+  delay(200000)
 }
 
 async function PRIMON_PROTO() {
@@ -343,20 +341,31 @@ async function PRIMON_PROTO() {
   });
   store.readFromFile("./baileys_store_multi.json");
   var { version } = await fetchLatestBaileysVersion();
-  const { state, saveState } = useSingleFileAuthState("./auth_info_multi.json");
+  const { state, saveCreds } = useMultiFileAuthState("session_record");
   const sock = makeWASocket({
     logger: P({ level: "silent" }),
     browser: ["Primon Proto", "Chrome", "1.0.0"],
     printQRInTerminal: true,
     auth: state,
-    version,
+    version: [3, 3234, 9],
   });
   var z = false;
 
   var INTERVAL = setInterval(async () => {
     store.writeToFile("./baileys_store_multi.json");
-    fs.exists("./auth_info_multi.json", async (e) => {
+    fs.exists("./session_record", async (e: any) => {
       if (!e == false) {
+        var a = fs.readdirSync("./session_record");
+        var d = "";
+        a.map((e: string) => {
+          d += fs.readFileSync("./session_record/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2: string) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
         var s = fs.readFileSync("./auth_info_multi.json");
         if (s.toString().length < 8000) {
           console.clear();
@@ -374,16 +383,16 @@ async function PRIMON_PROTO() {
         process.exit();
       }
     });
-  }, 15000);
+  }, 20000);
   store.bind(sock.ev);
-  sock.ev.on("connection.update", async (update) => {
+  sock.ev.on("connection.update", async (update: { connection: any; lastDisconnect: any; }) => {
     const { connection, lastDisconnect } = update;
     if (connection === "close") {
       if (
         (lastDisconnect.error as Boom)?.output?.statusCode !==
         DisconnectReason.loggedOut
       ) {
-        PRIMON_PROTO2();
+        PRIMON_PROTO();
       } else {
         console.log("connection closed");
       }
@@ -391,7 +400,7 @@ async function PRIMON_PROTO() {
     store.writeToFile("./baileys_store_multi.json");
     console.log("connection update", update);
   });
-  sock.ev.on("creds.update", saveState);
+  sock.ev.on("creds.update", saveCreds);
   return sock;
 }
 

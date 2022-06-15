@@ -22,5 +22,5 @@ yarn install typescript
 fi
 }
 install()
-yarn pbjs -t static-module -w commonjs -o ./index.js ./types.proto;
-yarn pbts -o ./main.d.ts ./index.js;
+yarn pbjs ./types.proto --es6 ./index_protocol.js ;
+yarn pbts -i ./types.proto ./index_protocol.ts;

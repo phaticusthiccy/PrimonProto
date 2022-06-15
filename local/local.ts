@@ -1181,6 +1181,7 @@ async function after_tr() {
           shell.exec(
             "cd PrimonProto/ && railway variables set SESSION4=" + tkn[3]
           );
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
           await delay(1500);
           console.clear();
           console.log(pmsg);
@@ -1215,6 +1216,7 @@ async function after_tr() {
               fins +
                " saniye sürede kurdunuz."
           );
+          shell.exec("rm -rf ./session")
           try {
             fs.unlinkSync("./auth_info_multi.json");
           } catch {}
@@ -1360,6 +1362,7 @@ async function after_tr() {
       shell.exec("cd PrimonProto/ && railway variables set SESSION2=" + tkn[1]);
       shell.exec("cd PrimonProto/ && railway variables set SESSION3=" + tkn[2]);
       shell.exec("cd PrimonProto/ && railway variables set SESSION4=" + tkn[3]);
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
       await delay(1500);
       console.clear();
       console.log(pmsg);
@@ -1392,6 +1395,7 @@ async function after_tr() {
           fins +
            " saniye sürede kurdunuz."
       );
+      shell.exec("rm -rf ./session")
       try {
         fs.unlinkSync("./auth_info_multi.json");
       } catch {}
@@ -1583,6 +1587,7 @@ async function after_en() {
           shell.exec(
             "cd PrimonProto/ && railway variables set SESSION4=" + tkn[3]
           );
+          shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
           await delay(1500);
           console.clear();
           console.log(penmsg);
@@ -1616,6 +1621,7 @@ async function after_en() {
               fins +
                " second"
           );
+          shell.exec("rm -rf ./session")
           try {
             fs.unlinkSync("./auth_info_multi.json");
           } catch {}
@@ -1758,6 +1764,7 @@ async function after_en() {
       shell.exec("cd PrimonProto/ && railway variables set SESSION2=" + tkn[1]);
       shell.exec("cd PrimonProto/ && railway variables set SESSION3=" + tkn[2]);
       shell.exec("cd PrimonProto/ && railway variables set SESSION4=" + tkn[3]);
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
       await delay(1500);
       console.clear();
       console.log(pmsg);
@@ -1791,6 +1798,7 @@ async function after_en() {
           fins +
            " second"
       );
+      shell.exec("rm -rf ./session")
       try {
         fs.unlinkSync("./auth_info_multi.json");
       } catch {}
@@ -1826,795 +1834,858 @@ async function after_en() {
   }
 }
 
-async function PRIMON_PROTO() {
-  const store = makeInMemoryStore({
-    logger: P().child({ level: "silent", stream: "store" }),
-  });
-  store.readFromFile("./baileys_store_multi.json");
-  var { version } = await fetchLatestBaileysVersion();
-  const { state, saveState } = useSingleFileAuthState("./auth_info_multi.json");
-  const sock = makeWASocket({
-    logger: P({ level: "silent" }),
-    browser: ["Primon Proto", "Chrome", "1.0.0"],
-    printQRInTerminal: true,
-    auth: state,
-    version,
-  });
-  setInterval(async () => {
-    store.writeToFile("./baileys_store_multi.json");
-    fs.exists("./auth_info_multi.json", async (e: boolean) => {
-      if (!e == false) {
-        var s = fs.readFileSync("./auth_info_multi.json");
-        if (s.toString().length < 8000) {
-          console.clear();
-          if (lang == "EN") {
-            console.log("Please Scan The QR Code Again!");
-          }
-          if (lang == "TR") {
-            console.log("Lütfen QR Kodu Tekrar Okutun!");
-          }
-          process.exit();
-        }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString());
-        fs.unlinkSync("./auth_info_multi.json");
-        fs.unlinkSync("./baileys_store_multi.json");
-        console.log(s1);
-        process.exit();
-      }
-    });
-  }, 15000);
-
-  store.bind(sock.ev);
-  sock.ev.on("connection.update", (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === "close") {
-      if (
-        (lastDisconnect.error as Boom)?.output?.statusCode !==
-        DisconnectReason.loggedOut
-      ) {
-        PRIMON_PROTO();
-      } else {
-        console.log("connection closed");
-      }
-    }
-    store.writeToFile("./baileys_store_multi.json");
-    console.log("connection update", update);
-  });
-  sock.ev.on("creds.update", saveState);
-  return sock;
-}
-
-async function PRIMON_PROTO2() {
-  const store = makeInMemoryStore({
-    logger: P().child({ level: "silent", stream: "store" }),
-  });
-  store.readFromFile("./baileys_store_multi.json");
-  var { version } = await fetchLatestBaileysVersion();
-  const { state, saveState } = useSingleFileAuthState("./auth_info_multi.json");
-  const sock = makeWASocket({
-    logger: P({ level: "silent" }),
-    browser: ["Primon Proto", "Chrome", "1.0.0"],
-    printQRInTerminal: true,
-    auth: state,
-    version,
-  });
-  var z = false;
-
-  var INTERVAL = setInterval(async () => {
-    store.writeToFile("./baileys_store_multi.json");
-    fs.exists("./auth_info_multi.json", async (e) => {
-      if (!e == false) {
-        var s = fs.readFileSync("./auth_info_multi.json");
-        if (s.toString().length < 8000) {
-          console.clear();
-          if (lang == "EN") {
-            console.log("Please Scan The QR Code Again!");
-          }
-          if (lang == "TR") {
-            console.log("Lütfen QR Kodu Tekrar Okutun!");
-          }
-          process.exit();
-        }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString());
-        fs.unlinkSync("./auth_info_multi.json");
-        fs.unlinkSync("./baileys_store_multi.json");
-        fs.writeFileSync("./break.txt", s1);
-        fs.writeFileSync("./sudo.txt", sock.authState.creds.me.id);
-        console.log( "Lütfen Komut Satırına " + "`node local.js` " +  "Yazın!");
-        await delay(1000);
-        process.exit();
-      }
-    });
-  }, 15000);
-  store.bind(sock.ev);
-  sock.ev.on("connection.update", async (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === "close") {
-      if (
-        (lastDisconnect.error as Boom)?.output?.statusCode !==
-        DisconnectReason.loggedOut
-      ) {
-        PRIMON_PROTO2();
-      } else {
-        console.log("connection closed");
-      }
-    }
-    store.writeToFile("./baileys_store_multi.json");
-    console.log("connection update", update);
-  });
-  sock.ev.on("creds.update", saveState);
-  return sock;
-}
-
-async function PRIMON_PROTO3() {
-  const store = makeInMemoryStore({
-    logger: P().child({ level: "silent", stream: "store" }),
-  });
-  store.readFromFile("./baileys_store_multi.json");
-  var { version } = await fetchLatestBaileysVersion();
-  const { state, saveState } = useSingleFileAuthState("./auth_info_multi.json");
-  const sock = makeWASocket({
-    logger: P({ level: "silent" }),
-    browser: ["Primon Proto", "Chrome", "1.0.0"],
-    printQRInTerminal: true,
-    auth: state,
-    version,
-  });
-  var z = false;
-
-  var INTERVAL = setInterval(async () => {
-    store.writeToFile("./baileys_store_multi.json");
-    fs.exists("./auth_info_multi.json", async (e) => {
-      if (!e == false) {
-        var s = fs.readFileSync("./auth_info_multi.json");
-        if (s.toString().length < 8000) {
-          console.clear();
-          if (lang == "EN") {
-            console.log("Please Scan The QR Code Again!");
-          }
-          if (lang == "TR") {
-            console.log("Lütfen QR Kodu Tekrar Okutun!");
-          }
-          process.exit();
-        }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString());
-        fs.unlinkSync("./auth_info_multi.json");
-        fs.unlinkSync("./baileys_store_multi.json");
-        fs.writeFileSync("./break.txt", s1);
-        fs.writeFileSync("./cont.txt", "1");
-        console.log( "Lütfen Komut Satırına " + "`node local.js` " +  "Yazın!");
-        await delay(1000);
-        process.exit();
-      }
-    });
-  }, 15000);
-  store.bind(sock.ev);
-  sock.ev.on("connection.update", async (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === "close") {
-      if (
-        (lastDisconnect.error as Boom)?.output?.statusCode !==
-        DisconnectReason.loggedOut
-      ) {
-        PRIMON_PROTO2();
-      } else {
-        console.log("connection closed");
-      }
-    }
-    store.writeToFile("./baileys_store_multi.json");
-    console.log("connection update", update);
-  });
-  sock.ev.on("creds.update", saveState);
-  return sock;
-}
-
-async function PRIMON_PROTO4() {
-  const store = makeInMemoryStore({
-    logger: P().child({ level: "silent", stream: "store" }),
-  });
-  store.readFromFile("./baileys_store_multi.json");
-  var { version } = await fetchLatestBaileysVersion();
-  const { state, saveState } = useSingleFileAuthState("./auth_info_multi.json");
-  const sock = makeWASocket({
-    logger: P({ level: "silent" }),
-    browser: ["Primon Proto", "Chrome", "1.0.0"],
-    printQRInTerminal: true,
-    auth: state,
-    version,
-  });
-  var z = false;
-
-  var INTERVAL = setInterval(async () => {
-    store.writeToFile("./baileys_store_multi.json");
-    fs.exists("./auth_info_multi.json", async (e) => {
-      if (!e == false) {
-        var s = fs.readFileSync("./auth_info_multi.json");
-        if (s.toString().length < 8000) {
-          console.clear();
-          if (lang == "EN") {
-            console.log("Please Scan The QR Code Again!");
-          }
-          if (lang == "TR") {
-            console.log("Lütfen QR Kodu Tekrar Okutun!");
-          }
-          process.exit();
-        }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString());
-        fs.unlinkSync("./auth_info_multi.json");
-        fs.unlinkSync("./baileys_store_multi.json");
-        fs.writeFileSync("./break.txt", s1);
-        fs.writeFileSync("./sudo.txt", sock.authState.creds.me.id);
-        console.log("Please Type " + "`node local.js` " + "To Command Prompt!");
-        await delay(1000);
-        process.exit();
-      }
-    });
-  }, 15000);
-  store.bind(sock.ev);
-  sock.ev.on("connection.update", async (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === "close") {
-      if (
-        (lastDisconnect.error as Boom)?.output?.statusCode !==
-        DisconnectReason.loggedOut
-      ) {
-        PRIMON_PROTO2();
-      } else {
-        console.log("connection closed");
-      }
-    }
-    store.writeToFile("./baileys_store_multi.json");
-    console.log("connection update", update);
-  });
-  sock.ev.on("creds.update", saveState);
-  return sock;
-}
-
-async function PRIMON_PROTO5() {
-  const store = makeInMemoryStore({
-    logger: P().child({ level: "silent", stream: "store" }),
-  });
-  store.readFromFile("./baileys_store_multi.json");
-  var { version } = await fetchLatestBaileysVersion();
-  const { state, saveState } = useSingleFileAuthState("./auth_info_multi.json");
-  const sock = makeWASocket({
-    logger: P({ level: "silent" }),
-    browser: ["Primon Proto", "Chrome", "1.0.0"],
-    printQRInTerminal: true,
-    auth: state,
-    version,
-  });
-  var z = false;
-
-  var INTERVAL = setInterval(async () => {
-    store.writeToFile("./baileys_store_multi.json");
-    fs.exists("./auth_info_multi.json", async (e) => {
-      if (!e == false) {
-        var s = fs.readFileSync("./auth_info_multi.json");
-        if (s.toString().length < 8000) {
-          console.clear();
-          if (lang == "EN") {
-            console.log("Please Scan The QR Code Again!");
-          }
-          if (lang == "TR") {
-            console.log("Lütfen QR Kodu Tekrar Okutun!");
-          }
-          process.exit();
-        }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString());
-        fs.unlinkSync("./auth_info_multi.json");
-        fs.unlinkSync("./baileys_store_multi.json");
-        fs.writeFileSync("./break.txt", s1);
-        fs.writeFileSync("./cont.txt", "1");
-        console.log("Please Type " + "`node local.js` " + "To Command Prompt!");
-        await delay(1000);
-        process.exit();
-      }
-    });
-  }, 15000);
-  store.bind(sock.ev);
-  sock.ev.on("connection.update", async (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === "close") {
-      if (
-        (lastDisconnect.error as Boom)?.output?.statusCode !==
-        DisconnectReason.loggedOut
-      ) {
-        PRIMON_PROTO2();
-      } else {
-        console.log("connection closed");
-      }
-    }
-    store.writeToFile("./baileys_store_multi.json");
-    console.log("connection update", update);
-  });
-  sock.ev.on("creds.update", saveState);
-  return sock;
-}
-
-async function PRIMON_PROTO6() {
-  const store = makeInMemoryStore({
-    logger: P().child({ level: "silent", stream: "store" }),
-  });
-  store.readFromFile("./baileys_store_multi.json");
-  var { version } = await fetchLatestBaileysVersion();
-  const { state, saveState } = useSingleFileAuthState("./auth_info_multi.json");
-  const sock = makeWASocket({
-    logger: P({ level: "silent" }),
-    browser: ["Primon Proto", "Chrome", "1.0.0"],
-    printQRInTerminal: true,
-    auth: state,
-    version,
-  });
-  var z = false;
-
-  var INTERVAL = setInterval(async () => {
-    store.writeToFile("./baileys_store_multi.json");
-    fs.exists("./auth_info_multi.json", async (e) => {
-      if (!e == false) {
-        var s = fs.readFileSync("./auth_info_multi.json");
-        if (s.toString().length < 8000) {
-          console.clear();
-          if (lang == "EN") {
-            console.log("Please Scan The QR Code Again!");
-          }
-          if (lang == "TR") {
-            console.log("Lütfen QR Kodu Tekrar Okutun!");
-          }
-          process.exit();
-        }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString());
-        fs.unlinkSync("./auth_info_multi.json");
-        fs.unlinkSync("./baileys_store_multi.json");
-        fs.writeFileSync("./break_session.txt", s1);
-        console.log("Lütfen Komut Satırına " + "`node local.js` " + "Yazın!");
-        await delay(1000);
-        process.exit();
-      }
-    });
-  }, 15000);
-  store.bind(sock.ev);
-  sock.ev.on("connection.update", async (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === "close") {
-      if (
-        (lastDisconnect.error as Boom)?.output?.statusCode !==
-        DisconnectReason.loggedOut
-      ) {
-        PRIMON_PROTO2();
-      } else {
-        console.log("connection closed");
-      }
-    }
-    store.writeToFile("./baileys_store_multi.json");
-    console.log("connection update", update);
-  });
-  sock.ev.on("creds.update", saveState);
-  return sock;
-}
-
-async function PRIMON_PROTO7() {
-  const store = makeInMemoryStore({
-    logger: P().child({ level: "silent", stream: "store" }),
-  });
-  store.readFromFile("./baileys_store_multi.json");
-  var { version } = await fetchLatestBaileysVersion();
-  const { state, saveState } = useSingleFileAuthState("./auth_info_multi.json");
-  const sock = makeWASocket({
-    logger: P({ level: "silent" }),
-    browser: ["Primon Proto", "Chrome", "1.0.0"],
-    printQRInTerminal: true,
-    auth: state,
-    version,
-  });
-  var z = false;
-
-  var INTERVAL = setInterval(async () => {
-    store.writeToFile("./baileys_store_multi.json");
-    fs.exists("./auth_info_multi.json", async (e) => {
-      if (!e == false) {
-        var s = fs.readFileSync("./auth_info_multi.json");
-        if (s.toString().length < 8000) {
-          console.clear();
-          if (lang == "EN") {
-            console.log("Please Scan The QR Code Again!");
-          }
-          if (lang == "TR") {
-            console.log("Lütfen QR Kodu Tekrar Okutun!");
-          }
-          process.exit();
-        }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString());
-        fs.unlinkSync("./auth_info_multi.json");
-        fs.unlinkSync("./baileys_store_multi.json");
-        fs.writeFileSync("./break_session.txt", s1);
-        console.log("Lütfen Komut Satırına " + "`node local.js` " + "Yazın!");
-        await delay(1000);
-        process.exit();
-      }
-    });
-  }, 15000);
-  store.bind(sock.ev);
-  sock.ev.on("connection.update", async (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === "close") {
-      if (
-        (lastDisconnect.error as Boom)?.output?.statusCode !==
-        DisconnectReason.loggedOut
-      ) {
-        PRIMON_PROTO2();
-      } else {
-        console.log("connection closed");
-      }
-    }
-    store.writeToFile("./baileys_store_multi.json");
-    console.log("connection update", update);
-  });
-  sock.ev.on("creds.update", saveState);
-  return sock;
-}
-
-async function PRIMON_PROTO8() {
-  const store = makeInMemoryStore({
-    logger: P().child({ level: "silent", stream: "store" }),
-  });
-  store.readFromFile("./baileys_store_multi.json");
-  var { version } = await fetchLatestBaileysVersion();
-  const { state, saveState } = useSingleFileAuthState("./auth_info_multi.json");
-  const sock = makeWASocket({
-    logger: P({ level: "silent" }),
-    browser: ["Primon Proto", "Chrome", "1.0.0"],
-    printQRInTerminal: true,
-    auth: state,
-    version,
-  });
-  var z = false;
-
-  var INTERVAL = setInterval(async () => {
-    store.writeToFile("./baileys_store_multi.json");
-    fs.exists("./auth_info_multi.json", async (e) => {
-      if (!e == false) {
-        var s = fs.readFileSync("./auth_info_multi.json");
-        if (s.toString().length < 8000) {
-          console.clear();
-          if (lang == "EN") {
-            console.log("Please Scan The QR Code Again!");
-          }
-          if (lang == "TR") {
-            console.log("Lütfen QR Kodu Tekrar Okutun!");
-          }
-          process.exit();
-        }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString());
-        fs.unlinkSync("./auth_info_multi.json");
-        fs.unlinkSync("./baileys_store_multi.json");
-        fs.writeFileSync("./break_session.txt", s1);
-        console.log("Please Type " + "`node local.js` " + "To Command Prompt!");
-        await delay(1000);
-        process.exit();
-      }
-    });
-  }, 15000);
-  store.bind(sock.ev);
-  sock.ev.on("connection.update", async (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === "close") {
-      if (
-        (lastDisconnect.error as Boom)?.output?.statusCode !==
-        DisconnectReason.loggedOut
-      ) {
-        PRIMON_PROTO2();
-      } else {
-        console.log("connection closed");
-      }
-    }
-    store.writeToFile("./baileys_store_multi.json");
-    console.log("connection update", update);
-  });
-  sock.ev.on("creds.update", saveState);
-  return sock;
-}
-
-async function PRIMON_PROTO9() {
-  const store = makeInMemoryStore({
-    logger: P().child({ level: "silent", stream: "store" }),
-  });
-  store.readFromFile("./baileys_store_multi.json");
-  var { version } = await fetchLatestBaileysVersion();
-  const { state, saveState } = useSingleFileAuthState("./auth_info_multi.json");
-  const sock = makeWASocket({
-    logger: P({ level: "silent" }),
-    browser: ["Primon Proto", "Chrome", "1.0.0"],
-    printQRInTerminal: true,
-    auth: state,
-    version,
-  });
-  var z = false;
-
-  var INTERVAL = setInterval(async () => {
-    store.writeToFile("./baileys_store_multi.json");
-    fs.exists("./auth_info_multi.json", async (e) => {
-      if (!e == false) {
-        var s = fs.readFileSync("./auth_info_multi.json");
-        if (s.toString().length < 8000) {
-          console.clear();
-          if (lang == "EN") {
-            console.log("Please Scan The QR Code Again!");
-          }
-          if (lang == "TR") {
-            console.log("Lütfen QR Kodu Tekrar Okutun!");
-          }
-          process.exit();
-        }
-        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString());
-        fs.unlinkSync("./auth_info_multi.json");
-        fs.unlinkSync("./baileys_store_multi.json");
-        fs.writeFileSync("./break_session.txt", s1);
-        console.log("Please Type " + "`node local.js` " + "To Command Prompt!");
-        await delay(1000);
-        process.exit();
-      }
-    });
-  }, 15000);
-  store.bind(sock.ev);
-  sock.ev.on("connection.update", async (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === "close") {
-      if (
-        (lastDisconnect.error as Boom)?.output?.statusCode !==
-        DisconnectReason.loggedOut
-      ) {
-        PRIMON_PROTO2();
-      } else {
-        console.log("connection closed");
-      }
-    }
-    store.writeToFile("./baileys_store_multi.json");
-    console.log("connection update", update);
-  });
-  sock.ev.on("creds.update", saveState);
-  return sock;
-}
 
 
 async function after_s_tr() {
+  console.clear()
+  console.log(pmsg)
+  await delay(1500)
+  console.log("QR Kod Başarıyla Okutuldu!")
+  await delay(1500)
+  console.log("Şimdi ise SESSION yenilemek için lütfen Railway hesabınıza giriş yapın. Az sonra giriş linki altta belirecek.")
+  await delay(5000)
+  console.clear()
+  console.log(pmsg)
+  const command = exec("railway login")
+  command.stdout.on('data', output => {
+    console.log(output.toString())
+  })
+  command.stdout.on("end", async () => {
+    console.log("Railway Hesabına Giriş Yapıldı!")
+    await delay(1500)
     console.clear()
     console.log(pmsg)
     await delay(1500)
-    console.log("QR Kod Başarıyla Okutuldu!")
-    await delay(1500)
-    console.log("Şimdi ise SESSION yenilemek için lütfen Railway hesabınıza giriş yapın. Az sonra giriş linki altta belirecek.")
-    await delay(5000)
-    console.clear()
-    console.log(pmsg)
-    const command = exec("railway login")
-    command.stdout.on('data', output => {
-      console.log(output.toString())
-    })
-    command.stdout.on("end", async () => {
-      console.log("Railway Hesabına Giriş Yapıldı!")
-      await delay(1500)
+    console.log("Şimdi ise botun kurulu olduğu uygulamaya girin. Ardından 'Settings' kısmından 'Project ID' yazan kodu kopyalayın ve buraya yapıştırın.")
+    rl.question("\n\nAnahtarı Girin :: ", async (proj) => {
       console.clear()
       console.log(pmsg)
       await delay(1500)
-      console.log("Şimdi ise botun kurulu olduğu uygulamaya girin. Ardından 'Settings' kısmından 'Project ID' yazan kodu kopyalayın ve buraya yapıştırın.")
-      rl.question("\n\nAnahtarı Girin :: ", async (proj) => {
-        console.clear()
-        console.log(pmsg)
-        await delay(1500)
-        shell.exec('rm -rf PrimonProto')
-        var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
-        var prj = shell.exec("cd PrimonProto && railway link " + proj)
-        var tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,9000}/g)
-        if (tkn.length > 4) {
-          if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
-          if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
-          if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
-          if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
-          if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
-        }
+      shell.exec('rm -rf PrimonProto')
+      var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
+      var prj = shell.exec("cd PrimonProto && railway link " + proj)
+      var tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,9000}/g)
+      if (tkn.length > 4) {
+        if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+        if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+        if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+        if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+        if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+      }
+      if (tkn.length < 4) {
+        tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,7000}/g)
         if (tkn.length < 4) {
-          tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,7000}/g)
-          if (tkn.length < 4) {
-            tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,5000}/g)
-            if (tkn.length > 4) {
-              if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
-              if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
-              if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
-              if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
-              if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
-            }
-          } else {
-            if (tkn !== 4) {
-              if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
-              if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
-              if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
-              if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
-              if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
-            }
+          tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,5000}/g)
+          if (tkn.length > 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        } else {
+          if (tkn.length !== 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
           }
         }
-        if (tkn[3] == undefined || tkn[3] == "undefined") {
-          tkn[3] = ""
-        }
-        shell.exec("cd PrimonProto/ && railway variables set SESSION=" + tkn[0])
-        shell.exec("cd PrimonProto/ && railway variables set SESSION2=" + tkn[1])
-        shell.exec("cd PrimonProto/ && railway variables set SESSION3=" + tkn[2])
-        shell.exec("cd PrimonProto/ && railway variables set SESSION4=" + tkn[3])
-        await delay(1500)
-        console.clear()
-        console.log(pmsg)
-        var sh7 = shell.exec("cd PrimonProto/ && yes n | railway up")
-        await delay(1500)
-        console.clear()
-        console.log(pmsg)
-        console.log("SESSION Yenilendi! Veri kaybı olmadan eski ayarlar geri getirildi.\n\n")
-        console.log("Primon Proto Kullandığınız İçin Teşekkürler!\n\n")
-        await delay(1500)
-        console.log("Lütfen " + "https://railway.app/project/" + proj + " linkini kontrol ediniz.")
-        try {
-          fs.unlinkSync("./auth_info_multi.json")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./gb_db.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./gh_auth.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./break.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./lang.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./baileys_store_multi.json")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./cont.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./time.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./sudo.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./break_session.txt")
-        } catch {
-        }
-        process.exit()
-      })
-    })
-  }
-  
-  async function after_s_en() {
-    console.clear()
-    console.log(pmsg)
-    await delay(1500)
-    console.log("QR Code Read Successfully!")
-    await delay(1500)
-    console.log("Now, please login to your Railway account to renew the SESSION. The login link will appear below.")
-    await delay(5000)
-    console.clear()
-    console.log(pmsg)
-    const command = exec("railway login")
-    command.stdout.on('data', output => {
-      console.log(output.toString())
-    })
-    command.stdout.on("end", async () => {
-      console.log("Logged In Railway Account!")
+      }
+      if (tkn[3] == undefined || tkn[3] == "undefined") {
+        tkn[3] = ""
+      }
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
       await delay(1500)
       console.clear()
       console.log(pmsg)
+      var sh7 = shell.exec("cd PrimonProto/ && yes n | railway up")
       await delay(1500)
-      console.log("Now go to the application where the bot is installed. Then copy the code that says 'Project ID' from 'Settings' and paste it here.")
-      rl.question("\n\nEnter Key :: ", async (proj) => {
-        console.clear()
-        console.log(pmsg)
-        await delay(1500)
-        shell.exec('rm -rf PrimonProto')
-        var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
-        var prj = shell.exec("cd PrimonProto && railway link " + proj)
-        var tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,10000}/g)
-        if (tkn.length > 4) {
-          if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
-          if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
-          if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
-          if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
-          if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
-        }
-        if (tkn.length < 4) {
-          tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,7000}/g)
-          if (tkn.length < 4) {
-            tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,5000}/g)
-            if (tkn.length > 4) {
-              if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
-              if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
-              if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
-              if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
-              if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
-            }
-          } else {
-            if (tkn !== 4) {
-              if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
-              if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
-              if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
-              if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
-              if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
-            }
-          }
-        }
-        if (tkn[3] == undefined || tkn[3] == "undefined") {
-          tkn[3] = ""
-        }
-        shell.exec("cd PrimonProto/ && railway variables set SESSION=" + tkn[0])
-        shell.exec("cd PrimonProto/ && railway variables set SESSION2=" + tkn[1])
-        shell.exec("cd PrimonProto/ && railway variables set SESSION3=" + tkn[2])
-        shell.exec("cd PrimonProto/ && railway variables set SESSION4=" + tkn[3])
-        await delay(1500)
-        console.clear()
-        console.log(penmsg)
-        var sh7 = shell.exec("cd PrimonProto/ && yes n | railway up")
-        await delay(1500)
-        console.clear()
-        console.log(penmsg)
-        console.log("SESSION Renewed! Restored old settings without data loss.\n\n")
-        console.log("Thanks For Using Primon Proto!\n\n")
-        await delay(1500)
-        console.log("Please check the " + "https://railway.app/project/" + proj)
-        try {
-          fs.unlinkSync("./auth_info_multi.json")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./gb_db.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./gh_auth.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./break.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./lang.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./baileys_store_multi.json")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./cont.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./sudo.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./time.txt")
-        } catch {
-        }
-        try {
-          fs.unlinkSync("./break_session.txt")
-        } catch {
-        }
-        process.exit()
-      })
+      console.clear()
+      console.log(pmsg)
+      console.log("SESSION Yenilendi! Veri kaybı olmadan eski ayarlar geri getirildi.\n\n")
+      console.log("Primon Proto Kullandığınız İçin Teşekkürler!\n\n")
+      await delay(1500)
+      console.log("Lütfen " + "https://railway.app/project/" + proj + " linkini kontrol ediniz.")
+      shell.exec("rm -rf ./session")
+      try {
+        fs.unlinkSync("./auth_info_multi.json")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./gb_db.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./gh_auth.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./break.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./lang.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./baileys_store_multi.json")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./cont.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./time.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./sudo.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./session5")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./break_session.txt")
+      } catch {
+      }
+      process.exit()
     })
-  }
+  })
+}
 
- MAIN();
+async function after_s_en() {
+  console.clear()
+  console.log(pmsg)
+  await delay(1500)
+  console.log("QR Code Read Successfully!")
+  await delay(1500)
+  console.log("Now, please login to your Railway account to renew the SESSION. The login link will appear below.")
+  await delay(5000)
+  console.clear()
+  console.log(pmsg)
+  const command = exec("railway login")
+  command.stdout.on('data', output => {
+    console.log(output.toString())
+  })
+  command.stdout.on("end", async () => {
+    console.log("Logged In Railway Account!")
+    await delay(1500)
+    console.clear()
+    console.log(pmsg)
+    await delay(1500)
+    console.log("Now go to the application where the bot is installed. Then copy the code that says 'Project ID' from 'Settings' and paste it here.")
+    rl.question("\n\nEnter Key :: ", async (proj) => {
+      console.clear()
+      console.log(pmsg)
+      await delay(1500)
+      shell.exec('rm -rf PrimonProto')
+      var sh1 = shell.exec('git clone https://github.com/phaticusthiccy/PrimonProto')
+      var prj = shell.exec("cd PrimonProto && railway link " + proj)
+      var tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,10000}/g)
+      if (tkn.length > 4) {
+        if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+        if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+        if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+        if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+        if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+      }
+      if (tkn.length < 4) {
+        tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,7000}/g)
+        if (tkn.length < 4) {
+          tkn = fs.readFileSync("./break_session.txt").toString().match(/.{10,5000}/g)
+          if (tkn.length > 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        } else {
+          if (tkn.length !== 4) {
+            if (tkn.length == 5) tkn[3] = tkn[3] + tkn[4]
+            if (tkn.length == 6) tkn[3] = tkn[3] + tkn[4] + tkn[5]
+            if (tkn.length == 7) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6]
+            if (tkn.length == 8) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7]
+            if (tkn.length == 9) tkn[3] = tkn[3] + tkn[4] + tkn[5] + tkn[6] + tkn[7] + tkn[8]
+          }
+        }
+      }
+      if (tkn[3] == undefined || tkn[3] == "undefined") {
+        tkn[3] = ""
+      }
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION=" + tkn[0])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION2=" + tkn[1])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION3=" + tkn[2])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION4=" + tkn[3])
+      shell.exec("cd PrimonProto/ && node railway.js variables set SESSION5=" + fs.readFileSync("./session5"))
+      await delay(1500)
+      console.clear()
+      console.log(penmsg)
+      var sh7 = shell.exec("cd PrimonProto/ && yes n | railway up")
+      await delay(1500)
+      console.clear()
+      console.log(penmsg)
+      console.log("SESSION Renewed! Restored old settings without data loss.\n\n")
+      console.log("Thanks For Using Primon Proto!\n\n")
+      await delay(1500)
+      console.log("Please check the " + "https://railway.app/project/" + proj)
+      shell.exec("rm -rf ./session")
+      try {
+        fs.unlinkSync("./auth_info_multi.json")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./session5")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./gb_db.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./gh_auth.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./break.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./lang.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./baileys_store_multi.json")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./cont.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./sudo.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./time.txt")
+      } catch {
+      }
+      try {
+        fs.unlinkSync("./break_session.txt")
+      } catch {
+      }
+      process.exit()
+    })
+  })
+}
+
+async function PRIMON_PROTO() {
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
+  store.readFromFile('./baileys_store_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
+  const sock = makeWASocket({
+    logger: P({ level: 'silent' }),
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
+    printQRInTerminal: true,
+    auth: state,
+    version: [3, 3234, 9],
+  })
+  setInterval(async () => {
+    store.writeToFile('./baileys_store_multi.json')
+    fs.exists("session", async (e) => {
+      if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var s = fs.readFileSync("./auth_info_multi.json")
+        if (s.toString().length < 8000) {
+          console.clear()
+          if (lang == "EN") {
+            console.log("Please Scan The QR Code Again!")
+          }
+          if (lang == "TR") {
+            console.log("Lütfen QR Kodu Tekrar Okutun!")
+          }
+          process.exit()
+        }
+        var s1 = btoa(fs.readFileSync("./auth_info_multi.json").toString())
+        fs.unlinkSync("./auth_info_multi.json")
+        fs.unlinkSync("./baileys_store_multi.json")
+        console.log(s1)
+        process.exit()
+      }
+    })
+  }, 20000)
+
+
+  store.bind(sock.ev)
+  sock.ev.on('connection.update', (update) => {
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      if ((lastDisconnect.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut) {
+        PRIMON_PROTO()
+      } else {
+        console.log('connection closed')
+      }
+    }
+    store.writeToFile('./baileys_store_multi.json')
+    console.log('connection update', update)
+  })
+  sock.ev.on('creds.update', saveCreds)
+  return sock
+}
+
+async function PRIMON_PROTO2() {
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
+  store.readFromFile('./baileys_store_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState ('session')
+  const sock = makeWASocket({
+    logger: P({ level: 'silent' }),
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
+    printQRInTerminal: true,
+    auth: state,
+    version: [3, 3234, 9],
+  })
+  var z = false
+
+  var INTERVAL = setInterval(async () => {
+    store.writeToFile('./baileys_store_multi.json')
+    fs.exists("./session", async (e) => {
+      if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
+        var s = fs.readFileSync("./auth_info_multi.json")
+        if (s.toString().length < 8000) {
+          console.clear()
+          if (lang == "EN") {
+            console.log("Please Scan The QR Code Again!")
+          }
+          if (lang == "TR") {
+            console.log("Lütfen QR Kodu Tekrar Okutun!")
+          }
+          process.exit()
+        }
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
+        fs.unlinkSync("./auth_info_multi.json")
+        fs.unlinkSync("./baileys_store_multi.json")
+        fs.writeFileSync("./break.txt", s1)
+        fs.writeFileSync("./sudo.txt", sock.authState.creds.me.id)
+        console.log(chalk.red("Lütfen Sistemi Tekrar Çalıştırın!"))
+        await delay(1000)
+        process.exit()
+      }
+    })
+  }, 20000)
+  store.bind(sock.ev)
+  sock.ev.on('connection.update', async (update) => {
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      if ((lastDisconnect.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut) {
+        PRIMON_PROTO2()
+      } else {
+        console.log('connection closed')
+      }
+    }
+    store.writeToFile('./baileys_store_multi.json')
+    console.log('connection update', update)
+  })
+  sock.ev.on('creds.update', saveCreds)
+  return sock
+}
+
+async function PRIMON_PROTO3() {
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
+  store.readFromFile('./baileys_store_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
+  const sock = makeWASocket({
+    logger: P({ level: 'silent' }),
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
+    printQRInTerminal: true,
+    auth: state,
+    version: [3, 3234, 9],
+  })
+  var z = false
+
+  var INTERVAL = setInterval(async () => {
+    store.writeToFile('./baileys_store_multi.json')
+    fs.exists("./session", async (e) => {
+      if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
+        var s = fs.readFileSync("./auth_info_multi.json")
+        if (s.toString().length < 8000) {
+          console.clear()
+          if (lang == "EN") {
+            console.log("Please Scan The QR Code Again!")
+          }
+          if (lang == "TR") {
+            console.log("Lütfen QR Kodu Tekrar Okutun!")
+          }
+          process.exit()
+        }
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
+        fs.unlinkSync("./auth_info_multi.json")
+        fs.unlinkSync("./baileys_store_multi.json")
+        fs.writeFileSync("./break.txt", s1)
+        fs.writeFileSync("./cont.txt", "1")
+        console.log(chalk.red("Lütfen Sistemi Tekrar Çalıştırın!"))
+        await delay(1000)
+        process.exit()
+      }
+    })
+  }, 20000)
+  store.bind(sock.ev)
+  sock.ev.on('connection.update', async (update) => {
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      if ((lastDisconnect.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut) {
+        PRIMON_PROTO2()
+      } else {
+        console.log('connection closed')
+      }
+    }
+    store.writeToFile('./baileys_store_multi.json')
+    console.log('connection update', update)
+  })
+  sock.ev.on('creds.update', saveCreds)
+  return sock
+}
+
+async function PRIMON_PROTO4() {
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
+  store.readFromFile('./baileys_store_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
+  const sock = makeWASocket({
+    logger: P({ level: 'silent' }),
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
+    printQRInTerminal: true,
+    auth: state,
+    version: [3, 3234, 9],
+  })
+  var z = false
+
+  var INTERVAL = setInterval(async () => {
+    store.writeToFile('./baileys_store_multi.json')
+    fs.exists("./session", async (e) => {
+      if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
+        var s = fs.readFileSync("./auth_info_multi.json")
+        if (s.toString().length < 8000) {
+          console.clear()
+          if (lang == "EN") {
+            console.log("Please Scan The QR Code Again!")
+          }
+          if (lang == "TR") {
+            console.log("Lütfen QR Kodu Tekrar Okutun!")
+          }
+          process.exit()
+        }
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
+        fs.unlinkSync("./auth_info_multi.json")
+        fs.unlinkSync("./baileys_store_multi.json")
+        fs.writeFileSync("./break.txt", s1)
+        fs.writeFileSync("./sudo.txt", sock.authState.creds.me.id)
+        console.log(chalk.red("Please Re-Run System!"))
+        await delay(1000)
+        process.exit()
+      }
+    })
+  }, 20000)
+  store.bind(sock.ev)
+  sock.ev.on('connection.update', async (update) => {
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      if ((lastDisconnect.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut) {
+        PRIMON_PROTO2()
+      } else {
+        console.log('connection closed')
+      }
+    }
+    store.writeToFile('./baileys_store_multi.json')
+    console.log('connection update', update)
+  })
+  sock.ev.on('creds.update', saveCreds)
+  return sock
+}
+
+async function PRIMON_PROTO5() {
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
+  store.readFromFile('./baileys_store_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
+  const sock = makeWASocket({
+    logger: P({ level: 'silent' }),
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
+    printQRInTerminal: true,
+    auth: state,
+    version: [3, 3234, 9],
+  })
+  var z = false
+
+  var INTERVAL = setInterval(async () => {
+    store.writeToFile('./baileys_store_multi.json')
+    fs.exists("./session", async (e) => {
+      if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
+        var s = fs.readFileSync("./auth_info_multi.json")
+        if (s.toString().length < 8000) {
+          console.clear()
+          if (lang == "EN") {
+            console.log("Please Scan The QR Code Again!")
+          }
+          if (lang == "TR") {
+            console.log("Lütfen QR Kodu Tekrar Okutun!")
+          }
+          process.exit()
+        }
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
+        fs.unlinkSync("./auth_info_multi.json")
+        fs.unlinkSync("./baileys_store_multi.json")
+        fs.writeFileSync("./break.txt", s1)
+        fs.writeFileSync("./cont.txt", "1")
+        console.log(chalk.red("Please Re-Run System!"))
+        await delay(1000)
+        process.exit()
+      }
+    })
+  }, 20000)
+  store.bind(sock.ev)
+  sock.ev.on('connection.update', async (update) => {
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      if ((lastDisconnect.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut) {
+        PRIMON_PROTO2()
+      } else {
+        console.log('connection closed')
+      }
+    }
+    store.writeToFile('./baileys_store_multi.json')
+    console.log('connection update', update)
+  })
+  sock.ev.on('creds.update', saveCreds)
+  return sock
+}
+
+async function PRIMON_PROTO6() {
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
+  store.readFromFile('./baileys_store_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds } = await useMultiFileAuthState('session')
+  const sock = makeWASocket({
+    logger: P({ level: 'silent' }),
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
+    printQRInTerminal: true,
+    auth: state,
+    version: [3, 3234, 9],
+  })
+  var z = false
+
+  var INTERVAL = setInterval(async () => {
+    store.writeToFile('./baileys_store_multi.json')
+    fs.exists("./session", async (e) => {
+      if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
+        var s = fs.readFileSync("./auth_info_multi.json")
+        if (s.toString().length < 8000) {
+          console.clear()
+          if (lang == "EN") {
+            console.log("Please Scan The QR Code Again!")
+          }
+          if (lang == "TR") {
+            console.log("Lütfen QR Kodu Tekrar Okutun!")
+          }
+          process.exit()
+        }
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
+        fs.unlinkSync("./auth_info_multi.json")
+        fs.unlinkSync("./baileys_store_multi.json")
+        fs.writeFileSync("./break_session.txt", s1)
+        console.log(chalk.red("Lütfen Sistemi Tekrar Çalıştırın!"))
+        await delay(1000)
+        process.exit()
+      }
+    })
+  }, 20000)
+  store.bind(sock.ev)
+  sock.ev.on('connection.update', async (update) => {
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      if ((lastDisconnect.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut) {
+        PRIMON_PROTO2()
+      } else {
+        console.log('connection closed')
+      }
+    }
+    store.writeToFile('./baileys_store_multi.json')
+    console.log('connection update', update)
+  })
+  sock.ev.on('creds.update', saveCreds)
+  return sock
+}
+
+async function PRIMON_PROTO7() {
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
+  store.readFromFile('./baileys_store_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
+  const sock = makeWASocket({
+    logger: P({ level: 'silent' }),
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
+    printQRInTerminal: true,
+    auth: state,
+    version: [3, 3234, 9],
+  })
+  var z = false
+
+  var INTERVAL = setInterval(async () => {
+    store.writeToFile('./baileys_store_multi.json')
+    fs.exists("./session", async (e) => {
+      if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
+        var s = fs.readFileSync("./auth_info_multi.json")
+        if (s.toString().length < 8000) {
+          console.clear()
+          if (lang == "EN") {
+            console.log("Please Scan The QR Code Again!")
+          }
+          if (lang == "TR") {
+            console.log("Lütfen QR Kodu Tekrar Okutun!")
+          }
+          process.exit()
+        }
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
+        fs.unlinkSync("./auth_info_multi.json")
+        fs.unlinkSync("./baileys_store_multi.json")
+        fs.writeFileSync("./break_session.txt", s1)
+        console.log(chalk.red("Lütfen Sistemi Tekrar Çalıştırın!"))
+        await delay(1000)
+        process.exit()
+      }
+    })
+  }, 20000)
+  store.bind(sock.ev)
+  sock.ev.on('connection.update', async (update) => {
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      if ((lastDisconnect.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut) {
+        PRIMON_PROTO2()
+      } else {
+        console.log('connection closed')
+      }
+    }
+    store.writeToFile('./baileys_store_multi.json')
+    console.log('connection update', update)
+  })
+  sock.ev.on('creds.update', saveCreds)
+  return sock
+}
+
+async function PRIMON_PROTO8() {
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
+  store.readFromFile('./baileys_store_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
+  const sock = makeWASocket({
+    logger: P({ level: 'silent' }),
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
+    printQRInTerminal: true,
+    auth: state,
+    version: [3, 3234, 9],
+  })
+  var z = false
+
+  var INTERVAL = setInterval(async () => {
+    store.writeToFile('./baileys_store_multi.json')
+    fs.exists("./session", async (e) => {
+      if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
+        var s = fs.readFileSync("./auth_info_multi.json")
+        if (s.toString().length < 8000) {
+          console.clear()
+          if (lang == "EN") {
+            console.log("Please Scan The QR Code Again!")
+          }
+          if (lang == "TR") {
+            console.log("Lütfen QR Kodu Tekrar Okutun!")
+          }
+          process.exit()
+        }
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
+        fs.unlinkSync("./auth_info_multi.json")
+        fs.unlinkSync("./baileys_store_multi.json")
+        fs.writeFileSync("./break_session.txt", s1)
+        console.log(chalk.red("Please Re-Run System!"))
+        await delay(1000)
+        process.exit()
+      }
+    })
+  }, 20000)
+  store.bind(sock.ev)
+  sock.ev.on('connection.update', async (update) => {
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      if ((lastDisconnect.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut) {
+        PRIMON_PROTO2()
+      } else {
+        console.log('connection closed')
+      }
+    }
+    store.writeToFile('./baileys_store_multi.json')
+    console.log('connection update', update)
+  })
+  sock.ev.on('creds.update', saveCreds)
+  return sock
+}
+
+async function PRIMON_PROTO9() {
+  const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) })
+  store.readFromFile('./baileys_store_multi.json')
+  var { version } = await fetchLatestBaileysVersion();
+  const { state, saveCreds  } = await useMultiFileAuthState('session')
+  const sock = makeWASocket({
+    logger: P({ level: 'silent' }),
+    browser: ['Primon Proto', 'Chrome', '1.0.0'],
+    printQRInTerminal: true,
+    auth: state,
+    version: [3, 3234, 9]
+  })
+  var z = false
+
+  var INTERVAL = setInterval(async () => {
+    store.writeToFile('./baileys_store_multi.json')
+    fs.exists("./session", async (e) => {
+      if (!e == false) {
+        var a = fs.readdirSync("./session");
+        var d = "";
+        a.map((e) => {
+          d += fs.readFileSync("./session/" + e).toString() + "&&&&&&&"
+        })
+        fs.writeFileSync("./auth_info_multi.json", btoa(d))
+        var c = "";
+        a.map((e2) => {
+          c += e2 + "&&&&&&&"
+        })
+        fs.writeFileSync("./session5", btoa(c))
+        var s = fs.readFileSync("./auth_info_multi.json")
+        if (s.toString().length < 8000) {
+          console.clear()
+          if (lang == "EN") {
+            console.log("Please Scan The QR Code Again!")
+          }
+          if (lang == "TR") {
+            console.log("Lütfen QR Kodu Tekrar Okutun!")
+          }
+          process.exit()
+        }
+        var s1 = fs.readFileSync("./auth_info_multi.json").toString()
+        fs.unlinkSync("./auth_info_multi.json")
+        fs.unlinkSync("./baileys_store_multi.json")
+        fs.writeFileSync("./break_session.txt", s1)
+        console.log(chalk.red("Please Re-Run System!"))
+        await delay(1000)
+        process.exit()
+      }
+    })
+  }, 20000)
+  store.bind(sock.ev)
+  sock.ev.on('connection.update', async (update) => {
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      if ((lastDisconnect.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut) {
+        PRIMON_PROTO2()
+      } else {
+        console.log('connection closed')
+      }
+    }
+    store.writeToFile('./baileys_store_multi.json')
+    console.log('connection update', update)
+  })
+  sock.ev.on('creds.update', saveCreds)
+  return sock
+}
+
+MAIN()
