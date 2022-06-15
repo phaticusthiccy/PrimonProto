@@ -36,4 +36,3 @@ async function save2() {
   } catch {}
   return true
 }
-save2()
