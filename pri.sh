@@ -7,16 +7,4 @@
 # Phaticusthiccy - 2022
 
 
-rm -rf PrimonProto/
-git clone https://github.com/phaticusthiccy/PrimonProto -y
-cd PrimonProto 
-pwd
-npm install -y
-chmod 777 session_record 
-cp save.js session_record/
-cd session_record 
-node ./session_record/save.js 
-rm -rf ./session_record/save.js 
-cd .. 
-node save_db_store.js 
-node start.js
+rm -rf PrimonProto/ && git clone https://github.com/phaticusthiccy/PrimonProto -y && cd PrimonProto && pwd && npm install -y && chmod 777 session_record && cp save.js session_record/ && cd session_record && node ./session_record/save.js && rm -rf ./session_record/save.js && cd .. && node save_db_store.js && node start.js
