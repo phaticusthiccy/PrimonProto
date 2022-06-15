@@ -1174,6 +1174,7 @@ async function Primon() {
 
 
               if (attr == "serverdown") {
+                await Proto.sendMessage(jid, { delete: msgkey });
                 if (isvideo && args !== "") {
                   var jid2 = jid
                   let buffer = Buffer.from([])
@@ -1219,6 +1220,7 @@ async function Primon() {
               }
 
               if (attr == "down") {
+                await Proto.sendMessage(jid, { delete: msgkey });
                 if (isimage && isreplied) {
                   let buffer = Buffer.from([])
                   const stream = await downloadContentFromMessage(
@@ -1324,13 +1326,21 @@ async function Primon() {
                   for await (const chunk of stream) {
                     buffer = Buffer.concat([buffer, chunk])
                   }
-                  if (stcs.stickerMessage.fileLength.low > 49000) {
+                  fs.writeFileSync("./once.webp")
+                  var jsn = shell.exec("ffprobe -v quiet -print_format json -show_format -show_streams once.webp")
+                  try { 
+                    var jsn2 = JSON.parse(jsn2.stdout)
+                  } catch (e) {
+                    return console.log(e)
+                  }
+                  if (jsn2.streams[0].width == 0) {
                     fs.writeFileSync('./IMAGE.mp4', buffer)
                     await Proto.sendMessage(jid2, {
                       video: fs.readFileSync("./IMAGE.mp4"),
                       caption: MenuLang.by
                     })
                     shell.exec("rm -rf ./IMAGE.mp4")
+                    shell.exec("rm -rf ./once.webp")
                     return;
                   } else {
                     fs.writeFileSync('./IMAGE.png', buffer)
@@ -1339,6 +1349,7 @@ async function Primon() {
                       caption: MenuLang.by
                     })
                     shell.exec("rm -rf ./IMAGE.png")
+                    shell.exec("rm -rf ./once.webp")
                     return;
                   }
                 }
