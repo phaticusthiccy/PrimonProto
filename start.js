@@ -525,7 +525,7 @@ async function ytaudio(link, downloadFolder) {
   }
 }
 async function Primon() {
-  const { state, saveCreds } = await useMultiFileAuthState("./session");
+  const { state, saveCreds } = await useMultiFileAuthState("session_recod");
   const Proto = makeWASocket({
     auth: state,
     logger: P({ level: PrimonDB.debug === true ? "debug" : "silent" }),
