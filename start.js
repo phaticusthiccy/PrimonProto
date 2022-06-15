@@ -3185,7 +3185,7 @@ async function Primon() {
                       return;
                     } else {
                       re = re.alive_msg
-                      re.alive_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.alive_msg_media.media) }, { caption: modulelang.get_alive + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.alive_msg_media.media) }, { caption: modulelang.get_alive + re})
+                      PrimonDB.alive_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(PrimonDB.alive_msg_media.media) }, { caption: modulelang.get_alive + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(PrimonDB.alive_msg_media.media) }, { caption: modulelang.get_alive + re})
                     }
                     return;
                   } else if (args == "afk") {
@@ -3197,7 +3197,7 @@ async function Primon() {
                       return;
                     } else {
                       re = re.afk.message
-                      re.afk_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.afk_media.media) }, { caption: modulelang.get_afk + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.afk_media.media) }, { caption: modulelang.get_afk + re})
+                      PrimonDB.afk_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(PrimonDB.afk_media.media) }, { caption: modulelang.get_afk + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(PrimonDB.afk_media.media) }, { caption: modulelang.get_afk + re})
                     }
                     return;
                   } else if (args == "ban") {
@@ -3209,7 +3209,7 @@ async function Primon() {
                       return;
                     } else {
                       re = re.ban_msg
-                      re.ban_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.ban_msg_media.media) }, { caption: modulelang.get_ban + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.ban_msg_media.media) }, { caption: modulelang.get_ban + re})
+                      PrimonDB.ban_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(PrimonDB.ban_msg_media.media) }, { caption: modulelang.get_ban + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(PrimonDB.ban_msg_media.media) }, { caption: modulelang.get_ban + re})
                     }
                     return;
                   } else if (args == "mute") {
@@ -3221,7 +3221,7 @@ async function Primon() {
                       return;
                     } else {
                       re = re.mute_msg
-                      re.mute_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.mute_msg_media.media) }, { caption: modulelang.get_mute + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.mute_msg_media.media) }, { caption: modulelang.get_mute + re})
+                      PrimonDB.mute_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(PrimonDB.mute_msg_media.media) }, { caption: modulelang.get_mute + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(PrimonDB.mute_msg_media.media) }, { caption: modulelang.get_mute + re})
                     }
                     return;
                   } else if (args == "unmute") {
@@ -3233,7 +3233,7 @@ async function Primon() {
                       return;
                     } else {
                       re = re.mute_msg
-                      re.mute_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.mute_msg_media.media) }, { caption: modulelang.get_mute + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.mute_msg_media.media) }, { caption: modulelang.get_mute + re})
+                      PrimonDB.mute_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(PrimonDB.mute_msg_media.media) }, { caption: modulelang.get_mute + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(PrimonDB.mute_msg_media.media) }, { caption: modulelang.get_mute + re})
                     }
                     return;
                   } else if (args == "block") {
@@ -3245,7 +3245,7 @@ async function Primon() {
                       return;
                     } else {
                       re = re.block_msg
-                      re.bloc_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.bloc_msg_media.media) }, { caption: modulelang.get_block + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.bloc_msg_media.media) }, { caption: modulelang.get_block + re})
+                      PrimonDB.bloc_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(PrimonDB.bloc_msg_media.media) }, { caption: modulelang.get_block + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(PrimonDB.bloc_msg_media.media) }, { caption: modulelang.get_block + re})
                     }
                     return;
                   } else if (args == "unblock") {
@@ -3257,7 +3257,7 @@ async function Primon() {
                       return;
                     } else {
                       re = re.unblock_msg
-                      re.unblock_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.unblock_msg_media.media) }, { caption: modulelang.get_unblock + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.unblock_msg_media.media) }, { caption: modulelang.get_unblock + re})
+                      PrimonDB.unblock_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(PrimonDB.unblock_msg_media.media) }, { caption: modulelang.get_unblock + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(PrimonDB.unblock_msg_media.media) }, { caption: modulelang.get_unblock + re})
                     }
                     return;
                   } else {
