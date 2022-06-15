@@ -2146,7 +2146,7 @@ async function Primon() {
                       },
                       public: false
                     })
-                    var ids = oct.id
+                    var ids = oct.data.id
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2187,7 +2187,7 @@ async function Primon() {
                       },
                       public: false
                     })
-                    var ids = oct.id
+                    var ids = oct.data.id
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2228,7 +2228,7 @@ async function Primon() {
                       },
                       public: false
                     })
-                    var ids = oct.id
+                    var ids = oct.data.id
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2270,7 +2270,7 @@ async function Primon() {
                       },
                       public: false
                     })
-                    var ids = oct.id
+                    var ids = oct.data.id
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2294,7 +2294,7 @@ async function Primon() {
                   var res2 = res
                   res2.alive_msg = repliedmsg;
                   res2.alive_msg_media.type = ""
-                  res2.alive_msg_media.media = []
+                  res2.alive_msg_media.media = ""
                   var renwe_handler = await octokit.request("PATCH /gists/{gist_id}", {
                     gist_id: process.env.GITHUB_DB,
                     description: "Primon Proto için Kalıcı Veritabanı",
@@ -3166,7 +3166,11 @@ async function Primon() {
                       return;
                     } else {
                       re = re.alive_msg
-                      PrimonDB.alive_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(PrimonDB.alive_msg_media.media), caption: modulelang.get_alive + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(PrimonDB.alive_msg_media.media) ,caption: modulelang.get_alive + re})
+                      var validimg = await octokit.request("GET /gists/{gist_id}", {
+                        gist_id: PrimonDB.alive_msg_media.media,
+                      })
+                      validimg = d.data.files["alive.txt"].content;
+                      PrimonDB.alive_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(validimg), caption: modulelang.get_alive + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(validimg) ,caption: modulelang.get_alive + re})
                     }
                     return;
                   } else if (repliedmsg == "afk") {
@@ -4029,7 +4033,7 @@ async function Primon() {
                       var validimg = await octokit.request("GET /gists/{gist_id}", {
                         gist_id: PrimonDB.alive_msg_media.media,
                       })
-                      validimg = d.data.files["primon.db.json"].content;
+                      validimg = d.data.files["alive.txt"].content;
                       fs.writeFileSync("./alive.png", validimg, "base64")
                       return await Proto.sendMessage(jid, {
                         image: fs.readFileSync("./alive.png"),
@@ -4047,7 +4051,7 @@ async function Primon() {
                       var validimg = await octokit.request("GET /gists/{gist_id}", {
                         gist_id: PrimonDB.alive_msg_media.media,
                       })
-                      validimg = d.data.files["primon.db.json"].content;
+                      validimg = d.data.files["alive.txt"].content;
                       fs.writeFileSync("./alive.mp4", validimg, "base64")
                       return await Proto.sendMessage(jid, {
                         video: fs.readFileSync("./alive.mp4"),
