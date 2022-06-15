@@ -3176,7 +3176,7 @@ async function Primon() {
                     return;
                   }
                 } else {
-                  if (repliedmsg == "alive") {
+                  if (args == "alive") {
                     var re = PrimonDB;
                     if (re.alive_msg_media.type == "") {
                       re = re.alive_msg
@@ -3188,7 +3188,7 @@ async function Primon() {
                       re.alive_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.alive_msg_media.media) }, { caption: modulelang.get_alive + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.alive_msg_media.media) }, { caption: modulelang.get_alive + re})
                     }
                     return;
-                  } else if (repliedmsg == "afk") {
+                  } else if (args == "afk") {
                     var re = PrimonDB;
                     if (re.afk_media.type == "") {
                       re = re.afk.message
@@ -3200,7 +3200,7 @@ async function Primon() {
                       re.afk_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.afk_media.media) }, { caption: modulelang.get_afk + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.afk_media.media) }, { caption: modulelang.get_afk + re})
                     }
                     return;
-                  } else if (repliedmsg == "ban") {
+                  } else if (args == "ban") {
                     var re = PrimonDB;
                     if (re.ban_msg_media.type == "") {
                       re = re.ban_msg
@@ -3212,7 +3212,7 @@ async function Primon() {
                       re.ban_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.ban_msg_media.media) }, { caption: modulelang.get_ban + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.ban_msg_media.media) }, { caption: modulelang.get_ban + re})
                     }
                     return;
-                  } else if (repliedmsg == "mute") {
+                  } else if (args == "mute") {
                     var re = PrimonDB;
                     if (re.mute_msg_media.type == "") {
                       re = re.mute_msg
@@ -3224,7 +3224,7 @@ async function Primon() {
                       re.mute_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.mute_msg_media.media) }, { caption: modulelang.get_mute + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.mute_msg_media.media) }, { caption: modulelang.get_mute + re})
                     }
                     return;
-                  } else if (repliedmsg == "unmute") {
+                  } else if (args == "unmute") {
                     var re = PrimonDB;
                     if (re.unmute_msg_media.type == "") {
                       re = re.unmute_msg
@@ -3236,7 +3236,7 @@ async function Primon() {
                       re.mute_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.mute_msg_media.media) }, { caption: modulelang.get_mute + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.mute_msg_media.media) }, { caption: modulelang.get_mute + re})
                     }
                     return;
-                  } else if (repliedmsg == "block") {
+                  } else if (args == "block") {
                     var re = PrimonDB;
                     if (re.bloc_msg_media.type == "") {
                       re = re.block_msg
@@ -3248,7 +3248,7 @@ async function Primon() {
                       re.bloc_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(re.bloc_msg_media.media) }, { caption: modulelang.get_block + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(re.bloc_msg_media.media) }, { caption: modulelang.get_block + re})
                     }
                     return;
-                  } else if (repliedmsg == "unblock") {
+                  } else if (args == "unblock") {
                     var re = PrimonDB;
                     if (re.unblock_msg_media.type == "") {
                       re = re.unblock_msg
