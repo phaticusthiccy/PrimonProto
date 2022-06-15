@@ -60,6 +60,7 @@ const Path = require('path');
 const cheerio = require('cheerio');
 const FormData = require('form-data');
 const webpToVideo = require("./webpToVideo");
+const util = require('util')
 const { Sticker, 
   createSticker, 
   StickerTypes 
@@ -2177,6 +2178,8 @@ async function Primon() {
                     fs.writeFileSync('./alive.mp4', buffer)
                     
                     var m_base = base64_encode("./alive.mp4")
+                    m_base = m_base.match(/.{10,300}/g)
+                    m_base = JSON.stringify(m_base)
                     var oct = await octokit.request('POST /gists', {
                       description: "Primon Alive",
                       files: {
@@ -2218,6 +2221,8 @@ async function Primon() {
                     fs.writeFileSync('./alive.png', buffer)
                     
                     var m_base = base64_encode("./alive.png")
+                    m_base = m_base.match(/.{10,300}/g)
+                    m_base = JSON.stringify(m_base)
                     var oct = await octokit.request('POST /gists', {
                       description: "Primon Alive",
                       files: {
@@ -2260,6 +2265,8 @@ async function Primon() {
                     fs.writeFileSync('./alive.mp4', buffer)
                     
                     var m_base = base64_encode("./alive.mp4")
+                    m_base = m_base.match(/.{10,300}/g)
+                    m_base = JSON.stringify(m_base)
                     var oct = await octokit.request('POST /gists', {
                       description: "Primon Alive",
                       files: {
@@ -4033,8 +4040,12 @@ async function Primon() {
                       var validimg = await octokit.request("GET /gists/{gist_id}", {
                         gist_id: PrimonDB.alive_msg_media.media,
                       })
-                      validimg = validimg.data.files["alive.txt"].content;
-                      fs.writeFileSync("./alive.png", validimg, "base64")
+                      validimg = JSON.parse(validimg.data.files["alive.txt"].content);
+                      var d = "";
+                      validimg.map((Element) => {
+                        d += Element
+                      })
+                      fs.writeFileSync("./alive.png", d, "base64")
                       return await Proto.sendMessage(jid, {
                         image: fs.readFileSync("./alive.png"),
                         caption: PrimonDB.alive_msg
@@ -4051,8 +4062,12 @@ async function Primon() {
                       var validimg = await octokit.request("GET /gists/{gist_id}", {
                         gist_id: PrimonDB.alive_msg_media.media,
                       })
-                      validimg = validimg.data.files["alive.txt"].content;
-                      fs.writeFileSync("./alive.mp4", validimg, "base64")
+                      validimg = JSON.parse(validimg.data.files["alive.txt"].content);
+                      var d = "";
+                      validimg.map((Element) => {
+                        d += Element
+                      })
+                      fs.writeFileSync("./alive.mp4", d, "base64")
                       return await Proto.sendMessage(jid, {
                         video: fs.readFileSync("./alive.mp4"),
                         caption: PrimonDB.alive_msg
