@@ -49,16 +49,17 @@ const pinglang = Language.getString("ping");
 const goodbyelang = Language.getString("goodbye");
 const welcomelang = Language.getString("welcome");
 const filterlang = Language.getString("filter");
-const stoplang = Language.getString("stop_f")
+const stoplang = Language.getString("stop_f");
 const startlang = Language.getString("onStart");
 const openapi = require("@phaticusthiccy/open-apis");
 const config = require("./config_proto");
 const { Octokit } = require("@octokit/core");
 const shell = require('shelljs');
 const { exec } = require("child_process");
-const Path = require('path')
-const cheerio = require('cheerio')
-const FormData = require('form-data')
+const Path = require('path');
+const cheerio = require('cheerio');
+const FormData = require('form-data');
+const webpToVideo = require("./webpToVideo");
 const { Sticker, 
   createSticker, 
   StickerTypes 
@@ -1377,20 +1378,19 @@ async function Primon() {
                   fs.writeFileSync("./once.webp", buffer)
                   var jsn = shell.exec("ffprobe -v quiet -print_format json -show_streams once.webp")
                   if (Number(jsn.split('"width": ')[1][0]) == 0) { 
-                    var datas = await webp2mp4File("./once.webp")
-                    await axios({ method: "GET", url: datas.result, responseType: "stream"}).then(({ data3 }) => {
-                      const saving = data3.pipe(fs.createWriteStream('/IMAGE.mp4'))
-                      saving.on("finish", async () => {
-                        await Proto.sendMessage(jid2, {
-                          video: fs.readFileSync("./IMAGE.mp4"),
-                          caption:
-                           MenuLang.by
-                        })
+                    webpToVideo.webp_to_mp4("./once.webp", {
+                      source_format: "webp"
+                    }).then((filew) => {
+                      fs.writeFileSync("./IMAGE.mp4", filew)
+                      await Proto.sendMessage(jid2, {
+                        video: fs.readFileSync("./IMAGE.mp4"),
+                        caption:
+                         MenuLang.by
                       })
+                      shell.exec("rm -rf ./IMAGE.mp4")
+                      shell.exec("rm -rf ./once.webp")
+                      return;
                     })
-                    shell.exec("rm -rf ./IMAGE.mp4")
-                    shell.exec("rm -rf ./once.webp")
-                    return;
                   } else {
                     fs.writeFileSync('./IMAGE.png', buffer)
                     await Proto.sendMessage(jid2, {
