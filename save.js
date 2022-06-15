@@ -31,7 +31,6 @@ var sn2 = sn.split("&&&&&&&");
 sn2.map((Element2) => {
   if (Element2 !== "" || Element2 !== " ") {
     var name = "session_record/" + sn4[sayac]
-    console.log(name)
     if (name !== "session_record/" || name !== "session_record/ " || name !== "session_record/\n") {
       try {
         fs.writeFileSync(name, Element2);
@@ -40,7 +39,6 @@ sn2.map((Element2) => {
   }
   sayac += 1;
 });
-shell.exec("ls && cd session_record && ls")
 console.log("Primon Session Updated!");
 try {
   fs.unlinkSync("./session_record/test.txt");
