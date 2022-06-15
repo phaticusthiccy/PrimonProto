@@ -26,7 +26,7 @@ async function save2() {
   var sn2 = sn.split("&&&&&&&")
   sn2.forEach((Element) => {
     if (Element !== "" || Element !== " ") {
-      fs.writeFileSync(sn4[sayac], Element)
+      fs.writeFileSync(".session/" + sn4[sayac], Element)
     }
     sayac = sayac + 1
   })

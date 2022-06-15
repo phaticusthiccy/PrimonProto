@@ -641,6 +641,7 @@ async function Primon() {
       sudo.push(PrimonDB.sudo);
     }
   }
+  console.log(Proto)
   try {
     meid = Proto.user.id.split(":")[0] + "@s.whatsapp.net";
   } catch {
