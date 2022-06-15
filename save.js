@@ -21,10 +21,12 @@ async function save2() {
       sn4.push(Element)
     } 
   })
+  console.log(sn4)
   var sayac = 0
   sn = Buffer.from(process.env.SESSION + process.env.SESSION2 + process.env.SESSION3 + process.env.SESSION4, "base64").toString()
   var sn2 = sn.split("&&&&&&&")
-  sn2.map((Element) => {
+  console.log(sn2)
+  sn2.forEach((Element) => {
     if (Element !== "" || Element !== " ") {
       fs.writeFileSync("session/" + sn4[sayac], Element)
     }
