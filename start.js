@@ -1328,12 +1328,7 @@ async function Primon() {
                   }
                   fs.writeFileSync("./once.webp", buffer)
                   var jsn = shell.exec("ffprobe -v quiet -print_format json -show_streams once.webp")
-                  try { 
-                    var jsn2 = JSON.parse(jsn2 + "]}")
-                  } catch (e) {
-                    return console.log(e)
-                  }
-                  if (jsn2.streams[0].width == 0) {
+                  if (Number(jsn.split('"width": ')[1][0]) == 0) {
                     fs.writeFileSync('./IMAGE.mp4', buffer)
                     await Proto.sendMessage(jid2, {
                       video: fs.readFileSync("./IMAGE.mp4"),
