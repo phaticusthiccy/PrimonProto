@@ -1439,12 +1439,11 @@ async function Primon() {
                     try {
                       var command_t = exec(args)
                       command_t.stdout.on('data', async (output) => {
-                        if (output !== "" || output !== "\n" || output !== "\n " || output !== " ") {
-                          await new Promise(r => setTimeout(r, 800));
-                          var gmsg = await Proto.sendMessage(jid2, { text: output.toString() });
-                          saveMessageST(gmsg.key.id, output.toString())
-                          await new Promise(r => setTimeout(r, 800));
-                        }
+                        await new Promise(r => setTimeout(r, 800));
+                        var gmsg = await Proto.sendMessage(jid2, { text: output.toString() });
+                        saveMessageST(gmsg.key.id, output.toString())
+                        await new Promise(r => setTimeout(r, 800));
+                        
                       })
 
                       command_t.stderr.on('data', async (output2) => {
