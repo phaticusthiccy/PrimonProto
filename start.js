@@ -3275,7 +3275,19 @@ async function Primon() {
                   await Proto.sendMessage(jid, { delete: msgkey });
                   var style = textpro_links(args);
                   if (style !== "") {
-                    var img = await openapi.textpro(style, repliedmsg);
+                    try {
+                      var img = await openapi.textpro(style, repliedmsg);
+                    } catch {
+                      var msg = await Proto.sendMessage(
+                        jid,
+                        {
+                          text: modulelang.textpro_null,
+                        }
+                      );
+                      await Proto.sendMessage(jid2, react(msg, "bad"));
+                      saveMessageST(msg.key.id, modulelang.textpro_null)
+                      return;
+                    }
                     var img2 = await axios.get(img, {
                       responseType: "arraybuffer",
                     });
@@ -3336,7 +3348,19 @@ async function Primon() {
                       saveMessageST(gmsg.key.id, modulelang.textpro_null)
                       return;
                     }
-                    var img = await openapi.textpro(url, text);
+                    try {
+                      var img = await openapi.textpro(style, repliedmsg);
+                    } catch {
+                      var msg = await Proto.sendMessage(
+                        jid,
+                        {
+                          text: modulelang.textpro_null,
+                        }
+                      );
+                      await Proto.sendMessage(jid2, react(msg, "bad"));
+                      saveMessageST(msg.key.id, modulelang.textpro_null)
+                      return;
+                    }
                     var img2 = await axios.get(img, {
                       responseType: "arraybuffer",
                     });
