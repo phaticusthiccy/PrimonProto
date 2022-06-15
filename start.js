@@ -1928,7 +1928,10 @@ async function Primon() {
                   "{%c}",
                   metadata.subject
                 );
-                await Proto.sendMessage(jid2, {
+                users.forEach((Element) => {
+                  defaultMsg += "🔹 @" + Element.split("@")[0] + "\n";
+                });
+                var gmsg = await Proto.sendMessage(jid2, {
                   text: defaultMsg
                 }, { mentions: users })
                 saveMessageST(gmsg.key.id, defaultMsg)
