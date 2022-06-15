@@ -1917,10 +1917,9 @@ async function Primon() {
                   return;
                 }
                 const metadata = await Proto.groupMetadata(jid2);
-                console.log(metadata.participants)
                 var users = [];
                 metadata.participants.map((user) => {
-                  if (user.isAdmin) {
+                  if (user.isAdmin || user.admin == "superadmin" || user.admin == "admin") {
                     users.push(user.id);
                   }
                 })
