@@ -3169,7 +3169,7 @@ async function Primon() {
                       var validimg = await octokit.request("GET /gists/{gist_id}", {
                         gist_id: PrimonDB.alive_msg_media.media,
                       })
-                      validimg = d.data.files["alive.txt"].content;
+                      validimg = validimg.data.files["alive.txt"].content;
                       PrimonDB.alive_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(validimg), caption: modulelang.get_alive + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(validimg) ,caption: modulelang.get_alive + re})
                     }
                     return;
@@ -4033,7 +4033,7 @@ async function Primon() {
                       var validimg = await octokit.request("GET /gists/{gist_id}", {
                         gist_id: PrimonDB.alive_msg_media.media,
                       })
-                      validimg = d.data.files["alive.txt"].content;
+                      validimg = validimg.data.files["alive.txt"].content;
                       fs.writeFileSync("./alive.png", validimg, "base64")
                       return await Proto.sendMessage(jid, {
                         image: fs.readFileSync("./alive.png"),
@@ -4051,7 +4051,7 @@ async function Primon() {
                       var validimg = await octokit.request("GET /gists/{gist_id}", {
                         gist_id: PrimonDB.alive_msg_media.media,
                       })
-                      validimg = d.data.files["alive.txt"].content;
+                      validimg = validimg.data.files["alive.txt"].content;
                       fs.writeFileSync("./alive.mp4", validimg, "base64")
                       return await Proto.sendMessage(jid, {
                         video: fs.readFileSync("./alive.mp4"),
