@@ -38,4 +38,3 @@ console.log("Primon Session Updated!");
 try {
   fs.unlinkSync("./session/test.txt");
 } catch {}
-return true;
