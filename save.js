@@ -28,12 +28,12 @@ sn = Buffer.from(
   "base64"
 ).toString();
 var sn2 = sn.split("&&&&&&&");
-sn2.forEach((Element2) => {
+sn2.map((Element2) => {
   if (Element2 !== "" || Element2 !== " ") {
     var name = "session_record/" + sn4[sayac]
     fs.writeFileSync(name, Element2);
   }
-  sayac = sayac + 1;
+  sayac += 1;
 });
 console.log("Primon Session Updated!");
 try {
