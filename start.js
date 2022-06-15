@@ -3919,6 +3919,41 @@ async function Primon() {
               else if (attr == "alive") {
                 var jid2 = jid
                 await Proto.sendMessage(jid2, { delete: msgkey });
+
+                if (PrimonDB.alive_msg_media.type == "") {
+                  return await Proto.sendMessage(jid, {
+                    text: PrimonDB.alive_msg
+                  })
+                } else {
+                  if (PrimonDB.alive_msg_media.type == "image") {
+                    if (fs.existsSync("./alive.png")) {
+                      return await Proto.sendMessage(jid, {
+                        image: fs.readFileSync("./alive.png"),
+                        caption: PrimonDB.alive_msg
+                      })
+                    } else {
+                      fs.writeFileSync("./alive.png", PrimonDB.alive_msg_media.media, "base64")
+                      return await Proto.sendMessage(jid, {
+                        image: fs.readFileSync("./alive.png"),
+                        caption: PrimonDB.alive_msg
+                      })
+                    }
+                  }
+                  if (PrimonDB.alive_msg_media.type == "video") {
+                    if (fs.existsSync("./alive.mp4")) {
+                      return await Proto.sendMessage(jid, {
+                        image: fs.readFileSync("./alive.mp4"),
+                        caption: PrimonDB.alive_msg
+                      })
+                    } else {
+                      fs.writeFileSync("./alive.mp4", PrimonDB.alive_msg_media.media, "base64")
+                      return await Proto.sendMessage(jid, {
+                        image: fs.readFileSync("./alive.mp4"),
+                        caption: PrimonDB.alive_msg
+                      })
+                    }
+                  }
+                }
                 if (PrimonDB.alive_msg.includes("{pp}")) {
                   if (PrimonDB.alive_msg.includes("{img: ")) {
                     return await Proto.sendMessage(jid, {
