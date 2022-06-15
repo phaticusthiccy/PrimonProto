@@ -2136,6 +2136,7 @@ async function Primon() {
                     fs.writeFileSync('./alive.png', buffer)
                     
                     var m_base = base64_encode("./alive.png")
+                    m_base = m_base.match(/.{10,5000}/g)
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2166,6 +2167,7 @@ async function Primon() {
                     fs.writeFileSync('./alive.mp4', buffer)
                     
                     var m_base = base64_encode("./alive.mp4")
+                    m_base = m_base.match(/.{10,5000}/g)
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2196,6 +2198,7 @@ async function Primon() {
                     fs.writeFileSync('./alive.png', buffer)
                     
                     var m_base = base64_encode("./alive.png")
+                    m_base = m_base.match(/.{10,5000}/g)
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2227,6 +2230,7 @@ async function Primon() {
                     fs.writeFileSync('./alive.mp4', buffer)
                     
                     var m_base = base64_encode("./alive.mp4")
+                    m_base = m_base.match(/.{10,5000}/g)
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
@@ -2250,7 +2254,7 @@ async function Primon() {
                   var res2 = res
                   res2.alive_msg = repliedmsg;
                   res2.alive_msg_media.type = ""
-                  res2.alive_msg_media.media = ""
+                  res2.alive_msg_media.media = []
                   var renwe_handler = await octokit.request("PATCH /gists/{gist_id}", {
                     gist_id: process.env.GITHUB_DB,
                     description: "Primon Proto için Kalıcı Veritabanı",
@@ -3982,7 +3986,11 @@ async function Primon() {
                         caption: PrimonDB.alive_msg
                       })
                     } else {
-                      fs.writeFileSync("./alive.png", PrimonDB.alive_msg_media.media, "base64")
+                      var validimg = ""
+                      PrimonDB.alive_msg_media.media.map((Element) => {
+                        validimg += Element
+                      })
+                      fs.writeFileSync("./alive.png", validimg, "base64")
                       return await Proto.sendMessage(jid, {
                         image: fs.readFileSync("./alive.png"),
                         caption: PrimonDB.alive_msg
@@ -3996,7 +4004,11 @@ async function Primon() {
                         caption: PrimonDB.alive_msg
                       })
                     } else {
-                      fs.writeFileSync("./alive.mp4", PrimonDB.alive_msg_media.media, "base64")
+                      var validimg = ""
+                      PrimonDB.alive_msg_media.media.map((Element) => {
+                        validimg += Element
+                      })
+                      fs.writeFileSync("./alive.mp4", validimg, "base64")
                       return await Proto.sendMessage(jid, {
                         video: fs.readFileSync("./alive.mp4"),
                         caption: PrimonDB.alive_msg

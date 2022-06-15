@@ -162,11 +162,13 @@ import shell from 'shelljs'
     "alive_msg": "",
     "alive_msg_media": {
       "type": "",
-      "media": ""
+      "media": []
     },
     "db_url": "",
     "token_key": "",
-    "lang_json": false
+    "lang_json": false,
+    "public": false,
+    "isstarred": false
   }
 
 `
