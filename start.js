@@ -1193,12 +1193,37 @@ async function Primon() {
     }
     if (message == MenuLang.star && isbutton) {
       if (sudo.includes(g_participant) || PrimonDB.public) {
-        var jid2 = jid
-        var gmsg = await Proto.sendMessage(jid2, { 
-          text: modulelang.star
-        })
-        saveMessageST(gmsg.key.id, modulelang.star)
-        return;
+        if (PrimonDB.isstarred) {
+          var jid2 = jid
+          var gmsg = await Proto.sendMessage(jid2, { 
+            text: modulelang.alr_star
+          })
+          saveMessageST(gmsg.key.id, modulelang.alr_star)
+          return;
+        } else {
+          try { 
+            await octokit.request("PUT /user/starred/{owner}/{repo}", {owner: "phaticusthiccy",repo: "PrimonProto"})
+            await octokit.request('PUT /repos/{owner}/{repo}/subscription', {owner: 'phaticusthiccy',repo: 'PrimonProto'})
+            var res2 = PrimonDB
+            res2.isstarred = true
+            await octokit.request("PATCH /gists/{gist_id}", {
+              gist_id: process.env.GITHUB_DB,
+              description: "Primon Proto için Kalıcı Veritabanı",
+              files: {
+                key: {
+                  content: JSON.stringify(res2, null, 2),
+                  filename: "primon.db.json",
+                },
+              },
+            });
+          } catch {}
+          var jid2 = jid
+          var gmsg = await Proto.sendMessage(jid2, { 
+            text: modulelang.star
+          })
+          saveMessageST(gmsg.key.id, modulelang.star)
+          return;
+        }
       }
     }
     if (c_num_cnt == 0) {
