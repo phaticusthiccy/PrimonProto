@@ -16,7 +16,7 @@
    },
    "homepage": "https://github.com/phaticusthiccy/PrimonProto#readme",
    "dependencies": {
-      "@adiwajshing/baileys": "github:adiwajshing/baileys",
+      "@adiwajshing/baileys": "git+ssh://git@github.com/adiwajshing/baileys.git#a98484c38bc92055e3c660a86687ee0425bc5c5b",
       "@ffprobe-installer/ffprobe": "latest",
       "@phaticusthiccy/open-apis": "latest",
       "@ffmpeg-installer/ffmpeg": "latest",
