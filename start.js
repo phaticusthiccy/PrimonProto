@@ -2135,24 +2135,11 @@ async function Primon() {
                       buffer = Buffer.concat([buffer, chunk])
                     }
                     fs.writeFileSync('./alive.png', buffer)
-                    
-                    var m_base = base64_encode("./alive.png")
-                    var oct = await octokit.request('POST /gists', {
-                      description: "Primon Alive",
-                      files: {
-                        key: {
-                          content: m_base,
-                          filename: "alive.txt"
-                        }
-                      },
-                      public: false
-                    })
-                    var ids = oct.data.id
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
                     res2.alive_msg_media.type = "image"
-                    res2.alive_msg_media.media = ids
+                    res2.alive_msg_media.media = "./alive.png"
                     await octokit.request("PATCH /gists/{gist_id}", {
                       gist_id: process.env.GITHUB_DB,
                       description: "Primon Proto için Kalıcı Veritabanı",
@@ -2176,26 +2163,11 @@ async function Primon() {
                       buffer = Buffer.concat([buffer, chunk])
                     }
                     fs.writeFileSync('./alive.mp4', buffer)
-                    
-                    var m_base = base64_encode("./alive.mp4")
-                    m_base = m_base.match(/.{10,300}/g)
-                    m_base = JSON.stringify(m_base)
-                    var oct = await octokit.request('POST /gists', {
-                      description: "Primon Alive",
-                      files: {
-                        key: {
-                          content: m_base,
-                          filename: "alive.txt"
-                        }
-                      },
-                      public: false
-                    })
-                    var ids = oct.data.id
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
                     res2.alive_msg_media.type = "video"
-                    res2.alive_msg_media.media = ids
+                    res2.alive_msg_media.media = "./alive.mp4"
                     await octokit.request("PATCH /gists/{gist_id}", {
                       gist_id: process.env.GITHUB_DB,
                       description: "Primon Proto için Kalıcı Veritabanı",
@@ -2219,26 +2191,11 @@ async function Primon() {
                       buffer = Buffer.concat([buffer, chunk])
                     }
                     fs.writeFileSync('./alive.png', buffer)
-                    
-                    var m_base = base64_encode("./alive.png")
-                    m_base = m_base.match(/.{10,300}/g)
-                    m_base = JSON.stringify(m_base)
-                    var oct = await octokit.request('POST /gists', {
-                      description: "Primon Alive",
-                      files: {
-                        key: {
-                          content: m_base,
-                          filename: "alive.txt"
-                        }
-                      },
-                      public: false
-                    })
-                    var ids = oct.data.id
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
                     res2.alive_msg_media.type = "image"
-                    res2.alive_msg_media.media = ids
+                    res2.alive_msg_media.media = "./alive.png"
                     await octokit.request("PATCH /gists/{gist_id}", {
                       gist_id: process.env.GITHUB_DB,
                       description: "Primon Proto için Kalıcı Veritabanı",
@@ -2263,26 +2220,11 @@ async function Primon() {
                       buffer = Buffer.concat([buffer, chunk])
                     }
                     fs.writeFileSync('./alive.mp4', buffer)
-                    
-                    var m_base = base64_encode("./alive.mp4")
-                    m_base = m_base.match(/.{10,300}/g)
-                    m_base = JSON.stringify(m_base)
-                    var oct = await octokit.request('POST /gists', {
-                      description: "Primon Alive",
-                      files: {
-                        key: {
-                          content: m_base,
-                          filename: "alive.txt"
-                        }
-                      },
-                      public: false
-                    })
-                    var ids = oct.data.id
                     var res = PrimonDB;
                     var res2 = res
                     res2.alive_msg = repliedmsg;
                     res2.alive_msg_media.type = "video"
-                    res2.alive_msg_media.media = ids
+                    res2.alive_msg_media.media = "./alive.mp4"
                     await octokit.request("PATCH /gists/{gist_id}", {
                       gist_id: process.env.GITHUB_DB,
                       description: "Primon Proto için Kalıcı Veritabanı",
@@ -3166,18 +3108,15 @@ async function Primon() {
                 if (isreplied) {
                   if (repliedmsg == "alive") {
                     var re = PrimonDB;
-                    if (re.alive_msg_media.type == "") {
+                    if (re.alive_msg_media.type == "" && (!fs.existsSync("./alive.png") && fs.existsSync("./alive.mp4"))) {
                       re = re.alive_msg
                       var gmsg = await Proto.sendMessage(jid2, { text: modulelang.get_alive + re})
                       saveMessageST(gmsg.key.id, modulelang.get_alive + re)
                       return;
                     } else {
                       re = re.alive_msg
-                      var validimg = await octokit.request("GET /gists/{gist_id}", {
-                        gist_id: PrimonDB.alive_msg_media.media,
-                      })
-                      validimg = validimg.data.files["alive.txt"].content;
-                      PrimonDB.alive_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(validimg), caption: modulelang.get_alive + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(validimg) ,caption: modulelang.get_alive + re})
+                      var validimg = fs.readFileSync(PrimonDB.alive_msg_media.media)
+                      PrimonDB.alive_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: validimg, caption: modulelang.get_alive + re}) : await Proto.sendMessage(jid2, {video: validimg ,caption: modulelang.get_alive + re})
                     }
                     return;
                   } else if (repliedmsg == "afk") {
@@ -3260,14 +3199,15 @@ async function Primon() {
                 } else {
                   if (args == "alive") {
                     var re = PrimonDB;
-                    if (re.alive_msg_media.type == "") {
+                    if (re.alive_msg_media.type == "" && (!fs.existsSync("./alive.png") && fs.existsSync("./alive.mp4"))) {
                       re = re.alive_msg
                       var gmsg = await Proto.sendMessage(jid2, { text: modulelang.get_alive + re})
                       saveMessageST(gmsg.key.id, modulelang.get_alive + re)
                       return;
                     } else {
                       re = re.alive_msg
-                      PrimonDB.alive_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: Buffer.from(PrimonDB.alive_msg_media.media) ,caption: modulelang.get_alive + re}) : await Proto.sendMessage(jid2, {video: Buffer.from(PrimonDB.alive_msg_media.media) ,caption: modulelang.get_alive + re})
+                      var validimg = fs.readFileSync(PrimonDB.alive_msg_media.media)
+                      PrimonDB.alive_msg_media.type == "image" ? await Proto.sendMessage(jid2, {image: validimg ,caption: modulelang.get_alive + re}) : await Proto.sendMessage(jid2, {video: validimg ,caption: modulelang.get_alive + re})
                     }
                     return;
                   } else if (args == "afk") {
@@ -4017,6 +3957,16 @@ async function Primon() {
                 "*◽ " + author_cmts[2] + "* :: _" + news[2] + "_"
                 var gmsg = await Proto.sendMessage(jid2, { text: modulelang.update + msg})
                 saveMessageST(gmsg.key.id, modulelang.update + msg)
+                if (fs.existsSync("./alive.png")) {
+                  shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
+                  shell.exec("cp ./alive.png PrimonProto/alive.png")
+                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
+                }
+                if (fs.existsSync("./alive.mp4")) {
+                  shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
+                  shell.exec("cp ./alive.mp4 PrimonProto/alive.mp4")
+                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
+                }
                 process.exit(1)
               }
 
