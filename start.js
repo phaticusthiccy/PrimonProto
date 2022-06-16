@@ -3987,18 +3987,8 @@ async function Primon() {
                         caption: PrimonDB.alive_msg
                       })
                     } else {
-                      var validimg = await octokit.request("GET /gists/{gist_id}", {
-                        gist_id: PrimonDB.alive_msg_media.media,
-                      })
-                      validimg = JSON.parse(validimg.data.files["alive.txt"].content);
-                      var d = "";
-                      validimg.map((Element) => {
-                        d += Element
-                      })
-                      fs.writeFileSync("./alive.png", d, "base64")
                       return await Proto.sendMessage(jid, {
-                        image: fs.readFileSync("./alive.png"),
-                        caption: PrimonDB.alive_msg
+                        text: PrimonDB.alive_msg
                       })
                     }
                   }
@@ -4009,18 +3999,8 @@ async function Primon() {
                         caption: PrimonDB.alive_msg
                       })
                     } else {
-                      var validimg = await octokit.request("GET /gists/{gist_id}", {
-                        gist_id: PrimonDB.alive_msg_media.media,
-                      })
-                      validimg = JSON.parse(validimg.data.files["alive.txt"].content);
-                      var d = "";
-                      validimg.map((Element) => {
-                        d += Element
-                      })
-                      fs.writeFileSync("./alive.mp4", d, "base64")
                       return await Proto.sendMessage(jid, {
-                        video: fs.readFileSync("./alive.mp4"),
-                        caption: PrimonDB.alive_msg
+                        text: PrimonDB.alive_msg
                       })
                     }
                   }
