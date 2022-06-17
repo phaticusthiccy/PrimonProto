@@ -155,7 +155,12 @@
       "sticker_error_vid": "_Bu video sticker yapmak için çok uzun veya boyutu çok fazla._",
       "sticker_error_img": "_Bu fotoğraf sticker yapmak için çok uzun veya boyutu çok fazla._",
       "tagadmin1": "{%d1}```{%c}tagadmin``` \n{%d1}_Gruptaki adminleri etiketleyin!_",
-      "tagadmin2": "_Gruptaki tüm adminleri etiketler._"
+      "tagadmin2": "_Gruptaki tüm adminleri etiketler._",
+      "null_worktype": "_Lütfen sadece_ *private* _veya_ *public* _kelimelerini kullanın._",
+      "worktype_admin_req": "_Bu komutu yanlızca bot sahibi ve SUDO'lar kullanabilir!_",
+      "wmode1": "{%d1}```{%c}workmode``` \n{%d1}_Botu herkes için kullanıma açar veya kapatır._\n{%d1}\n\n```{%c}workmode private````\n```{&c}workmode public```",
+      "wmode2": "_Botu herkes için kullanıma açar veya kapatır._",
+      "wmode3": "```&workmode private````\n```&workmode public```"
     }
   }
 }

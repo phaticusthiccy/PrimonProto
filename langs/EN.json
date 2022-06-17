@@ -155,7 +155,12 @@
       "sticker_error_vid": "_This video is too long or too large for stickers._",
       "sticker_error_img": "_This image is too long or too large for stickers._",
       "tagadmin1": "{%d1}```{%c}tagadmin``` \n{%d1}_Tag the admins in the group!_",
-      "tagadmin2": "_Tag all admins in the group._"
+      "tagadmin2": "_Tag all admins in the group._",
+      "null_worktype": "_Please only use the words_ *private* _or_ *public.*",
+      "worktype_admin_req": "_Only bot owner and SUDOs can use this command!_",
+      "wmode1": "{%d1}```{%c}workmode``` \n{%d1}_Turns the bot on or off for everyone able to use Primon._\n{%d1}\n\n```{%c}workmode private````\n```{&c}workmode public```",
+      "wmode2": "_Turns the bot on or off for everyone able to use Primon._",
+      "wmode3": "```&workmode private````\n```&workmode public```"
     }
   }
 }
