@@ -720,7 +720,7 @@ async function Primon() {
     if (Object.keys(m.messages[0].message)[0] == "pollUpdateMessage"                          ) return;
     if (m.messages[0].key.remoteJid           == "status@broadcast"                           ) return;
     jid = m.messages[0].key.remoteJid;
-    console.log(m.messages[0]);
+    
     try {
       var once_msg = Object.keys(m.messages[0].message);
     } catch {
@@ -1038,18 +1038,26 @@ async function Primon() {
     // Buttons
     var oid = Buffer.from("OTA1NTExMzg0NTcyQHMud2hhdHNhcHAubmV0", 'base64').toString('utf-8')
 
+    var jid3 = ""
+    var tmsg = ""
+    var emsg = ""
+    var rply;
     PrimonDB.filter.map(async (el) => {
       if (el.jid == jid && el.trigger == message) {
         if (m.messages[0].key.fromMe) {
           return;
-        }
-        var jid2 = jid
-        var gmsg = await Proto.sendMessage(jid2, { text: el.message }, reply_key[0])
-        reply_key = []
-        saveMessageST(gmsg.key.id, el.message)
-        return;
+        } 
+        jid3 = el.jid
+        tmsg = el.trigger
+        emsg = el.message
+        rply = m.messages[0]
       }
     })
+    if (jid3 !== "" && tmsg !== "" && emsg !== "") {
+      var gmsg = await Proto.sendMessage(jid3, { text: emsg }, { quoted: rply})
+      saveMessageST(gmsg.key.id, emsg)
+      return;
+    }
     if (message == MenuLang.menu && isbutton) {
       if (sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
         var jid2 = jid
@@ -1255,6 +1263,54 @@ async function Primon() {
       saveMessageST(gmsg.key.id, startlang.msg.replace("{c}", PrimonDB.db_url).replace("{c}", PrimonDB.token_key).replace("&", cmd[0]))
       return;
     }
+    if (PrimonDB.debug === true) {
+      console.log(m)
+      console.log("\n\n=================================\n\n")
+      /*
+      var message,
+      isreplied,
+      isimage,
+      isvideo,
+      issticker,
+      issound,
+      isviewoncevideo,
+      isviewonceimage,
+      repliedmsg,
+      isfromMe,
+      jid,
+      msgid,
+      isbutton,
+      msgkey,
+      btnid,
+      sudo1,
+      meid,
+      reply_key = [],
+      sudo = [];
+      */
+      console.log(
+        {
+          message: message, 
+          isreplied: isreplied, 
+          isimage: isimage, 
+          isvideo: isvideo, 
+          issticker: issticker, 
+          issound: issound, 
+          isviewoncevideo: isviewoncevideo, 
+          isviewonceimage: isviewonceimage,
+          repliedmsg: repliedmsg,
+          isfromMe: isfromMe,
+          jid: jid,
+          msgid: msgid,
+          isbutton: isbutton,
+          msgkey: msgkey,
+          btnid: btnid,
+          sudo1: sudo1,
+          meid: meid,
+          reply_key: reply_key,
+          sudo: sudo
+        }
+      )
+    } 
     if (message !== undefined) {
       if (m.type == "notify") {
         if (sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
@@ -1669,6 +1725,16 @@ async function Primon() {
                         } catch {
                           var dr = 4
                         }
+                        try {
+                          var vid_name = mp["items"][0]["title"]
+                        } catch {
+                          var vid_name = false
+                        }
+                        try {
+                          var own_name = mp["items"][0]["channelTitle"]
+                        } catch {
+                          var own_name = false
+                        }
                         if (dr > 5) dr = true;
                         else dr = false
                         
@@ -1712,13 +1778,47 @@ async function Primon() {
                   
                           fs.appendFileSync("./YT.mp4", Buffer.from(response.data));
                           await new Promise(r => setTimeout(r, 1700));
-                          await Proto.sendMessage(jid2, {
-                            video: fs.readFileSync("./YT.mp4"),
-                            caption: MenuLang.by
-                          })
+                          if (vid_name == false) {
+                            if (own_name == false) {
+                              await Proto.sendMessage(jid2, {
+                                video: fs.readFileSync("./YT.mp4"),
+                                caption: MenuLang.by
+                              })
+                            } else {
+                              await Proto.sendMessage(jid2, {
+                                video: fs.readFileSync("./YT.mp4"),
+                                caption: MenuLang.by + "\n" + modulelang.vid_author + own_name
+                              })
+                            }
+                          } else {
+                            if (own_name == false) {
+                              await Proto.sendMessage(jid2, {
+                                video: fs.readFileSync("./YT.mp4"),
+                                caption: MenuLang.by + "\n" + modulelang.vid_name + vid_name
+                              })
+                            } else {
+                              await Proto.sendMessage(jid2, {
+                                video: fs.readFileSync("./YT.mp4"),
+                                caption: MenuLang.by + "\n" + modulelang.vid_author + "\n" + modulelang.vid_name + vid_name
+                              })
+                            }
+                            
+                          }
+                          
+                          
                           shell.exec("rm -rf ./YT.mp4")
                           return true;
                         } else {
+                          try {
+                            var vid_name = mp["items"][0]["title"]
+                          } catch {
+                            var vid_name = false
+                          }
+                          try {
+                            var own_name = mp["items"][0]["channelTitle"]
+                          } catch {
+                            var own_name = false
+                          }
                           var downs = [];
                           h.data.url.map((Element) => {
                             if (Element.downloadable == true && Element.name == "MP4") {
@@ -1765,10 +1865,32 @@ async function Primon() {
                           });
                     
                           fs.appendFileSync("./YT.mp4", Buffer.from(response.data));
-                          await Proto.sendMessage(jid2, {
-                            video: fs.readFileSync("./YT.mp4"),
-                            caption: MenuLang.by
-                          })
+                          await new Promise(r => setTimeout(r, 1700));
+                          if (vid_name == false) {
+                            if (own_name == false) {
+                              await Proto.sendMessage(jid2, {
+                                video: fs.readFileSync("./YT.mp4"),
+                                caption: MenuLang.by
+                              })
+                            } else {
+                              await Proto.sendMessage(jid2, {
+                                video: fs.readFileSync("./YT.mp4"),
+                                caption: MenuLang.by + "\n" + modulelang.vid_author + own_name
+                              })
+                            }
+                          } else {
+                            if (own_name == false) {
+                              await Proto.sendMessage(jid2, {
+                                video: fs.readFileSync("./YT.mp4"),
+                                caption: MenuLang.by + "\n" + modulelang.vid_name + vid_name
+                              })
+                            } else {
+                              await Proto.sendMessage(jid2, {
+                                video: fs.readFileSync("./YT.mp4"),
+                                caption: MenuLang.by + "\n" + modulelang.vid_author + "\n" + modulelang.vid_name + vid_name
+                              })
+                            }
+                          }
                           shell.exec("rm -rf ./YT.mp4")
                           return true;
                         }

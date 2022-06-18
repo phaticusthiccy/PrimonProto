@@ -160,7 +160,9 @@
       "worktype_admin_req": "_Only bot owner and SUDOs can use this command!_",
       "wmode1": "{%d1}```{%c}workmode``` \n{%d1}_Turns the bot on or off for everyone able to use Primon._\n{%d1}\n\n```{%c}workmode private````\n```{&c}workmode public```",
       "wmode2": "_Turns the bot on or off for everyone able to use Primon._",
-      "wmode3": "```&workmode private````\n```&workmode public```"
+      "wmode3": "```&workmode private````\n```&workmode public```",
+      "vid_author": "_Video Author:_ ",
+      "vid_name": "_Video Name:_ "
     }
   }
 }
