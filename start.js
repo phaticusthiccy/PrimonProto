@@ -1135,7 +1135,7 @@ async function Primon() {
             cmdlang.example + "\n" + modulelang.term2.replace(/&/gi, cmd[0])
 
           },
-          reply_key[0]
+          { quoted: m.messages[0]}
         );
         reply_key = []
         saveMessageST(gmsg.key.id, cmdlang.command + "```" + cmd[0] + "alive" + "```" + "\n" +
@@ -4369,11 +4369,13 @@ async function Primon() {
                 var gmsg = await Proto.sendMessage(jid2, { text: modulelang.update + msg})
                 saveMessageST(gmsg.key.id, modulelang.update + msg)
                 if (fs.existsSync("./alive.png")) {
+                  shell.exec("rm -rf PrimonProto/")
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   shell.exec("cp ./alive.png PrimonProto/alive.png")
                   return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && npm i && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
                 }
                 if (fs.existsSync("./alive.mp4")) {
+                  shell.exec("rm -rf PrimonProto/")
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   shell.exec("cp ./alive.mp4 PrimonProto/alive.mp4")
                   return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && npm i && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
