@@ -1599,12 +1599,12 @@ async function Primon() {
                         url: "https://api.onlinevideoconverter.pro/api/convert",
                         method: "post",
                         data: {
-                          url: link,
+                          url: args,
                         },
                       });
                   
                       try {
-                        var mp = await GetListByKeyword(link, false, 1)
+                        var mp = await GetListByKeyword(args, false, 1)
                       } catch {
                         var mp = false
                       }
@@ -1655,9 +1655,9 @@ async function Primon() {
                           responseType: "arraybuffer"
                         });
                   
-                        fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+                        fs.appendFileSync("./YT.mp4", Buffer.from(response.data));
                         await new Promise(r => setTimeout(r, 1700));
-                        await Proto.sendMessage(jid, {
+                        await Proto.sendMessage(jid2, {
                           video: fs.readFileSync("./YT.mp4"),
                           caption: MenuLang.by
                         })
@@ -1710,9 +1710,9 @@ async function Primon() {
                             responseType: "arraybuffer"
                           });
                   
-                          fs.appendFileSync(downloadFolder, Buffer.from(response.data));
+                          fs.appendFileSync("./YT.mp4", Buffer.from(response.data));
                           await new Promise(r => setTimeout(r, 1700));
-                          await Proto.sendMessage(jid, {
+                          await Proto.sendMessage(jid2, {
                             video: fs.readFileSync("./YT.mp4"),
                             caption: MenuLang.by
                           })
@@ -1764,8 +1764,8 @@ async function Primon() {
                             responseType: "arraybuffer"
                           });
                     
-                          fs.appendFileSync(downloadFolder, Buffer.from(response.data));
-                          await Proto.sendMessage(jid, {
+                          fs.appendFileSync("./YT.mp4", Buffer.from(response.data));
+                          await Proto.sendMessage(jid2, {
                             video: fs.readFileSync("./YT.mp4"),
                             caption: MenuLang.by
                           })
