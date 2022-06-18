@@ -4249,12 +4249,12 @@ async function Primon() {
                 if (fs.existsSync("./alive.png")) {
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   shell.exec("cp ./alive.png PrimonProto/alive.png")
-                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
+                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && npm install && node save.js && node save_db_store.js && node start.js")
                 }
                 if (fs.existsSync("./alive.mp4")) {
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   shell.exec("cp ./alive.mp4 PrimonProto/alive.mp4")
-                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
+                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && npm install && node save.js && node save_db_store.js && node start.js")
                 }
                 process.exit(1)
               }
