@@ -4372,13 +4372,13 @@ async function Primon() {
                   shell.exec("rm -rf PrimonProto/")
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   shell.exec("cp ./alive.png PrimonProto/alive.png")
-                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && npm i && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
+                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && npm i && npm i node-youtube-music && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
                 }
                 if (fs.existsSync("./alive.mp4")) {
                   shell.exec("rm -rf PrimonProto/")
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   shell.exec("cp ./alive.mp4 PrimonProto/alive.mp4")
-                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && npm i && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
+                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && npm i && npm i node-youtube-music && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
                 }
                 process.exit(1)
               }

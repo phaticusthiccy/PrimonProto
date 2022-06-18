@@ -22,7 +22,6 @@
       "@ffmpeg-installer/ffmpeg": "latest",
       "@adiwajshing/keyed-db": "latest",
       "wa-sticker-formatter": "latest",
-      "node-youtube-music": "latest",
       "qrcode-terminal": "latest",
       "link-preview-js": "latest",
       "child_process": "latest",
