@@ -37,7 +37,6 @@ const P = require("pino");
 const { Boom } = require("@hapi/boom");
 const fs = require("fs");
 const axios = require("axios");
-const nodeYoutubeMusic = require("node-youtube-music")
 const { on } = require("events");
 require("util").inspect.defaultOptions.depth = null;
 const Language = require("./lang");
@@ -62,6 +61,7 @@ const cheerio = require('cheerio');
 const FormData = require('form-data');
 const webpToVideo = require("./webpToVideo");
 const util = require('util')
+const nodeYoutubeMusic = require("node-youtube-music")
 const { Sticker, 
   createSticker, 
   StickerTypes 
@@ -4249,12 +4249,12 @@ async function Primon() {
                 if (fs.existsSync("./alive.png")) {
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   shell.exec("cp ./alive.png PrimonProto/alive.png")
-                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && npm install && node save.js && node save_db_store.js && node start.js")
+                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && npm i && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
                 }
                 if (fs.existsSync("./alive.mp4")) {
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   shell.exec("cp ./alive.mp4 PrimonProto/alive.mp4")
-                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && npm install && node save.js && node save_db_store.js && node start.js")
+                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && npm i && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
                 }
                 process.exit(1)
               }

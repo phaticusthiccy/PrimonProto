@@ -37,6 +37,6 @@ RUN git clone https://github.com/phaticusthiccy/PrimonProto
 
 WORKDIR /PrimonProto
 
-RUN npm install 
+RUN npm i 
 
 CMD [ "bash","pri.sh" ]
