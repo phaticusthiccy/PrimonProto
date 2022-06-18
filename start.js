@@ -36,7 +36,8 @@ ffmpeg.setFfprobePath(ffprobePath);
 const P = require("pino");
 const { Boom } = require("@hapi/boom");
 const fs = require("fs");
-var axios = require("axios");
+const axios = require("axios");
+const nodeYoutubeMusic = require("node-youtube-music")
 const { on } = require("events");
 require("util").inspect.defaultOptions.depth = null;
 const Language = require("./lang");
@@ -1830,16 +1831,8 @@ async function Primon() {
                   try {
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.song_down });
                     saveMessageST(gmsg.key.id, modulelang.song_down)
-
-
-                    var uri = await GetListByKeyword(args,false,5)
-                    var gts = [];
-                    uri.items.map((Element) => {
-                      if (Element.type == "video") {
-                        gts.push(Element.id)
-                      }
-                    })
-                    uri = "https://www.youtube.com/watch?v=" + gts[0]
+                    var songs = await nodeYoutubeMusic.searchMusics(args)
+                    var uri = "https://www.youtube.com/watch?v=" + songs[0]["youtubeId"]
                     var h = await axios({
                       url: "https://api.onlinevideoconverter.pro/api/convert",
                       method: "post",
@@ -1849,11 +1842,19 @@ async function Primon() {
                     });
                     var downs = [];
                     h.data.url.map((Element) => {
-                      if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "360") {
+                      if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "144") {
                         downs.push(Element.url)
                       }
                     })
                 
+                    if (downs.length == 0) {
+                      h.data.url.map((Element) => {
+                        if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "240") {
+                          downs.push(Element.url)
+                        }
+                      })
+                    }
+
                     if (downs.length == 0) {
                       h.data.url.map((Element) => {
                         if (Element.name == "MP4" && Element.quality == "144") {
@@ -1884,10 +1885,10 @@ async function Primon() {
                     });
                 
                     fs.appendFileSync("./YT2.mp4", Buffer.from(response.data));
-                    ffmpeg("./YT2.mp4").audioBitrate('128k').save('./YT2.mp3').on('end', async () => {
+                    ffmpeg("./YT2.mp4").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save('./YT2.mp3').on('end', async () => {
                       return await Proto.sendMessage(jid2, {
                         audio: fs.readFileSync("./YT2.mp3"),
-                        mimetype: "audio/mp4"
+                        mimetype: "audio/mp3"
                       })
                     })
                   } catch (e) {
