@@ -1731,7 +1731,7 @@ async function Primon() {
                           var vid_name = false
                         }
                         try {
-                          var own_name = mp["items"][0]["channelTitle"]
+                          var own_name = mp.items[0].channelTitle
                         } catch {
                           var own_name = false
                         }
@@ -1779,7 +1779,7 @@ async function Primon() {
                           fs.appendFileSync("./YT.mp4", Buffer.from(response.data));
                           await new Promise(r => setTimeout(r, 1700));
                           if (vid_name == false) {
-                            if (own_name == false) {
+                            if (own_name == false || own_name == "") {
                               await Proto.sendMessage(jid2, {
                                 video: fs.readFileSync("./YT.mp4"),
                                 caption: MenuLang.by
@@ -1791,7 +1791,7 @@ async function Primon() {
                               })
                             }
                           } else {
-                            if (own_name == false) {
+                            if (own_name == false || own_name == "") {
                               await Proto.sendMessage(jid2, {
                                 video: fs.readFileSync("./YT.mp4"),
                                 caption: MenuLang.by + "\n" + modulelang.vid_name + vid_name
@@ -1815,7 +1815,7 @@ async function Primon() {
                             var vid_name = false
                           }
                           try {
-                            var own_name = mp["items"][0]["channelTitle"]
+                            var own_name = mp.items[0].channelTitle
                           } catch {
                             var own_name = false
                           }
@@ -1867,7 +1867,7 @@ async function Primon() {
                           fs.appendFileSync("./YT.mp4", Buffer.from(response.data));
                           await new Promise(r => setTimeout(r, 1700));
                           if (vid_name == false) {
-                            if (own_name == false) {
+                            if (own_name == false || own_name == "") {
                               await Proto.sendMessage(jid2, {
                                 video: fs.readFileSync("./YT.mp4"),
                                 caption: MenuLang.by
@@ -1879,7 +1879,7 @@ async function Primon() {
                               })
                             }
                           } else {
-                            if (own_name == false) {
+                            if (own_name == false || own_name == "") {
                               await Proto.sendMessage(jid2, {
                                 video: fs.readFileSync("./YT.mp4"),
                                 caption: MenuLang.by + "\n" + modulelang.vid_name + vid_name
