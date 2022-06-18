@@ -1826,7 +1826,7 @@ async function Primon() {
                     fs.unlinkSync("./YT2.mp4")
                   } catch {}
                   try {
-                    fs.unlinkSync("./YT2.mp3")
+                    fs.unlinkSync("./YT2.opus")
                   } catch {}
                   try {
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.song_down });
@@ -1885,11 +1885,10 @@ async function Primon() {
                     });
                 
                     fs.appendFileSync("./YT2.mp4", Buffer.from(response.data));
-                    ffmpeg("./YT2.mp4").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save('./YT2.mp3').on('end', async () => {
+                    ffmpeg("./YT2.mp4").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).audioCodec('libopus').save('./YT2.opus').on('end', async () => {
                       return await Proto.sendMessage(jid2, {
-                        audio: fs.readFileSync("./YT2.mp3"),
+                        audio: fs.readFileSync("./YT2.opus"),
                         mimetype: "audio/mp4",
-                        ptt: true
                       })
                     })
                   } catch (e) {
