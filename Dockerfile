@@ -38,6 +38,7 @@ RUN git clone https://github.com/phaticusthiccy/PrimonProto
 WORKDIR /PrimonProto
 
 RUN npm i 
+
 RUN npm i node-youtube-music
 
 CMD [ "bash","pri.sh" ]
