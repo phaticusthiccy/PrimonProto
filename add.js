@@ -156,6 +156,11 @@ function afterarg(text) {
   } else {
     payload = od[0];
   }
+  if (payload.endsWith(" ")) {
+    payload = payload.split("")
+    var payload2 = payload.pop()
+    payload = payload.join("")
+  }
   return payload;
 }
 

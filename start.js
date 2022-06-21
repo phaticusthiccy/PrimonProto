@@ -1363,12 +1363,12 @@ async function Primon() {
               var args = "";
               if (attr.includes(" ")) {
                 attr = attr.split(" ")[0];
-                arg.a = message.split(" ");
+                arg.a = message.split(" "); // .module argument [".module", "argument"]
                 arg.a.map((e) => {
                   arg.b.push(e);
                 });
-                arg.b.shift();
-                arg.c = arg.b.join(" ");
+                arg.b.shift(); // ["argument"]
+                arg.c = arg.b.join(" "); // argument
                 args = arg.c;
               } else {
                 args = "";
@@ -3857,7 +3857,8 @@ async function Primon() {
                   await Proto.sendMessage(jid2, { delete: msgkey });
                   try {
                     var type = argfinder(args);
-                  } catch {
+                  } catch (e) {
+                    connsole.log(e)
                     var msg = await Proto.sendMessage(
                       jid,
                       {
@@ -3881,7 +3882,6 @@ async function Primon() {
                     saveMessageST(msg.key.id, modulelang.textpro_null)
                     return;
                   } else {
-                    var type = argfinder(args);
                     var url = textpro_links(type);
                     var text = afterarg(args);
                     if (text == "" || text == " ") {
@@ -3896,7 +3896,8 @@ async function Primon() {
                     }
                     try {
                       var img = await openapi.textpro(style, repliedmsg);
-                    } catch {
+                    } catch (e) {
+                      connsole.log(e)
                       var msg = await Proto.sendMessage(
                         jid,
                         {
@@ -4670,7 +4671,7 @@ async function Primon() {
                   return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
                 } else {
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.update_without_media + msg})
-                  saveMessageST(gmsg.key.id, modulelang.update + msg)
+                  saveMessageST(gmsg.key.id, modulelang.update_without_media + msg)
                   shell.exec("rm -rf PrimonProto/")
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
