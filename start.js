@@ -617,6 +617,7 @@ async function Primon() {
     sudo1,
     meid,
     reply_key = [],
+    super_sudo = [],
     sudo = [];
   Proto.ev.on("group-participants.update", async (st) => {
     var re = PrimonDB;
@@ -694,22 +695,32 @@ async function Primon() {
       })
     }
   });
-
-  if (PrimonDB.sudo !== false) {
-    if (PrimonDB.sudo.includes(",")) {
-      var sudo1 = PrimonDB.sudo.split(",");
-      sudo1.map((Element) => {
-        sudo.push(Element + "@s.whatsapp.net");
-      });
-    } else {
-      sudo.push(PrimonDB.sudo);
-    }
-  }
   try {
     meid = Proto.user.id.split(":")[0] + "@s.whatsapp.net";
   } catch {
     meid = Proto.user.id.split("@")[0] + "@s.whatsapp.net";
   }
+
+  setInterval(async () => {
+    if (PrimonDB.sudo !== false) {
+      if (PrimonDB.sudo.includes(",")) {
+        var sudo1 = PrimonDB.sudo.split(",");
+        sudo1.map((Element) => {
+          sudo.push(Element + "@s.whatsapp.net");
+        });
+      } else {
+        sudo.push(PrimonDB.sudo);
+      }
+    }
+    if (PrimonDB.super_sudo !== false || PrimonDB.super_sudo.length == 0) {
+      super_sudo = PrimonDB.sudo
+      if (!super_sudo.includes(meid)) {
+        super_sudo.push(meid)
+      }
+    }
+  }, 4000)
+  
+  
   Proto.ev.on("messages.upsert", async (m) => {
     if (!m.messages[0].message                                                                ) return;
     if (Object.keys(m.messages[0].message)[0] == "protocolMessage"                            ) return;
@@ -1065,7 +1076,7 @@ async function Primon() {
       return;
     }
     if (message == MenuLang.menu && isbutton) {
-      if (sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
+      if (sudo.includes(g_participant) || super_sudo.includes(g_participant) ||  PrimonDB.public || jid == oid) {
         var jid2 = jid
         var gmsg = await Proto.sendMessage(
           jid2,
@@ -1134,6 +1145,14 @@ async function Primon() {
             cmdlang.command + "```" + cmd[0] + "workmode" + "```" + "\n" +
             cmdlang.info + modulelang.wmode2 + "\n" +
             cmdlang.example + "\n" + modulelang.wmode3.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+            cmdlang.command + "```" + cmd[0] + "sudo" + "```" + "\n" +
+            cmdlang.info + modulelang.sudo1 + "\n" +
+            cmdlang.example + "\n" + modulelang.sudo2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+            cmdlang.command + "```" + cmd[0] + "supersudo" + "```" + "\n" +
+            cmdlang.info + modulelang.supersudo1 + "\n" +
+            cmdlang.example + "\n" + modulelang.supersudo2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
             cmdlang.command + "```" + cmd[0] + "term" + "```" + "\n" +
             cmdlang.info + modulelang.term1 + "\n" +
@@ -1208,6 +1227,14 @@ async function Primon() {
         cmdlang.info + modulelang.wmode2 + "\n" +
         cmdlang.example + "\n" + modulelang.wmode3.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
+        cmdlang.command + "```" + cmd[0] + "sudo" + "```" + "\n" +
+        cmdlang.info + modulelang.sudo1 + "\n" +
+        cmdlang.example + "\n" + modulelang.sudo2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+        cmdlang.command + "```" + cmd[0] + "supersudo" + "```" + "\n" +
+        cmdlang.info + modulelang.supersudo1 + "\n" +
+        cmdlang.example + "\n" + modulelang.supersudo2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
         cmdlang.command + "```" + cmd[0] + "term" + "```" + "\n" +
         cmdlang.info + modulelang.term1 + "\n" +
         cmdlang.danger + modulelang.term3 + "\n" +
@@ -1219,7 +1246,7 @@ async function Primon() {
       }
     }
     if (message == MenuLang.owner && isbutton) {
-      if (sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
+      if (sudo.includes(g_participant) || super_sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
         var jid2 = jid
         var gmsg = await Proto.sendMessage(jid2, { 
           text: modulelang.owner
@@ -1229,7 +1256,7 @@ async function Primon() {
       }
     }
     if (message == MenuLang.star && isbutton) {
-      if (sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
+      if (sudo.includes(g_participant) || super_sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
         if (PrimonDB.isstarred) {
           var jid2 = jid
           var gmsg = await Proto.sendMessage(jid2, { 
@@ -1319,7 +1346,7 @@ async function Primon() {
     } 
     if (message !== undefined) {
       if (m.type == "notify") {
-        if (sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
+        if (sudo.includes(g_participant) || super_sudo.includes(g_participant) || PrimonDB.public || jid == oid) {
           if (PrimonDB.sudo !== false && sudo.length > 0) {
             if (cmd.includes(message[0])) {
               var command = message.split("");
@@ -1409,6 +1436,12 @@ async function Primon() {
               // SUDO
               else if (attr == "sudo") {
                 var jid2 = jid
+                if (!super_sudo.includes(g_participant)) {
+                  await Proto.sendMessage(jid2, { delete: msgkey });
+                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_super_sudo }, { quoted: m.messages[0]});
+                  saveMessageST(gmsg.key.id, modulelang.must_super_sudo)
+                  return;
+                }
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 if (!isreplied) {
                   if (PrimonDB.sudo.length == 0) {
@@ -1420,13 +1453,68 @@ async function Primon() {
                     PrimonDB.sudo.map((Element) => {
                       sudo_map += "_◽ " + Element + "\n"
                     })
-                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.sudo_list });
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.sudo_list + sudo_map });
                     saveMessageST(gmsg.key.id, modulelang.sudo_list)
                     return;
                   }
                 } else {
-                  var sudo_id = ""
+                  var sudo_id = m.messages[0].message.extendedTextMessage.contextInfo.participant
+                  PrimonDB = PrimonDB.sudo.push(sudo_id)
+                  await octokit.request("PATCH /gists/{gist_id}", {
+                    gist_id: process.env.GITHUB_DB,
+                    description: "Primon Proto için Kalıcı Veritabanı",
+                    files: {
+                      key: {
+                        content: JSON.stringify(PrimonDB, null, 2),
+                        filename: "primon.db.json",
+                      },
+                    },
+                  });
+                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.setted})
+                  saveMessageST(gmsg.key.id, modulelang.setted)
+                  return;
+                }
+              }
 
+              // Super SUDO
+              else if (attr == "supersudo") {
+                var jid2 = jid
+                await Proto.sendMessage(jid2, { delete: msgkey });
+                if (g_participant !== meid) {
+                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_owner }, { quoted: m.messages[0]});
+                  saveMessageST(gmsg.key.id, modulelang.must_owner)
+                  return;
+                }
+                if (!isreplied) {
+                  if (PrimonDB.sudo.length == 0) {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.no_super_sudo });
+                    saveMessageST(gmsg.key.id, modulelang.no_super_sudo)
+                    return;
+                  } else {
+                    var sudo_map = ""
+                    PrimonDB.super_sudo.map((Element) => {
+                      sudo_map += "_◽ " + Element + "\n"
+                    })
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.super_sudo_list + sudo_map});
+                    saveMessageST(gmsg.key.id, modulelang.super_sudo_list)
+                    return;
+                  }
+                } else {
+                  var sudo_id = m.messages[0].message.extendedTextMessage.contextInfo.participant
+                  PrimonDB = PrimonDB.super_sudo.push(sudo_id)
+                  await octokit.request("PATCH /gists/{gist_id}", {
+                    gist_id: process.env.GITHUB_DB,
+                    description: "Primon Proto için Kalıcı Veritabanı",
+                    files: {
+                      key: {
+                        content: JSON.stringify(PrimonDB, null, 2),
+                        filename: "primon.db.json",
+                      },
+                    },
+                  });
+                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.setted})
+                  saveMessageST(gmsg.key.id, modulelang.setted)
+                  return;
                 }
               }
 
@@ -1626,20 +1714,32 @@ async function Primon() {
 
               // Term
               else if (attr == "term") {
-                await Proto.sendMessage(jid, { delete: msgkey });
+                var jid2 = jid
+                await Proto.sendMessage(jid2, { delete: msgkey });
+                if (PrimonDB.public == true && isfromMe == false) {
+                  const metadata = await Proto.groupMetadata(jid2);
+                  var users = [];
+                  metadata.participants.map((user) => {
+                    if (user.isAdmin || user.admin == "superadmin" || user.admin == "admin") {
+                      users.push(user.id);
+                    }
+                  });
+                  if (!users.includes(g_participant)) {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_admin }, { quoted: m.messages[0]});
+                    saveMessageST(gmsg.key.id, modulelang.must_admin)
+                    return;
+                  }
+                }
                 if (args == "") {
-                  var jid2 = jid
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.need_cmd });
                   saveMessageST(gmsg.key.id, modulelang.need_cmd)
                   return;
                 } else {
                   if (args.includes("rm ")) {
-                    var jid2 = jid
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.valid_cmd });
                     saveMessageST(gmsg.key.id, modulelang.valid_cmd)
                     return;
                   } else {
-                    var jid2 = jid
                     try {
                       var command_t = exec(args)
                       command_t.stdout.on('data', async (output) => {
@@ -1670,7 +1770,7 @@ async function Primon() {
               // YouTube Download
               else if (attr == "video") {
                 var jid2 = jid
-                await Proto.sendMessage(jid, { delete: msgkey });
+                await Proto.sendMessage(jid2, { delete: msgkey });
                 if (args == "") {
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.need_yt });
                   saveMessageST(gmsg.key.id, modulelang.need_yt)
@@ -1841,9 +1941,7 @@ async function Primon() {
                               })
                             }
                             
-                          }
-                          
-                          
+                          }   
                           shell.exec("rm -rf ./YT.mp4")
                           return true;
                         } else {
@@ -1953,8 +2051,9 @@ async function Primon() {
 
               // YouTube Search
               else if (attr == "yt") {
-                await Proto.sendMessage(jid, { delete: msgkey });
                 var jid2 = jid
+                await Proto.sendMessage(jid2, { delete: msgkey });
+                
                 if (args == "") {
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.need_q });
                   saveMessageST(gmsg.key.id, modulelang.need_q)
@@ -1976,7 +2075,7 @@ async function Primon() {
               // YT Music
               else if (attr == "song") {
                 var jid2 = jid
-                await Proto.sendMessage(jid, { delete: msgkey });
+                await Proto.sendMessage(jid2, { delete: msgkey });
                 if (args == "") {
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.need_qs });
                   saveMessageST(gmsg.key.id, modulelang.need_qs)
@@ -2061,8 +2160,9 @@ async function Primon() {
               }
               // Menu
               else if (attr == "menu") {
-                await Proto.sendMessage(jid, { delete: msgkey });
                 var jid2 = jid
+                await Proto.sendMessage(jid2, { delete: msgkey });
+                
                 if (args == "") {
                   var gmsg = await Proto.sendMessage(jid2, config.TEXTS.MENU[0]);
                   saveMessageST(gmsg.key.id, config.TEXTS.MENU[0])
@@ -2166,6 +2266,28 @@ async function Primon() {
                       { text: cmds(modulelang.get3, 3, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.get3, 3, cmd[0]))
+                    return;
+                  } else if (
+                    args == "sudo" ||
+                    args == "Sudo" ||
+                    args == "SUDO"
+                  ) {
+                    var gmsg = await Proto.sendMessage(
+                      jid2,
+                      { text: cmds(modulelang.sudo3, 3, cmd[0]) }
+                    );
+                    saveMessageST(gmsg.key.id, cmds(modulelang.sudo3, 3, cmd[0]))
+                    return;
+                  } else if (
+                    args == "supersudo" ||
+                    args == "Supersudo" ||
+                    args == "SUPERSUDO"
+                  ) {
+                    var gmsg = await Proto.sendMessage(
+                      jid2,
+                      { text: cmds(modulelang.supersudo3, 3, cmd[0]) }
+                    );
+                    saveMessageST(gmsg.key.id, cmds(modulelang.supersudo3, 3, cmd[0]))
                     return;
                   } else if (
                     args == "set" ||
@@ -2345,6 +2467,20 @@ async function Primon() {
                   saveMessageST(gmsg.key.id, cmdlang.onlyGroup)
                   return;
                 }
+                if (PrimonDB.public == true && isfromMe == false) {
+                  const metadata = await Proto.groupMetadata(jid2);
+                  var users = [];
+                  metadata.participants.map((user) => {
+                    if (user.isAdmin || user.admin == "superadmin" || user.admin == "admin") {
+                      users.push(user.id);
+                    }
+                  });
+                  if (!users.includes(g_participant)) {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_admin }, { quoted: m.messages[0]});
+                    saveMessageST(gmsg.key.id, modulelang.must_admin)
+                    return;
+                  }
+                }
                 if (isreplied) {
                   await Proto.sendMessage(jid, { delete: msgkey });
                   if (isimage) {
@@ -2362,10 +2498,12 @@ async function Primon() {
                     }
                     fs.writeFileSync('./tagall.png', buffer)
                     var cpt;
-                    repliedmsg === "" ? cpt = {} : cpt = { caption: repliedmsg }
+                    repliedmsg === "" ? cpt = "" : cpt = repliedmsg
                     await Proto.sendMessage(jid2, {
-                      image: fs.readFileSync("./tagall.png")
-                    }, cpt, {mentions: users})
+                      image: fs.readFileSync("./tagall.png"),
+                      caption: cpt,
+                      mentions: users
+                    })
                     shell.exec("rm -rf ./tagall.png")
                     return;
                   }
@@ -2384,10 +2522,12 @@ async function Primon() {
                     }
                     fs.writeFileSync('./tagall.mp4', buffer)
                     var cpt;
-                    repliedmsg === "" ? cpt = {} : cpt = { caption: repliedmsg }
+                    repliedmsg === "" ? cpt = "" : cpt = repliedmsg
                     await Proto.sendMessage(jid2, {
-                      video: fs.readFileSync("./tagall.mp4")
-                    }, cpt, {mentions: users})
+                      video: fs.readFileSync("./tagall.mp4"),
+                      caption: cpt,
+                      mentions: users
+                    })
                     shell.exec("rm -rf ./tagall.mp4")
                     return;
                   }
@@ -2406,10 +2546,12 @@ async function Primon() {
                     }
                     fs.writeFileSync('./tagall.png', buffer)
                     var cpt;
-                    repliedmsg === "" ? cpt = {} : cpt = { caption: repliedmsg }
+                    repliedmsg === "" ? cpt = "" : cpt = repliedmsg 
                     await Proto.sendMessage(jid2, {
-                      image: fs.readFileSync("./tagall.png")
-                    }, cpt, {mentions: users})
+                      image: fs.readFileSync("./tagall.png"),
+                      caption: cpt,
+                      mentions: users
+                    })
                     shell.exec("rm -rf ./tagall.png")
                     return;
                   }
@@ -2429,10 +2571,12 @@ async function Primon() {
                     }
                     fs.writeFileSync('./tagall.mp4', buffer)
                     var cpt;
-                    repliedmsg === "" ? cpt = {} : cpt = { caption: repliedmsg }
+                    repliedmsg === "" ? cpt = "" : cpt = repliedmsg 
                     await Proto.sendMessage(jid2, {
-                      video: fs.readFileSync("./tagall.mp4")
-                    }, cpt, {mentions: users})
+                      video: fs.readFileSync("./tagall.mp4"),
+                      caption: cpt,
+                      mentions: users
+                    })
                     shell.exec("rm -rf ./tagall.mp4")
                     return;
                   }
@@ -2487,6 +2631,11 @@ async function Primon() {
               // Set
               else if (attr == "set") {
                 var jid2 = jid
+                if (!super_sudo.includes(g_participant)) {
+                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_super_sudo }, { quoted: m.messages[0]});
+                  saveMessageST(gmsg.key.id, modulelang.must_super_sudo)
+                  return;
+                }
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (!isreplied) {
                   var gmsg = await Proto.sendMessage(jid2, {text: modulelang.reply})
@@ -2494,6 +2643,8 @@ async function Primon() {
                   return;
                 }
                 if (args == "alive") {
+                  shell.exec("rm -rf src/alive.mp4")
+                  shell.exec("rm -rf src/alive.png")
                   if (isimage) {
                     let buffer = Buffer.from([])
                     const stream = await downloadContentFromMessage(
@@ -2626,6 +2777,8 @@ async function Primon() {
                   saveMessageST(gmsg.key.id, modulelang.setted)
                   return;
                 } else if (args == "afk") {
+                  shell.exec("rm -rf src/afk.mp4")
+                  shell.exec("rm -rf src/afk.png")
                   if (isimage) {
                     let buffer = Buffer.from([])
                     const stream = await downloadContentFromMessage(
@@ -2761,6 +2914,8 @@ async function Primon() {
                   saveMessageST(gmsg.key.id, modulelang.setted)
                   return;
                 } else if (args == "ban") {
+                  shell.exec("rm -rf src/ban.mp4")
+                  shell.exec("rm -rf src/ban.png")
                   if (isimage) {
                     let buffer = Buffer.from([])
                     const stream = await downloadContentFromMessage(
@@ -2897,6 +3052,8 @@ async function Primon() {
                   saveMessageST(gmsg.key.id, modulelang.setted)
                   return;
                 } else if (args == "mute") {
+                  shell.exec("rm -rf src/mute.mp4")
+                  shell.exec("rm -rf src/mute.png")
                   if (isimage) {
                     let buffer = Buffer.from([])
                     const stream = await downloadContentFromMessage(
@@ -3033,6 +3190,8 @@ async function Primon() {
                   saveMessageST(gmsg.key.id, modulelang.setted)
                   return;
                 } else if (args == "unmute") {
+                  shell.exec("rm -rf src/unmute.mp4")
+                  shell.exec("rm -rf src/unmute.png")
                   if (isimage) {
                     let buffer = Buffer.from([])
                     const stream = await downloadContentFromMessage(
@@ -3169,6 +3328,8 @@ async function Primon() {
                   saveMessageST(gmsg.key.id, modulelang.setted)
                   return;
                 } else if (args == "block") {
+                  shell.exec("rm -rf src/block.mp4")
+                  shell.exec("rm -rf src/block.png")
                   if (isimage) {
                     let buffer = Buffer.from([])
                     const stream = await downloadContentFromMessage(
@@ -3305,6 +3466,8 @@ async function Primon() {
                   saveMessageST(gmsg.key.id, modulelang.setted)
                   return;
                 } else if (args == "unblock") {
+                  shell.exec("rm -rf src/unblock.mp4")
+                  shell.exec("rm -rf src/unblock.png")
                   if (isimage) {
                     let buffer = Buffer.from([])
                     const stream = await downloadContentFromMessage(
@@ -3753,6 +3916,11 @@ async function Primon() {
               // Work Mode
               else if (attr == "workmode") {
                 var jid2 = jid
+                if (!super_sudo.includes(g_participant)) {
+                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_super_sudo }, { quoted: m.messages[0]});
+                  saveMessageST(gmsg.key.id, modulelang.must_super_sudo)
+                  return;
+                }
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 if (isreplied) {
                   if (isfromMe == false && !sudo.includes(g_participant)) {
@@ -3885,6 +4053,20 @@ async function Primon() {
               // Welcome
               else if (attr == "welcome") {
                 var jid2 = jid
+                if (PrimonDB.public == true && isfromMe == false) {
+                  const metadata = await Proto.groupMetadata(jid2);
+                  var users = [];
+                  metadata.participants.map((user) => {
+                    if (user.isAdmin || user.admin == "superadmin" || user.admin == "admin") {
+                      users.push(user.id);
+                    }
+                  });
+                  if (!users.includes(g_participant)) {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_admin }, { quoted: m.messages[0]});
+                    saveMessageST(gmsg.key.id, modulelang.must_admin)
+                    return;
+                  }
+                }
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 if (ispm) {
                   var gmsg = await Proto.sendMessage(
@@ -4031,6 +4213,20 @@ async function Primon() {
               // Goodbye
               else if (attr == "goodbye") {
                 var jid2 = jid
+                if (PrimonDB.public == true && isfromMe == false) {
+                  const metadata = await Proto.groupMetadata(jid2);
+                  var users = [];
+                  metadata.participants.map((user) => {
+                    if (user.isAdmin || user.admin == "superadmin" || user.admin == "admin") {
+                      users.push(user.id);
+                    }
+                  });
+                  if (!users.includes(g_participant)) {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_admin }, { quoted: m.messages[0]});
+                    saveMessageST(gmsg.key.id, modulelang.must_admin)
+                    return;
+                  }
+                }
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 if (ispm) {
                   var gmsg = await Proto.sendMessage(
@@ -4177,6 +4373,20 @@ async function Primon() {
               // Filter
               else if (attr == "filter") {
                 var jid2 = jid
+                if (PrimonDB.public == true && isfromMe == false) {
+                  const metadata = await Proto.groupMetadata(jid2);
+                  var users = [];
+                  metadata.participants.map((user) => {
+                    if (user.isAdmin || user.admin == "superadmin" || user.admin == "admin") {
+                      users.push(user.id);
+                    }
+                  });
+                  if (!users.includes(g_participant)) {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_admin }, { quoted: m.messages[0]});
+                    saveMessageST(gmsg.key.id, modulelang.must_admin)
+                    return;
+                  }
+                }
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 if (isreplied) {
                   if (args == "") {
@@ -4295,6 +4505,20 @@ async function Primon() {
               // Stop Filter
               else if (attr == "stop") {
                 var jid2 = jid
+                if (PrimonDB.public == true && isfromMe == false) {
+                  const metadata = await Proto.groupMetadata(jid2);
+                  var users = [];
+                  metadata.participants.map((user) => {
+                    if (user.isAdmin || user.admin == "superadmin" || user.admin == "admin") {
+                      users.push(user.id);
+                    }
+                  });
+                  if (!users.includes(g_participant)) {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_admin }, { quoted: m.messages[0]});
+                    saveMessageST(gmsg.key.id, modulelang.must_admin)
+                    return;
+                  }
+                }
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 if (isreplied) {
                   var re = PrimonDB;
@@ -4384,6 +4608,11 @@ async function Primon() {
               // Update
               else if (attr == "update") {
                 var jid2 = jid
+                if (!super_sudo.includes(g_participant)) {
+                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_super_sudo }, { quoted: m.messages[0]});
+                  saveMessageST(gmsg.key.id, modulelang.must_super_sudo)
+                  return;
+                }
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 var cmmts = await axios.get("https://api.github.com/users/phaticusthiccy/events/public")
                 cmmts = cmmts.data
@@ -4432,13 +4661,13 @@ async function Primon() {
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   shell.exec("rm -rf PrimonProto/src")
                   shell.exec("mv src PrimonProto/")
-                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && npm i && npm i node-youtube-music && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
+                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
                 } else {
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.update_without_media + msg})
                   saveMessageST(gmsg.key.id, modulelang.update + msg)
                   shell.exec("rm -rf PrimonProto/")
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
-                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && npm i && npm i node-youtube-music && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
+                  return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
                 }
               }
 
@@ -4453,7 +4682,7 @@ async function Primon() {
                   })
                 } else {
                   if (PrimonDB.alive_msg_media.type == "image") {
-                    if (fs.existsSync("./alive.png")) {
+                    if (fs.existsSync("./src/alive.png")) {
                       return await Proto.sendMessage(jid, {
                         image: fs.readFileSync("./src/alive.png"),
                         caption: PrimonDB.alive_msg

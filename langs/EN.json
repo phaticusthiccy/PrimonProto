@@ -160,11 +160,25 @@
       "tagadmin2": "_Tag all admins in the group._",
       "null_worktype": "_Please only use the words_ *private* _or_ *public.*",
       "worktype_admin_req": "_Only bot owner and SUDOs can use this command!_",
-      "wmode1": "{%d1}```{%c}workmode``` \n{%d1}_Turns the bot on or off for everyone able to use Primon._\n{%d1}\n\n```{%c}workmode private````\n```{&c}workmode public```",
+      "wmode1": "{%d1}```{%c}workmode``` \n{%d1}_Turns the bot on or off for everyone able to use Primon._\n{%d1}\n\n```{%c}workmode private```\n```{&c}workmode public```",
       "wmode2": "_Turns the bot on or off for everyone able to use Primon._",
-      "wmode3": "```&workmode private````\n```&workmode public```",
+      "wmode3": "```&workmode private```\n```&workmode public```",
       "vid_author": "_Video Author:_ ",
-      "vid_name": "_Video Name:_ "
+      "vid_name": "_Video Name:_ ",
+      "no_sudo": "_Cannot find added SUDO user!_",
+      "sudo_list": "_Persons with SUDO Authorization_ \n\n:",
+      "no_super_sudo": "_Cannot find added SUPER SUDO user!_",
+      "super_sudo_list": "_Persons with SUPER SUDO Authorization_ \n\n:",
+      "sudo1": "_Grants some of the bot privileges to the responding user. If the message is not answered, it will show the current SUDO list._",
+      "supersudo1": "_Gives the replied user full bot privileges. If the message is not answered, it will show the current SUPER SUDO list._",
+      "sudo2": "```&sudo <reply to message>```\n```&sudo```",
+      "supersudo2": "```&supersudo <reply to message>```\n```&supersudo```",
+      "sudo3": "{%d1}```{%c}sudo```\n{%d1}_Grants some of the bot privileges to the responding user. If the message is not answered, it will show the current SUDO list._\n{%d1}\n\n```{%c}sudo <reply to message>```\n```{%c}sudo```",
+      "supersudo3": "{%d1}```{%c}supersudo```\n{%d1}_Gives the replied user full bot privileges. If the message is not answered, it will show the current SUPER SUDO list._\n{%d1}\n\n```{%c}supersudo <reply to message>```\n```{%c}supersudo```",
+      "must_sudo": "_You have to be SUDO to use this command!_",
+      "must_super_sudo": "_You have to be SUPER SUDO to use this command!_",
+      "must_owner": "_Only bot owner can use this command!_",
+      "must_admin": "_You need to be an admin to use this command!_"
     }
   }
 }

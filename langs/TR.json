@@ -160,11 +160,25 @@
       "tagadmin2": "_Gruptaki tüm adminleri etiketler._",
       "null_worktype": "_Lütfen sadece_ *private* _veya_ *public* _kelimelerini kullanın._",
       "worktype_admin_req": "_Bu komutu yanlızca bot sahibi ve SUDO'lar kullanabilir!_",
-      "wmode1": "{%d1}```{%c}workmode``` \n{%d1}_Botu herkes için kullanıma açar veya kapatır._\n{%d1}\n\n```{%c}workmode private````\n```{&c}workmode public```",
+      "wmode1": "{%d1}```{%c}workmode``` \n{%d1}_Botu herkes için kullanıma açar veya kapatır._\n{%d1}\n\n```{%c}workmode private```\n```{&c}workmode public```",
       "wmode2": "_Botu herkes için kullanıma açar veya kapatır._",
-      "wmode3": "```&workmode private````\n```&workmode public```",
+      "wmode3": "```&workmode private```\n```&workmode public```",
       "vid_author": "_Video Sahibi:_ ",
-      "vid_name": "_Video İsmi:_ "
+      "vid_name": "_Video İsmi:_ ",
+      "no_sudo": "_Eklenmiş SUDO kullanıcısı bulunmuyor!_",
+      "sudo_list": "_SUDO Yetkisine Sahip Kişiler_ \n\n:",
+      "no_super_sudo": "_Eklenmiş SÜPER SUDO kullanıcısı bulunmuyor!_",
+      "super_sudo_list": "_SÜPER SUDO Yetkisine Sahip Kişiler_ \n\n:",
+      "sudo1": "_Yanıtlanan kullanıcıya bot yetkilerinin bir kısmını verir. Mesaj yanıtlanmazsa güncel SUDO listesini gösterir._",
+      "supersudo1": "_Yanıtlanan kullanıcıya bot yetkilerinin tamamını verir. Mesaj yanıtlanmazsa güncel SÜPER SUDO listesini gösterir._",
+      "sudo2": "```&sudo <mesaja yanıt ver>```\n```&sudo```",
+      "supersudo2": "```&supersudo <mesaja yanıt ver>```\n```&supersudo```",
+      "sudo3": "{%d1}```{%c}sudo```\n{%d1}_Yanıtlanan kullanıcıya bot yetkilerinin bir kısmını verir. Mesaj yanıtlanmazsa güncel SUDO listesini gösterir._\n{%d1}\n\n```{%c}sudo <mesaja yanıt ver>```\n```{%c}sudo```",
+      "supersudo3": "{%d1}```{%c}supersudo```\n{%d1}_Yanıtlanan kullanıcıya bot yetkilerinin tamamını verir. Mesaj yanıtlanmazsa güncel SÜPER SUDO listesini gösterir._\n{%d1}\n\n```{%c}supersudo <mesaja yanıt ver>```\n```{%c}supersudo```",
+      "must_sudo": "_Bu komutu kullanman için SUDO olman lazım!_",
+      "must_super_sudo": "_Bu komutu kullanman için SÜPER SUDO olman lazım!_",
+      "must_owner": "_Bu komutu yanlızca bot sahibi kullanabilir!_",
+      "must_admin": "_Bu komutu kullanman için admin olman gerekiyor!_"
     }
   }
 }
