@@ -1457,7 +1457,7 @@ async function Primon() {
                   } else {
                     var sudo_map = ""
                     sudo.map((Element) => {
-                      sudo_map += "_◽ " + Element + "\n"
+                      sudo_map += "_◽ " + Element + "_\n"
                     })
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.sudo_list + sudo_map });
                     saveMessageST(gmsg.key.id, modulelang.sudo_list)
@@ -1499,7 +1499,7 @@ async function Primon() {
                   } else {
                     var sudo_map = ""
                     PrimonDB.super_sudo.map((Element) => {
-                      sudo_map += "_◽ " + Element + "\n"
+                      sudo_map += "_◽ " + Element + "_\n"
                     })
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.super_sudo_list + sudo_map});
                     saveMessageST(gmsg.key.id, modulelang.super_sudo_list)
@@ -4702,7 +4702,7 @@ async function Primon() {
                   if (PrimonDB.alive_msg_media.type == "video") {
                     if (fs.existsSync("./src/alive.mp4")) {
                       return await Proto.sendMessage(jid, {
-                        video: fs.readFileSync("./alive.mp4"),
+                        video: fs.readFileSync("./src/alive.mp4"),
                         caption: PrimonDB.alive_msg
                       })
                     } else {
