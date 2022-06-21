@@ -1450,13 +1450,13 @@ async function Primon() {
                 }
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 if (!isreplied) {
-                  if (PrimonDB.sudo.length == 0) {
+                  if (sudo.length == 0) {
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.no_sudo });
                     saveMessageST(gmsg.key.id, modulelang.no_sudo)
                     return;
                   } else {
                     var sudo_map = ""
-                    PrimonDB.sudo.map((Element) => {
+                    sudo.map((Element) => {
                       sudo_map += "_◽ " + Element + "\n"
                     })
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.sudo_list + sudo_map });
@@ -1465,7 +1465,7 @@ async function Primon() {
                   }
                 } else {
                   var sudo_id = m.messages[0].message.extendedTextMessage.contextInfo.participant
-                  PrimonDB = PrimonDB.sudo.push(sudo_id)
+                  PrimonDB.sudo = PrimonDB.sudo + "," + sudo_id
                   await octokit.request("PATCH /gists/{gist_id}", {
                     gist_id: process.env.GITHUB_DB,
                     description: "Primon Proto için Kalıcı Veritabanı",
