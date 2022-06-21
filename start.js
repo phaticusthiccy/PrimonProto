@@ -243,9 +243,15 @@ const retryMessageHandler = async message => {
   }
 }
 
-const store = makeInMemoryStore({
-  logger: P({ level: 'silent'})
-});
+const store = makeInMemoryStore({ 
+  logger: P().child(
+    { 
+      level: 'silent', 
+      stream: 'store' 
+    }
+  ) 
+})
+
 function wait(ms) {
   var start = Date.now(),
       now = start;
