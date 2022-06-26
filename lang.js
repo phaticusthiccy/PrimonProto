@@ -64,8 +64,9 @@ if (cont == false) {
     console.log(chalk.green.bold("Loaded EN Language!"));
   }
 } else {
+  var plang = require("./langs/PrimomIOP.json")
   if (lang == "TR") {
-    fs.wwriteFileSync("./langs/PrimomIOP.json", get_db.lang_json)
+    fs.writeFileSync("./langs/PrimomIOP.json", get_db.lang_json)
     console.log("Kişiselleştirilmiş Dil Dosyası Yükleniyor..")
     var json = JSON.parse(fs.readFileSync("./langs/PrimonIOP.json"))
     var old_keys = Object.keys(require("./langs/TR.json"))
@@ -79,41 +80,7 @@ if (cont == false) {
         var re = JSON.parse(r2)
         re.lang_json = false
         var re3 = JSON.stringify(re, null, 2)
-        await octokit.request("PATCH /gists/{gist_id}", {
-          gist_id: process.env.GITHUB_DB,
-          description: "Primon Proto için Kalıcı Veritabanı",
-          files: {
-            key: {
-              content: re3,
-              filename: "primon.db.json",
-              },
-          },
-        });
-      })();
-      var json = JSON.parse(fs.readFileSync("./langs/TR.json"));
-    } else {
-      old_keys = require("./langs/TR.json").STRINGS
-      var w2keys = require("./langs/PrimomIOP.json").STRINGS
-      var cont2 = false
-      var sayac = 0
-      old_keys.map((Element) => {
-        if (Element !== w2keys[sayac]) {
-          cont2 = false
-          sayac = 0
-          return;
-        }
-        sayac = sayac + 1
-      })
-      sayac = 0
-      if (cont2 == false) {
-        console.log(chalk.red("Kişiselleştirilmiş Dil Dosyası Okunabilir Değil veya JSON hatası var!"))
-        console.log("\n")
-        console.log("Varsayılan Olarak Türkçe Dili Tekrar Yükleniyor..")
-        (async () => {
-          var re2 = JSON.stringify(get_db, null, 2);
-          var re = JSON.parse(r2)
-          re.lang_json = false
-          var re3 = JSON.stringify(re, null, 2)
+        try {
           await octokit.request("PATCH /gists/{gist_id}", {
             gist_id: process.env.GITHUB_DB,
             description: "Primon Proto için Kalıcı Veritabanı",
@@ -124,6 +91,48 @@ if (cont == false) {
                 },
             },
           });
+        } catch {
+          console.log("API LIMIT")
+        }
+      })();
+      var json = JSON.parse(fs.readFileSync("./langs/TR.json"));
+    } else {
+      old_keys = Object.keys(require("./langs/TR.json").STRINGS)
+      var w2keys = Object.keys(require("./langs/PrimomIOP.json").STRINGS)
+      var cont2 = false
+      var sayac = 0
+      old_keys.map((Element) => {
+        if (Element !== w2keys[sayac]) {
+          plang.STRINGS[Element] = Element[sayac]
+        }
+        sayac = sayac + 1
+      })
+      sayac = 0
+      cont2 = true
+      fs.writeFileSync("./langs/PrimomIOP.json", JSON.stringify(plang, null, 2))
+      if (cont2 == false) {
+        console.log(chalk.red("Kişiselleştirilmiş Dil Dosyası Okunabilir Değil veya JSON hatası var!"))
+        console.log("\n")
+        console.log("Varsayılan Olarak Türkçe Dili Tekrar Yükleniyor..")
+        (async () => {
+          var re2 = JSON.stringify(get_db, null, 2);
+          var re = JSON.parse(r2)
+          re.lang_json = false
+          var re3 = JSON.stringify(re, null, 2)
+          try {
+            await octokit.request("PATCH /gists/{gist_id}", {
+              gist_id: process.env.GITHUB_DB,
+              description: "Primon Proto için Kalıcı Veritabanı",
+              files: {
+                key: {
+                  content: re3,
+                  filename: "primon.db.json",
+                  },
+              },
+            });
+          } catch {
+            console.log("API LIMIT")
+          }
         })();
         var json = JSON.parse(fs.readFileSync("./langs/TR.json"));
       } else {
@@ -143,22 +152,27 @@ if (cont == false) {
             var re = JSON.parse(r2)
             re.lang_json = false
             var re3 = JSON.stringify(re, null, 2)
-            await octokit.request("PATCH /gists/{gist_id}", {
-              gist_id: process.env.GITHUB_DB,
-              description: "Primon Proto için Kalıcı Veritabanı",
-              files: {
-                key: {
-                  content: re3,
-                  filename: "primon.db.json",
-                  },
-              },
-            });
+            try {
+              await octokit.request("PATCH /gists/{gist_id}", {
+                gist_id: process.env.GITHUB_DB,
+                description: "Primon Proto için Kalıcı Veritabanı",
+                files: {
+                  key: {
+                    content: re3,
+                    filename: "primon.db.json",
+                    },
+                },
+              });
+            } catch {
+              console.log("API LIMIT")
+            }
           })();
           var json = JSON.parse(fs.readFileSync("./langs/TR.json"));
         } else {
           var obj2 = Object.keys(require("./langs/TR.json").STRINGS)
           // Array ["menu", "onStart", "stop_f" ...[]]
           // Default
+
           var s3 = []
           obj2.map((el) => {
             s3.push(Object.keys(require("./langs/TR.json").STRINGS[el]))
@@ -166,10 +180,12 @@ if (cont == false) {
           s3 = s3.flat()
           // Array [Array ["menu", "owner", "star", "pp", "by"], Array ["msg"] ...[[]]]
           // Default
+          // Array ["menu", "owner", "star", "pp", "by", "msg" ...[]]
 
           var obj3 = Object.keys(require("./langs/PrimomIOP.json").STRINGS)
           // Array ["menu", "onStart", "stop_f" ...[]]
           // Personalized
+
           var s4 = []
           obj3.map((el) => {
             s4.push(Object.keys(require("./langs/PrimomIOP.json").STRINGS[el]))
@@ -177,7 +193,8 @@ if (cont == false) {
           s4 = s4.flat()
           // Array [Array ["menu", "owner", "star", "pp", "by"], Array ["msg"] ...[[]]]
           // Personalized
-
+          // Array ["menu", "owner", "star", "pp", "by", "msg" ...[]]
+          
           var sayac2 = 0
           var cont4 = false
           s3.map((el) => {
@@ -198,16 +215,20 @@ if (cont == false) {
               var re = JSON.parse(r2)
               re.lang_json = false
               var re3 = JSON.stringify(re, null, 2)
-              await octokit.request("PATCH /gists/{gist_id}", {
-                gist_id: process.env.GITHUB_DB,
-                description: "Primon Proto için Kalıcı Veritabanı",
-                files: {
-                  key: {
-                    content: re3,
-                    filename: "primon.db.json",
-                    },
-                },
-              });
+              try {
+                await octokit.request("PATCH /gists/{gist_id}", {
+                  gist_id: process.env.GITHUB_DB,
+                  description: "Primon Proto için Kalıcı Veritabanı",
+                  files: {
+                    key: {
+                      content: re3,
+                      filename: "primon.db.json",
+                      },
+                  },
+                });
+              } catch {
+                console.log("API LIMIT")
+              }
             })();
             var json = JSON.parse(fs.readFileSync("./langs/TR.json"));
           } else {
@@ -218,7 +239,7 @@ if (cont == false) {
       }
     }
   } else {
-    fs.wwriteFileSync("./langs/PrimomIOP.json", get_db.lang_json)
+    fs.writeFileSync("./langs/PrimomIOP.json", get_db.lang_json)
     console.log("Loading Personalized Language File..")
     var json = JSON.parse(fs.readFileSync("./langs/PrimonIOP.json"))
     var old_keys = Object.keys(require("./langs/EN.json"))
@@ -232,41 +253,7 @@ if (cont == false) {
         var re = JSON.parse(r2)
         re.lang_json = false
         var re3 = JSON.stringify(re, null, 2)
-        await octokit.request("PATCH /gists/{gist_id}", {
-          gist_id: process.env.GITHUB_DB,
-          description: "Primon Proto için Kalıcı Veritabanı",
-          files: {
-            key: {
-              content: re3,
-              filename: "primon.db.json",
-              },
-          },
-        });
-      })();
-      var json = JSON.parse(fs.readFileSync("./langs/EN.json"));
-    } else {
-      old_keys = require("./langs/EN.json").STRINGS
-      var w2keys = require("./langs/PrimomIOP.json").STRINGS
-      var cont2 = false
-      var sayac = 0
-      old_keys.map((Element) => {
-        if (Element !== w2keys[sayac]) {
-          cont2 = false
-          sayac = 0
-          return;
-        }
-        sayac = sayac + 1
-      })
-      sayac = 0
-      if (cont2 == false) {
-        console.log(chalk.red("Personalized Language File Is Not Readable or has a JSON error!"))
-        console.log("\n")
-        console.log("English Language Reloading by Default..")
-        (async () => {
-          var re2 = JSON.stringify(get_db, null, 2);
-          var re = JSON.parse(r2)
-          re.lang_json = false
-          var re3 = JSON.stringify(re, null, 2)
+        try {
           await octokit.request("PATCH /gists/{gist_id}", {
             gist_id: process.env.GITHUB_DB,
             description: "Primon Proto için Kalıcı Veritabanı",
@@ -277,6 +264,47 @@ if (cont == false) {
                 },
             },
           });
+        } catch {
+          console.log("API LIMIT")
+        }
+      })();
+      var json = JSON.parse(fs.readFileSync("./langs/EN.json"));
+    } else {
+      old_keys = Object.keys(require("./langs/EN.json").STRINGS)
+      var w2keys = Object.keys(require("./langs/PrimomIOP.json").STRINGS)
+      var cont2 = false
+      var sayac = 0
+      old_keys.map((Element) => {
+        if (Element !== w2keys[sayac]) {
+          plang.STRINGS[Element] = Element[sayac]
+        }
+        sayac = sayac + 1
+      })
+      sayac = 0
+      cont2 = true
+      if (cont2 == false) {
+        console.log(chalk.red("Personalized Language File Is Not Readable or has a JSON error!"))
+        console.log("\n")
+        console.log("English Language Reloading by Default..")
+        (async () => {
+          var re2 = JSON.stringify(get_db, null, 2);
+          var re = JSON.parse(r2)
+          re.lang_json = false
+          var re3 = JSON.stringify(re, null, 2)
+          try {
+            await octokit.request("PATCH /gists/{gist_id}", {
+              gist_id: process.env.GITHUB_DB,
+              description: "Primon Proto için Kalıcı Veritabanı",
+              files: {
+                key: {
+                  content: re3,
+                  filename: "primon.db.json",
+                  },
+              },
+            });
+          } catch {
+            console.log("API LIMIT")
+          }
         })();
         var json = JSON.parse(fs.readFileSync("./langs/EN.json"));
       } else {
@@ -295,16 +323,20 @@ if (cont == false) {
             var re = JSON.parse(r2)
             re.lang_json = false
             var re3 = JSON.stringify(re, null, 2)
-            await octokit.request("PATCH /gists/{gist_id}", {
-              gist_id: process.env.GITHUB_DB,
-              description: "Primon Proto için Kalıcı Veritabanı",
-              files: {
-                key: {
-                  content: re3,
-                  filename: "primon.db.json",
-                  },
-              },
-            });
+            try {
+              await octokit.request("PATCH /gists/{gist_id}", {
+                gist_id: process.env.GITHUB_DB,
+                description: "Primon Proto için Kalıcı Veritabanı",
+                files: {
+                  key: {
+                    content: re3,
+                    filename: "primon.db.json",
+                    },
+                },
+              });
+            } catch {
+              console.log("API LIMIT")
+            }
           })();
           var json = JSON.parse(fs.readFileSync("./langs/EN.json"));
         } else {
@@ -350,16 +382,20 @@ if (cont == false) {
               var re = JSON.parse(r2)
               re.lang_json = false
               var re3 = JSON.stringify(re, null, 2)
-              await octokit.request("PATCH /gists/{gist_id}", {
-                gist_id: process.env.GITHUB_DB,
-                description: "Primon Proto için Kalıcı Veritabanı",
-                files: {
-                  key: {
-                    content: re3,
-                    filename: "primon.db.json",
-                    },
-                },
-              });
+              try {
+                await octokit.request("PATCH /gists/{gist_id}", {
+                  gist_id: process.env.GITHUB_DB,
+                  description: "Primon Proto için Kalıcı Veritabanı",
+                  files: {
+                    key: {
+                      content: re3,
+                      filename: "primon.db.json",
+                      },
+                  },
+                });
+              } catch {
+                console.log("API LIMIT")
+              }
             })();
             var json = JSON.parse(fs.readFileSync("./langs/EN.json"));
           } else {

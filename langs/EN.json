@@ -49,7 +49,9 @@
     },
     "tagall": {
       "msg": "🔸 *Members of* {%c} 🔸\n\n",
-      "admin": "🔸 *Admins of* {%c} 🔸\n\n"
+      "admin": "🔸 *Admins of* {%c} 🔸\n\n",
+      "super": "🔸 *Super Admins of* {%c} 🔸\n\n",
+      "super_info": "_Super admins are the people with the highest authority in the group. No one has as much authority and right as super admin._"
     },
     "goodbye": {
       "not_set_goodbye": "_No goodbye messages are set for this chat._",
@@ -151,6 +153,7 @@
       "song_us": "```&song Thiccy - Vibe House```",
       "song_fl": "{%d1}```{%c}song```\n{%d1}_Download songs from YouTube._ \n{%d1}\n\n```{%c}song Thiccy - Vibe House```",
       "only_img_or_video": "*Please only reply to video, photo or sticker!*",
+      "reply_img_or_video": "*Please only reply to video or photo!*",
       "sticker1": "_Converts video or photo to sticker. If the sticker is answered it will turn it into a photo or video._",
       "sticker2": "```&sticker <reply a message>```\n```&sticker <Sticker name> <reply a message>```",
       "sticker3": "{%d1}```{%c}sticker```\n{%d1}_Converts video or photo to sticker. If the sticker is answered it will turn it into a photo or video._ \n{%d1}\n\n```{%c}sticker <reply a message>```\n```{%c}sticker <Sticker name> <reply a message>```",
@@ -166,9 +169,9 @@
       "vid_author": "_Video Author:_ ",
       "vid_name": "_Video Name:_ ",
       "no_sudo": "_Cannot find added SUDO user!_",
-      "sudo_list": "_Persons with SUDO Authorization_ \n\n:",
+      "sudo_list": "_Persons with SUDO Authorization:_ \n\n",
       "no_super_sudo": "_Cannot find added SUPER SUDO user!_",
-      "super_sudo_list": "_Persons with SUPER SUDO Authorization_ \n\n:",
+      "super_sudo_list": "_Persons with SUPER SUDO Authorization:_ \n\n",
       "sudo1": "_Grants some of the bot privileges to the responding user. If the message is not answered, it will show the current SUDO list._",
       "supersudo1": "_Gives the replied user full bot privileges. If the message is not answered, it will show the current SUPER SUDO list._",
       "sudo2": "```&sudo <reply to message>```\n```&sudo```",
@@ -178,7 +181,13 @@
       "must_sudo": "_You have to be SUDO to use this command!_",
       "must_super_sudo": "_You have to be SUPER SUDO to use this command!_",
       "must_owner": "_Only bot owner can use this command!_",
-      "must_admin": "_You need to be an admin to use this command!_"
+      "must_admin": "_You need to be an admin to use this command!_",
+      "view": "_Downloads view-once pictures or videos._",
+      "view2": "{%d1}```{%c}view```\n{%d1}_Downloads view-once pictures or videos._",
+      "tagsuperadmin": "_Tags super admins in the group. No one has as much authority and right as super admin._",
+      "tagsuperadmin2": "{%d1}```{%c}tagsuperadmin```\n{%d1}_Tags super admins in the group. No one has as much authority and right as super admin._",
+      "no_super_admin": "_There is no super admin in this group!_",
+      "limit": "_API Limit! Your changes will be added as soon as possible._"
     }
   }
 }

@@ -49,7 +49,9 @@
     },
     "tagall": {
       "msg": "🔸 {%c} *Grubunun Üyeleri* 🔸\n\n",
-      "admin": "🔸 {%c} *Grubunun Adminleri* 🔸\n\n"
+      "admin": "🔸 {%c} *Grubunun Adminleri* 🔸\n\n",
+      "super": "🔸 {%c} *Grubunun Süper Adminleri* 🔸\n\n",
+      "super_info": "_Süper adminler grup içinde en yüksek yetkiye sahip olan kişilerdir. Hiçbir admin süper admin'in, süper admin kadar yetkisi ve hakkı yoktur._"
     },
     "goodbye": {
       "not_set_goodbye": "_Bu sohbet için herhangi bir görüşürüz mesajı ayarlanmamış._",
@@ -151,6 +153,7 @@
       "song_us": "```&song Thiccy - Vibe House```",
       "song_fl": "{%d1}```{%c}song```\n{%d1}_YouTube üzerinden şarkı indirir._ \n{%d1}\n\n```{%c}song Thiccy - Vibe House```",
       "only_img_or_video": "*Lütfen sadece video, fotoğraf veya sticker'a yanıt verin!*",
+      "reply_img_or_video": "*Lütfen sadece video veya fotoğrafa yanıt verin!*",
       "sticker1": "_Videoyu veya fotoğrafı stickera çevirir. Eğer sticker yanıtlanırsa fotoğrafa veya videoya çevirir._",
       "sticker2": "```&sticker <mesaja yanıt ver>```\n```&sticker <Sticker ismi> <mesaja yanıt ver>```",
       "sticker3": "{%d1}```{%c}sticker```\n{%d1}_Videoyu veya fotoğrafı sticker'a çevirir. Eğer sticker yanıtlanırsa fotoğrafa veya videoya çevirir._ \n{%d1}\n\n```{%c}sticker <mesaja yanıt ver>```\n```{%c}sticker <Sticker ismi> <mesaja yanıt ver>```",
@@ -166,9 +169,9 @@
       "vid_author": "_Video Sahibi:_ ",
       "vid_name": "_Video İsmi:_ ",
       "no_sudo": "_Eklenmiş SUDO kullanıcısı bulunmuyor!_",
-      "sudo_list": "_SUDO Yetkisine Sahip Kişiler_ \n\n:",
+      "sudo_list": "_SUDO Yetkisine Sahip Kişiler:_ \n\n",
       "no_super_sudo": "_Eklenmiş SÜPER SUDO kullanıcısı bulunmuyor!_",
-      "super_sudo_list": "_SÜPER SUDO Yetkisine Sahip Kişiler_ \n\n:",
+      "super_sudo_list": "_SÜPER SUDO Yetkisine Sahip Kişiler:_ \n\n",
       "sudo1": "_Yanıtlanan kullanıcıya bot yetkilerinin bir kısmını verir. Mesaj yanıtlanmazsa güncel SUDO listesini gösterir._",
       "supersudo1": "_Yanıtlanan kullanıcıya bot yetkilerinin tamamını verir. Mesaj yanıtlanmazsa güncel SÜPER SUDO listesini gösterir._",
       "sudo2": "```&sudo <mesaja yanıt ver>```\n```&sudo```",
@@ -178,7 +181,13 @@
       "must_sudo": "_Bu komutu kullanman için SUDO olman lazım!_",
       "must_super_sudo": "_Bu komutu kullanman için SÜPER SUDO olman lazım!_",
       "must_owner": "_Bu komutu yanlızca bot sahibi kullanabilir!_",
-      "must_admin": "_Bu komutu kullanman için admin olman gerekiyor!_"
+      "must_admin": "_Bu komutu kullanman için admin olman gerekiyor!_",
+      "view": "_Tek seferlik görüntülenen resimleri veya videoları indirir._",
+      "view2": "{%d1}```{%c}view```\n{%d1}_Tek seferlik görüntülenen resimleri veya videoları indirir._",
+      "tagsuperadmin": "_Gruptaki süper adminleri etiketler. Bu adminlerin yetkisi hiçbir kullanıcıda yoktur._",
+      "tagsuperadmin2": "{%d1}```{%c}tagsuperadmin```\n{%d1}_Gruptaki süper adminleri etiketler. Bu adminlerin yetkisi hiçbir kullanıcıda yoktur._",
+      "no_super_admin": "_Bu grupta herhangi bir süper admin yok!_",
+      "limit": "_API Limiti! En yakın zamanda yaptığınız değişiklikler eklenecektir._"
     }
   }
 }
