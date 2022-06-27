@@ -39,6 +39,4 @@ WORKDIR /PrimonProto
 
 RUN npm i 
 
-RUN npm i node-youtube-music
-
 CMD [ "bash","pri.sh" ]
