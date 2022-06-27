@@ -334,7 +334,7 @@ var command_list = [
   "filter", "stop", "sticker", "update", 
   "yt", "video", "term", "song", 
   "tagadmin", "workmode", "sudo", "supersudo", 
-  "view", "tagsuperadmin"
+  "view", "tagsuperadmin", "carbon"
 ] // 22
 var diff = [];
 
@@ -1247,6 +1247,10 @@ async function Primon() {
             cmdlang.command + "```" + cmd[0] + "view" + "```" + "\n" +
             cmdlang.info + modulelang.view + "\n\n\n" + 
 
+            cmdlang.command + "```" + cmd[0] + "carbon" + "```" + "\n" +
+            cmdlang.info + modulelang.carbon + "\n" +
+            cmdlang.example + "\n" + modulelang.carbon2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
             cmdlang.command + "```" + cmd[0] + "term" + "```" + "\n" +
             cmdlang.info + modulelang.term1 + "\n" +
             cmdlang.danger + modulelang.term3 + "\n" +
@@ -1333,6 +1337,10 @@ async function Primon() {
 
         cmdlang.command + "```" + cmd[0] + "view" + "```" + "\n" +
         cmdlang.info + modulelang.view + "\n\n\n" + 
+
+        cmdlang.command + "```" + cmd[0] + "carbon" + "```" + "\n" +
+        cmdlang.info + modulelang.carbon + "\n" +
+        cmdlang.example + "\n" + modulelang.carbon2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
         cmdlang.command + "```" + cmd[0] + "term" + "```" + "\n" +
         cmdlang.info + modulelang.term1 + "\n" +
@@ -1532,6 +1540,79 @@ async function Primon() {
               }
 
 
+              // Carbon
+              else if (attr == "carbon") {
+                var jid2 = jid
+                await Proto.sendMessage(jid2, { delete: msgkey });
+                if (isreplied) {
+                  var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURI(repliedmsg), { responseType: "arraybuffer"})
+
+                  // Its my native API from https://open-apis-rest.up.railway.app
+                  // Name called "carbon" but the client ı wrote, not coming from carbon.now.sh
+                  // I can say, its look likes a carbon but not that
+                  // REST Native API for creating Code İmages.
+                  //
+                  // Parameters:
+                  /**
+                   * 
+                   var theme = [
+                    "abyss",
+                    "dark-plus",
+                    "light-plus",
+                    "github-dark",
+                    "github-light",
+                    "visual-studio-dark",
+                    "visual-studio-light",
+                    "high-contrast",
+                    "kimbie-dark",
+                    "dimmed-monokai",
+                    "monokai",
+                    "night-owl",
+                    "night-owl-no-italic",
+                    "night-owl-light",
+                    "night-owl-light-no-italic",
+                    "quietlight",
+                    "red",
+                    "solarized-dark",
+                    "solarized-light",
+                    "tomorrow-night-blue"
+                  ]
+                  var langs = [
+                    "ada", "batch", "c", "csharp",
+                    "cpp", "clojure", "cobol", "coffee",
+                    "commonlisp","crystal","css","gherkin",
+                    "dscript","dart","diff","django","dockerfile",
+                    "elixir","elm","erlang","fsharp","fortran",
+                    "git-commit","git-rebase","go","graphql",
+                    "groovy","handlebars","haskell","hlsl",
+                    "html","ignore","cfg","java","js","json",
+                    "jsonwithcomments","jsx","julia","kts",
+                    "latex","less","log","lua","makefile",
+                    "markdown","mathematica","ntriples","nginx",
+                    "nim","objective-c","objective-cpp","ocaml",
+                    "octave","pascal","perl","php","python",
+                    "powershell","r","racket","perl6","reason",
+                    "reason_lisp","rescript","riscv","ruby","rust",
+                    "sass","scala","scheme","scss","shaderlab",
+                    "shellscript","smalltalk","sql","swift","tcl",
+                    "toml","tsx","twig","ts","verilog","vhdl",
+                    "visualbasic","vue","xml","xquery","yaml","zig"
+                  ]
+                   */
+                  // &theme={theme}
+                  // &language={language}
+
+                  return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
+                } else {
+                  if (args == "") {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.args }, { quoted: m.messages[0]});
+                    saveMessageST(gmsg.key.id, modulelang.args)
+                    return;
+                  }
+                  var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURI(args), { responseType: "arraybuffer"})
+                  return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
+                }
+              }
               // View
               else if (attr == "view") {
                 var jid2 = jid
@@ -2545,6 +2626,17 @@ async function Primon() {
                     saveMessageST(gmsg.key.id, cmds(modulelang.update2, 2, cmd[0]))
                     return;
                   } else if (
+                    args == "carbon" ||
+                    args == "Carbon" ||
+                    args == "CARBON"
+                  ) {
+                    var gmsg = await Proto.sendMessage(
+                      jid2,
+                      { text: cmds(modulelang.carbon3, 3, cmd[0]) }
+                    );
+                    saveMessageST(gmsg.key.id, cmds(modulelang.carbon3, 3, cmd[0]))
+                    return;
+                  }  else if (
                     args == "yt" ||
                     args == "Yt" ||
                     args == "YT"

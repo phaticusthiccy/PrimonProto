@@ -187,7 +187,11 @@
       "tagsuperadmin": "_Gruptaki süper adminleri etiketler. Bu adminlerin yetkisi hiçbir kullanıcıda yoktur._",
       "tagsuperadmin2": "{%d1}```{%c}tagsuperadmin```\n{%d1}_Gruptaki süper adminleri etiketler. Bu adminlerin yetkisi hiçbir kullanıcıda yoktur._",
       "no_super_admin": "_Bu grupta herhangi bir süper admin yok!_",
-      "limit": "_API Limiti! En yakın zamanda yaptığınız değişiklikler eklenecektir._"
+      "limit": "_API Limiti! En yakın zamanda yaptığınız değişiklikler eklenecektir._",
+      "args": "_Lütfen herhangi bir kelime girin!_",
+      "carbon": "_Mesajınızı farklı stillerdeki kod ekran görüntüsüne çevirin!_",
+      "carbon2": "```&carbon Thiccy```\n```&carbon <mesaja yanıt ver>```",
+      "carbon3": "{%d1}```{%c}carbon```\n{%d1}_Mesajınızı farklı stillerdeki kod ekran görüntüsüne çevirin!_\n{%d1}\n\n```{%c}carbon Thiccy```\n```{%c}carbon <mesaja yanıt ver>```"
     }
   }
 }

@@ -187,7 +187,11 @@
       "tagsuperadmin": "_Tags super admins in the group. No one has as much authority and right as super admin._",
       "tagsuperadmin2": "{%d1}```{%c}tagsuperadmin```\n{%d1}_Tags super admins in the group. No one has as much authority and right as super admin._",
       "no_super_admin": "_There is no super admin in this group!_",
-      "limit": "_API Limit! Your changes will be added as soon as possible._"
+      "limit": "_API Limit! Your changes will be added as soon as possible._",
+      "args": "_Please enter any word!_",
+      "carbon": "_Turn your message into code screenshot in different styles!_",
+      "carbon2": "```&carbon Thiccy```\n```&carbon <reply to message>```",
+      "carbon3": "{%d1}```{%c}carbon```\n{%d1}_Turn your message into code screenshot in different styles!_\n{%d1}\n\n```{%c}carbon Thiccy```\n```{%c}carbon <reply to message>```"
     }
   }
 }
