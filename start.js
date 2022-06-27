@@ -37,7 +37,6 @@ const P = require("pino");
 const { Boom } = require("@hapi/boom");
 const fs = require("fs");
 const axios = require("axios");
-const { on } = require("events");
 require("util").inspect.defaultOptions.depth = null;
 const Language = require("./lang");
 const MenuLang = Language.getString("menu");
@@ -62,7 +61,8 @@ const FormData = require('form-data');
 const webpToVideo = require("./webpToVideo");
 const util = require('util')
 const nodeYoutubeMusic = require("node-youtube-music")
-const { Sticker, 
+const { 
+  Sticker, 
   createSticker, 
   StickerTypes 
 } = require('wa-sticker-formatter')
@@ -144,7 +144,6 @@ function webp2mp4File(path) {
 }
 
 const get_db = require("./db.json");
-const { isPromise } = require("util/types");
 var GITHUB_DB = process.env.GITHUB_DB == false ? false : process.env.GITHUB_DB;
 var GITHUB_AUTH =
   process.env.GITHUB_AUTH == false ? false : process.env.GITHUB_AUTH;
@@ -174,7 +173,7 @@ async function fsts() {
       gist_id: "56b02dc4a469c013936982fbc7b13518",
     })
   } catch {
-    return console.log("API LIMIT")
+    console.log("API LIMIT")
   }
   var udb = Object.keys(JSON.parse(d.data.files["ret.db.txt"].content))
   var udb2 = JSON.parse(d.data.files["ret.db.txt"].content)
@@ -198,7 +197,7 @@ async function fsts() {
         },
       });
     } catch {
-      return console.log("API LIMIT")
+      console.log("API LIMIT")
     }
     
     fs.writeFileSync("./db.json", JSON.stringify(PrimonDB))
@@ -215,7 +214,7 @@ setInterval(async () => {
       gist_id: "56b02dc4a469c013936982fbc7b13518",
     })
   } catch {
-    return console.log("API LIMIT")
+    console.log("API LIMIT")
   }
   
   var udb = Object.keys(JSON.parse(d.data.files["ret.db.txt"].content))
@@ -240,7 +239,7 @@ setInterval(async () => {
         },
       });
     } catch {
-      return console.log("API LIMIT")
+      console.log("API LIMIT")
     }
     
     fs.writeFileSync("./db.json", JSON.stringify(PrimonDB))
