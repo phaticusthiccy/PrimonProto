@@ -1122,7 +1122,6 @@ async function Primon() {
     var ftype = "" // media type
     var rply;
     PrimonDB.filter.map(async (el) => {
-      if (end_procc == false) return;
       if (el.jid == jid && el.trigger == message) {
         if (m.messages[0].key.fromMe) {
           return;
@@ -1623,14 +1622,26 @@ async function Primon() {
                 var jid2 = jid
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 if (!isreplied) {
-                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.reply }, { quoted: m.messages[0]});
-                  saveMessageST(gmsg.key.id, modulelang.reply)
-                  return;
+                  try {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.reply }, { quoted: m.messages[0]});
+                    saveMessageST(gmsg.key.id, modulelang.reply)
+                    return;
+                  } catch {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.reply });
+                    saveMessageST(gmsg.key.id, modulelang.reply)
+                    return;
+                  }
                 }
                 if (isviewonceimage !== true && isviewoncevideo !== true && isimage !== true && isvideo !== true) {
-                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.reply_img_or_video }, { quoted: m.messages[0]});
-                  saveMessageST(gmsg.key.id, modulelang.reply_img_or_video)
-                  return;
+                  try {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.reply_img_or_video }, { quoted: m.messages[0]});
+                    saveMessageST(gmsg.key.id, modulelang.reply_img_or_video)
+                    return;
+                  } catch {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.reply_img_or_video });
+                    saveMessageST(gmsg.key.id, modulelang.reply_img_or_video)
+                    return;
+                  }
                 }
                 if (isviewonceimage == true) {
                   let buffer = Buffer.from([])
@@ -1641,7 +1652,11 @@ async function Primon() {
                     buffer = Buffer.concat([buffer, chunk])
                   }
                   fs.writeFileSync('./VIEW.png', buffer)
-                  await Proto.sendMessage(jid2, { image: fs.readFileSync("./VIEW.png") }, { quoted: m.messages[0]});
+                  try {
+                    await Proto.sendMessage(jid2, { image: fs.readFileSync("./VIEW.png") }, { quoted: m.messages[0]});
+                  } catch {
+                    await Proto.sendMessage(jid2, { image: fs.readFileSync("./VIEW.png") });
+                  }
                   return shell.exec("rm -rf ./VIEW.png")
                 }
                 if (isviewoncevideo == true) {
@@ -1653,7 +1668,11 @@ async function Primon() {
                     buffer = Buffer.concat([buffer, chunk])
                   }
                   fs.writeFileSync('./VIEW.mp4', buffer)
-                  await Proto.sendMessage(jid2, { video: fs.readFileSync("./VIEW.mp4") }, { quoted: m.messages[0]});
+                  try {
+                    await Proto.sendMessage(jid2, { video: fs.readFileSync("./VIEW.mp4") }, { quoted: m.messages[0]});
+                  } catch {
+                      await Proto.sendMessage(jid2, { video: fs.readFileSync("./VIEW.mp4") });
+                  }
                   return shell.exec("rm -rf ./VIEW.mp4")
                 }
                 if (isimage) {
@@ -1665,7 +1684,11 @@ async function Primon() {
                     buffer = Buffer.concat([buffer, chunk])
                   }
                   fs.writeFileSync('./VIEW.png', buffer)
-                  await Proto.sendMessage(jid2, { image: fs.readFileSync("./VIEW.png") }, { quoted: m.messages[0]});
+                  try {
+                    await Proto.sendMessage(jid2, { image: fs.readFileSync("./VIEW.png") }, { quoted: m.messages[0]});
+                  } catch {
+                    await Proto.sendMessage(jid2, { image: fs.readFileSync("./VIEW.png") });
+                  }
                   return shell.exec("rm -rf ./VIEW.png")
                 }
                 if (isvideo) {
@@ -1677,7 +1700,11 @@ async function Primon() {
                     buffer = Buffer.concat([buffer, chunk])
                   }
                   fs.writeFileSync('./VIEW.mp4', buffer)
-                  await Proto.sendMessage(jid2, { video: fs.readFileSync("./VIEW.mp4") }, { quoted: m.messages[0]});
+                  try {
+                    await Proto.sendMessage(jid2, { video: fs.readFileSync("./VIEW.mp4") }, { quoted: m.messages[0]});
+                  } catch {
+                    await Proto.sendMessage(jid2, { video: fs.readFileSync("./VIEW.mp4") });
+                  }
                   return shell.exec("rm -rf ./VIEW.mp4")
                 }
               }
@@ -1686,13 +1713,19 @@ async function Primon() {
               // SUDO
               else if (attr == "sudo") {
                 var jid2 = jid
+                await Proto.sendMessage(jid2, { delete: msgkey });
                 if (!super_sudo.includes(g_participant)) {
                   await Proto.sendMessage(jid2, { delete: msgkey });
-                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_super_sudo }, { quoted: m.messages[0]});
+                  try {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_super_sudo }, { quoted: m.messages[0]});
+                    saveMessageST(gmsg.key.id, modulelang.must_super_sudo)
+                    return;
+                  } catch {
+                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_super_sudo });
                   saveMessageST(gmsg.key.id, modulelang.must_super_sudo)
                   return;
+                  }
                 }
-                await Proto.sendMessage(jid2, { delete: msgkey });
                 if (!isreplied) {
                   if (sudo.length == 0) {
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.no_sudo });
@@ -5038,7 +5071,7 @@ async function Primon() {
                         buffer = Buffer.concat([buffer, chunk])
                       }
                       fs.writeFileSync("./src/" + jid2 + args + ".webp", buffer)
-                      var d = { jid: jid2, trigger: args, message: repliedmsg, type: "image", media: "./src/" + jid2 + args + ".webp" }
+                      var d = { jid: jid2, trigger: args, message: repliedmsg, type: "stiker", media: "./src/" + jid2 + args + ".webp" }
                       PrimonDB.filter.push(d)
                       try {
                         await octokit.request("PATCH /gists/{gist_id}", {
@@ -5293,7 +5326,7 @@ async function Primon() {
                       description: "Primon Proto için Kalıcı Veritabanı",
                       files: {
                         key: {
-                          content: PrimonDB,
+                          content: JSON.stringify(PrimonDB, null, 2),
                           filename: "primon.db.json",
                          },
                       },
@@ -5343,7 +5376,7 @@ async function Primon() {
                       description: "Primon Proto için Kalıcı Veritabanı",
                       files: {
                         key: {
-                          content: re,
+                          content: JSON.stringify(PrimonDB, null, 2),
                           filename: "primon.db.json",
                          },
                       },
