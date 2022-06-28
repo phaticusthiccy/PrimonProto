@@ -4953,31 +4953,33 @@ async function Primon() {
                       for await (const chunk of stream) {
                         buffer = Buffer.concat([buffer, chunk])
                       }
-                      await fs.writeFile("./src/" + jid2 + args + ".png", buffer)
-                      var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".png" }
-                      PrimonDB.filter.push(d)
-                      try {
-                        await octokit.request("PATCH /gists/{gist_id}", {
-                          gist_id: process.env.GITHUB_DB,
-                          description: "Primon Proto için Kalıcı Veritabanı",
-                          files: {
-                            key: {
-                              content: JSON.stringify(PrimonDB, null, 2),
-                              filename: "primon.db.json",
+                      fs.writeFile("./src/" + jid2 + args + ".png", buffer, async (err) => {
+                        if (err) return console.log(err)
+                        var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".png" }
+                        PrimonDB.filter.push(d)
+                        try {
+                          await octokit.request("PATCH /gists/{gist_id}", {
+                            gist_id: process.env.GITHUB_DB,
+                            description: "Primon Proto için Kalıcı Veritabanı",
+                            files: {
+                              key: {
+                                content: JSON.stringify(PrimonDB, null, 2),
+                                filename: "primon.db.json",
+                              },
                             },
-                          },
-                        });
-                      } catch {
-                        var gmsg = await Proto.sendMessage(jid2, { text: modulelang.limit})
-                        saveMessageST(gmsg.key.id, modulelang.limit)
+                          });
+                        } catch {
+                          var gmsg = await Proto.sendMessage(jid2, { text: modulelang.limit})
+                          saveMessageST(gmsg.key.id, modulelang.limit)
+                          return;
+                        }
+                        var gmsg = await Proto.sendMessage(
+                          jid2,
+                          { text: filterlang.succ.replace("&", args) }
+                        );
+                        saveMessageST(gmsg.key.id, filterlang.succ.replace("&", args))
                         return;
-                      }
-                      var gmsg = await Proto.sendMessage(
-                        jid2,
-                        { text: filterlang.succ.replace("&", args) }
-                      );
-                      saveMessageST(gmsg.key.id, filterlang.succ.replace("&", args))
-                      return;
+                      })
                     }
                     if (isvideo) {
                       shell.exec("rm -rf src/" + jid2 + args + ".mp4")
