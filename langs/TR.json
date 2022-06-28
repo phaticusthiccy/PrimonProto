@@ -163,7 +163,7 @@
       "tagadmin2": "_Gruptaki tüm adminleri etiketler._",
       "null_worktype": "_Lütfen sadece_ *private* _veya_ *public* _kelimelerini kullanın._",
       "worktype_admin_req": "_Bu komutu yanlızca bot sahibi ve SUDO'lar kullanabilir!_",
-      "wmode1": "{%d1}```{%c}workmode``` \n{%d1}_Botu herkes için kullanıma açar veya kapatır._\n{%d1}\n\n```{%c}workmode private```\n```{&c}workmode public```",
+      "wmode1": "{%d1}```{%c}workmode``` \n{%d1}_Botu herkes için kullanıma açar veya kapatır._\n{%d1}\n\n```{%c}workmode private```\n```{%c}workmode public```",
       "wmode2": "_Botu herkes için kullanıma açar veya kapatır._",
       "wmode3": "```&workmode private```\n```&workmode public```",
       "vid_author": "_Video Sahibi:_ ",

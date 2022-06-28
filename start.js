@@ -4059,6 +4059,10 @@ async function Primon() {
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.setted})
                   saveMessageST(gmsg.key.id, modulelang.setted)
                   return;
+                } else {
+                  var gmsg = await Proto.sendMessage(jid2, { text: modulelang.set_null.replace("&", cmd[0])})
+                  saveMessageST(gmsg.key.id, modulelang.set_null.replace("&", cmd[0]))
+                  return;
                 }
               }
 
