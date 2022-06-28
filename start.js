@@ -652,7 +652,6 @@ async function Primon() {
     msgRetryCounterMap,
     getMessage: retryMessageHandler
   });
-  Proto.ev.setMaxListeners(0)
   setInterval(async () => {
     Proto.logger = P({ level: PrimonDB.debug === true ? "debug" : "silent" })
   }, 5000)
