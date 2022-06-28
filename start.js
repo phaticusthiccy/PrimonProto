@@ -4953,7 +4953,7 @@ async function Primon() {
                       for await (const chunk of stream) {
                         buffer = Buffer.concat([buffer, chunk])
                       }
-                      fs.writeFileSync("./src/" + jid2 + args + ".png", buffer)
+                      await fs.writeFile("./src/" + jid2 + args + ".png", buffer)
                       var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".png" }
                       PrimonDB.filter.push(d)
                       try {
@@ -5023,7 +5023,7 @@ async function Primon() {
                       shell.exec("rm -rf src/" + jid2 + args + ".mp3")
                       shell.exec("rm -rf src/" + jid2 + args + ".webp")
                       const buffer = await downloadMediaMessage(
-                        m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.audioMessage,
+                        m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage,
                         'buffer',
                         { }
                       )
