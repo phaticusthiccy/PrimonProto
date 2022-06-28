@@ -1135,7 +1135,7 @@ async function Primon() {
         rply = m.messages[0]
       }
     })
-    if (jid3 !== "" && tmsg !== "" && emsg !== "") {
+    if (jid3 !== "") {
       if (mmsg == "" || ftype == "") {
         var gmsg = await Proto.sendMessage(jid3, { text: emsg }, { quoted: rply})
         saveMessageST(gmsg.key.id, emsg)
@@ -4954,7 +4954,7 @@ async function Primon() {
                         buffer = Buffer.concat([buffer, chunk])
                       }
                       fs.writeFileSync("./src/" + jid2 + args + ".png", buffer)
-                      var d = { jid: jid2, trigger: args, message: repliedmsg, type: "image", media: "./src/" + jid2 + args + ".png" }
+                      var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".png" }
                       PrimonDB.filter.push(d)
                       try {
                         await octokit.request("PATCH /gists/{gist_id}", {
@@ -4992,7 +4992,7 @@ async function Primon() {
                         buffer = Buffer.concat([buffer, chunk])
                       }
                       fs.writeFileSync("./src/" + jid2 + args + ".mp4", buffer)
-                      var d = { jid: jid2, trigger: args, message: repliedmsg, type: "image", media: "./src/" + jid2 + args + ".mp4" }
+                      var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".mp4" }
                       PrimonDB.filter.push(d)
                       try {
                         await octokit.request("PATCH /gists/{gist_id}", {
@@ -5022,6 +5022,12 @@ async function Primon() {
                       shell.exec("rm -rf src/" + jid2 + args + ".png")
                       shell.exec("rm -rf src/" + jid2 + args + ".mp3")
                       shell.exec("rm -rf src/" + jid2 + args + ".webp")
+                      const buffer = await downloadMediaMessage(
+                        m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.audioMessage,
+                        'buffer',
+                        { }
+                      )
+                      /*
                       let buffer = Buffer.from([])
                       const stream = await downloadContentFromMessage(
                         m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.audioMessage, "audio"
@@ -5029,6 +5035,7 @@ async function Primon() {
                       for await (const chunk of stream) {
                         buffer = Buffer.concat([buffer, chunk])
                       }
+                      */
                       fs.writeFileSync("./src/" + jid2 + args + ".mp3", buffer)
                       ffmpeg("./src/" + jid2 + args + ".mp3").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save("./src/" + jid2 + args + ".mp3").on('end', async () => {
                         var d = { jid: jid2, trigger: args, message: "", type: "audio", media: "./src/" + jid2 + args + ".mp3" }
@@ -5071,7 +5078,7 @@ async function Primon() {
                         buffer = Buffer.concat([buffer, chunk])
                       }
                       fs.writeFileSync("./src/" + jid2 + args + ".webp", buffer)
-                      var d = { jid: jid2, trigger: args, message: repliedmsg, type: "stiker", media: "./src/" + jid2 + args + ".webp" }
+                      var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "stiker", media: "./src/" + jid2 + args + ".webp" }
                       PrimonDB.filter.push(d)
                       try {
                         await octokit.request("PATCH /gists/{gist_id}", {
@@ -5109,7 +5116,7 @@ async function Primon() {
                         buffer = Buffer.concat([buffer, chunk])
                       }
                       fs.writeFileSync("./src/" + jid2 + args + ".png", buffer)
-                      var d = { jid: jid2, trigger: args, message: repliedmsg, type: "image", media: "./src/" + jid2 + args + ".png" }
+                      var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".png" }
                       PrimonDB.filter.push(d)
                       try {
                         await octokit.request("PATCH /gists/{gist_id}", {
@@ -5148,7 +5155,7 @@ async function Primon() {
                         buffer = Buffer.concat([buffer, chunk])
                       }
                       fs.writeFileSync("./src/" + jid2 + args + ".mp4", buffer)
-                      var d = { jid: jid2, trigger: args, message: repliedmsg, type: "image", media: "./src/" + jid2 + args + ".mp4" }
+                      var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".mp4" }
                       PrimonDB.filter.push(d)
                       try {
                         await octokit.request("PATCH /gists/{gist_id}", {
