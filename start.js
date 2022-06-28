@@ -5386,12 +5386,31 @@ async function Primon() {
                   }
                 })
                 var dates = new Array();
-                dates[0] = date_cmts[0] == "P" ? "Protocol Date" : new Date(date_cmts[0]).toISOString().replace(/T/, " ").replace(/\..+/, "")
-                dates[1] = date_cmts[1] == "P" ? "Protocol Date" : new Date(date_cmts[1]).toISOString().replace(/T/, " ").replace(/\..+/, "")
-                dates[2] = date_cmts[2] == "P" ? "Protocol Date" : new Date(date_cmts[2]).toISOString().replace(/T/, " ").replace(/\..+/, "")
-                dates[3] = date_cmts[3] == "P" ? "Protocol Date" : new Date(date_cmts[3]).toISOString().replace(/T/, " ").replace(/\..+/, "")
-                dates[4] = date_cmts[4] == "P" ? "Protocol Date" : new Date(date_cmts[4]).toISOString().replace(/T/, " ").replace(/\..+/, "")
-                dates[5] = date_cmts[5] == "P" ? "Protocol Date" : new Date(date_cmts[5]).toISOString().replace(/T/, " ").replace(/\..+/, "")
+                try {
+                  dates[0] = date_cmts[0] == "P" ? "Protocol Date" : new Date(date_cmts[0]).toISOString().replace(/T/, " ").replace(/\..+/, "")
+                } catch {
+                  dates[0]  = "P"
+                }try {
+                  dates[1] = date_cmts[1] == "P" ? "Protocol Date" : new Date(date_cmts[1]).toISOString().replace(/T/, " ").replace(/\..+/, "")
+                } catch {
+                  dates[1]  = "P"
+                }try {
+                  dates[2] = date_cmts[2] == "P" ? "Protocol Date" : new Date(date_cmts[2]).toISOString().replace(/T/, " ").replace(/\..+/, "")
+                } catch {
+                  dates[2]  = "P"
+                }try {
+                  dates[3] = date_cmts[3] == "P" ? "Protocol Date" : new Date(date_cmts[3]).toISOString().replace(/T/, " ").replace(/\..+/, "")
+                } catch {
+                  dates[3]  = "P"
+                }try {
+                  dates[4] = date_cmts[4] == "P" ? "Protocol Date" : new Date(date_cmts[4]).toISOString().replace(/T/, " ").replace(/\..+/, "")
+                } catch {
+                  dates[4]  = "P"
+                }try {
+                  dates[5] = date_cmts[5] == "P" ? "Protocol Date" : new Date(date_cmts[5]).toISOString().replace(/T/, " ").replace(/\..+/, "")
+                } catch {
+                  dates[5]  = "P"
+                }
 
                 var msg = 
                   "*◽ " + author_cmts[0]         + "* :: _" + news[0]  + "_" + "\n" +
