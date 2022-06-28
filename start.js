@@ -1599,8 +1599,11 @@ async function Primon() {
                    */
                   // &theme={theme}
                   // &language={language}
-
-                  return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
+                  try {
+                    return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
+                  } catch {
+                    return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by })
+                  }
                 } else {
                   if (args == "") {
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.args }, { quoted: m.messages[0]});
@@ -1608,7 +1611,11 @@ async function Primon() {
                     return;
                   }
                   var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURI(args), { responseType: "arraybuffer"})
-                  return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
+                  try {
+                    return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
+                  } catch {
+                    return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by })
+                  }
                 }
               }
               // View
