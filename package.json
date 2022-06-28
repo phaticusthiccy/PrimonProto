@@ -25,6 +25,7 @@
       "@phaticusthiccy/open-apis": "latest",
       "@railway/cli": "^1.8.0",
       "axios": "latest",
+      "node-youtube-music": "latest",
       "chalk": "4.1.2",
       "child_process": "latest",
       "fluent-ffmpeg": "latest",

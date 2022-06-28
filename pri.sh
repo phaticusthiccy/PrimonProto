@@ -7,4 +7,4 @@
 # Phaticusthiccy - 2022
 
 
-rm -rf PrimonProto/ && git clone https://github.com/phaticusthiccy/PrimonProto && cd PrimonProto && npm i && npm i node-youtube-music && chmod 777 session_record && node save.js && node save_db_store.js && node start.js
+rm -rf PrimonProto/ && git clone https://github.com/phaticusthiccy/PrimonProto && cd PrimonProto && npm i && chmod 777 session_record && node save.js && node save_db_store.js && node start.js
