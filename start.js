@@ -4405,9 +4405,9 @@ async function Primon() {
                   await Proto.sendMessage(jid2, { delete: msgkey });
                   var type = argfinder(args);
                   var url = textpro_links(type);
-                  console.log(type)
-                  console.log(url)
-                  console.log(args)
+                  console.log(type + "\n")
+                  console.log(url + "\n")
+                  console.log(args + "\n")
                   if (url == "") {
                     try {
                       var msg = await Proto.sendMessage(
@@ -5556,12 +5556,14 @@ async function Primon() {
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
                   shell.exec("rm -rf PrimonProto/src")
                   shell.exec("mv src PrimonProto/")
+                  shell.exec("mv ./baileys_store_multi.json PrimonProto/baileys_store_multi.json")
                   return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
                 } else {
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.update_without_media + msg})
                   saveMessageST(gmsg.key.id, modulelang.update_without_media + msg)
                   shell.exec("rm -rf PrimonProto/")
                   shell.exec("git clone https://github.com/phaticusthiccy/PrimonProto")
+                  shell.exec("mv ./baileys_store_multi.json PrimonProto/baileys_store_multi.json")
                   return shell.exec("cd PrimonProto && rm -rf PrimonProto/ && chmod 777 session_record && node save.js && node save_db_store.js && node start.js")
                 }
               }
