@@ -4442,7 +4442,7 @@ async function Primon() {
                     try {
                       var img = await openapi.textpro(style, text3);
                     } catch (e) {
-                      connsole.log(e)
+                      console.log(e)
                       var msg = await Proto.sendMessage(
                         jid2,
                         {
@@ -5096,12 +5096,6 @@ async function Primon() {
                       shell.exec("rm -rf src/" + jid2 + args + ".png")
                       shell.exec("rm -rf src/" + jid2 + args + ".mp3")
                       shell.exec("rm -rf src/" + jid2 + args + ".webp")
-                      const buffer = await downloadMediaMessage(
-                        m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage,
-                        'buffer',
-                        { }
-                      )
-                      /*
                       let buffer = Buffer.from([])
                       const stream = await downloadContentFromMessage(
                         m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.audioMessage, "audio"
@@ -5109,8 +5103,9 @@ async function Primon() {
                       for await (const chunk of stream) {
                         buffer = Buffer.concat([buffer, chunk])
                       }
-                      */
+                      console.log(buffer)
                       fs.appendFileSync("./src/" + jid2 + args + ".mp3", buffer)
+                      shell.exec("cd src && ls")
                       ffmpeg("./src/" + jid2 + args + ".mp3").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save("./src/" + jid2 + args + ".mp3").on('end', async () => {
                         var d = { jid: jid2, trigger: args, message: "", type: "audio", media: "./src/" + jid2 + args + ".mp3" }
                         PrimonDB.filter.push(d)
