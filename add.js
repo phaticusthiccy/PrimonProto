@@ -54,13 +54,11 @@ function bademojis() {
 function textpro_links(type) {
   var url;
   if (type == "neon") {
-    url =
-      "https://textpro.me/create-glowing-neon-light-text-effect-online-free-1061.html";
+    url = "https://textpro.me/create-glowing-neon-light-text-effect-online-free-1061.html";
   } else if (type == "neon2") {
     url = "https://textpro.me/neon-text-effect-online-963.html";
   } else if (type == "devil") {
-    url =
-      "https://textpro.me/create-neon-devil-wings-text-effect-online-free-1014.html";
+    url = "https://textpro.me/create-neon-devil-wings-text-effect-online-free-1014.html";
   } else if (type == "batman") {
     url = "https://textpro.me/make-a-batman-logo-online-free-1066.html";
   } else if (type == "led") {
@@ -70,20 +68,15 @@ function textpro_links(type) {
   } else if (type == "love2") {
     url = "https://textpro.me/create-neon-light-on-brick-wall-online-1062.html";
   } else if (type == "glitch") {
-    url =
-      "https://textpro.me/create-impressive-glitch-text-effects-online-1027.html";
+    url = "https://textpro.me/create-impressive-glitch-text-effects-online-1027.html";
   } else if (type == "summer") {
-    url =
-      "https://textpro.me/create-a-summer-neon-light-text-effect-online-1076.html";
+    url = "https://textpro.me/create-a-summer-neon-light-text-effect-online-1076.html";
   } else if (type == "neon3") {
-    url =
-      "https://textpro.me/create-light-glow-sliced-text-effect-online-1068.html";
+    url = "https://textpro.me/create-light-glow-sliced-text-effect-online-1068.html";
   } else if (type == "sea") {
-    url =
-      "https://textpro.me/create-3d-deep-sea-metal-text-effect-online-1053.html";
+    url = "https://textpro.me/create-3d-deep-sea-metal-text-effect-online-1053.html";
   } else if (type == "robot") {
-    url =
-      "https://textpro.me/create-a-transformer-text-effect-online-1035.html";
+    url = "https://textpro.me/create-a-transformer-text-effect-online-1035.html";
   } else if (type == "bp") {
     url = "https://textpro.me/create-neon-light-blackpink-logo-text-effect-online-1081.html"
   } else if (type == "bp2") {

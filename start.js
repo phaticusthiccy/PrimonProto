@@ -4403,20 +4403,7 @@ async function Primon() {
                   }
                 } else {
                   await Proto.sendMessage(jid2, { delete: msgkey });
-                  try {
-                    var type = argfinder(args);
-                  } catch (e) {
-                    connsole.log(e)
-                    var msg = await Proto.sendMessage(
-                      jid2,
-                      {
-                        text: modulelang.textpro_null,
-                      }
-                    );
-                    await Proto.sendMessage(jid2, react(msg, "bad"));
-                    saveMessageST(msg.key.id, modulelang.textpro_null)
-                    return;
-                  }
+                  var type = argfinder(args);
                   var url = textpro_links(type);
                   if (url == "") {
                     try {
@@ -4442,8 +4429,8 @@ async function Primon() {
                       return;
                     }
                   } else {
-                    var text = afterarg(args);
-                    if (text == "" || text == " ") {
+                    var text3 = afterarg(args);
+                    if (text3 == "" || text3 == " ") {
                       var gmsg = await Proto.sendMessage(
                         jid2,
                         {
@@ -4454,7 +4441,7 @@ async function Primon() {
                       return;
                     }
                     try {
-                      var img = await openapi.textpro(style, text);
+                      var img = await openapi.textpro(style, text3);
                     } catch (e) {
                       connsole.log(e)
                       var msg = await Proto.sendMessage(
