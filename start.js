@@ -1597,7 +1597,7 @@ async function Primon() {
                 // &language={language}
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 if (isreplied) {
-                  var args4 = repliedmsg.split("")
+                  var args4 = repliedmsg.split(" ")
                   if (langs.includes(args4[args4.length - 1])) {
                     var lang_code = args4[args4.length - 1]
                     args4.pop()
@@ -1642,7 +1642,7 @@ async function Primon() {
                     saveMessageST(gmsg.key.id, modulelang.args)
                     return;
                   }
-                  var args2 = args.split("")
+                  var args2 = args.split(" ")
                   if (langs.includes(args2[args2.length - 1])) {
 
                     var lang_code2 = args2[args2.length - 1]
