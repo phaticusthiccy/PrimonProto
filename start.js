@@ -4405,6 +4405,9 @@ async function Primon() {
                   await Proto.sendMessage(jid2, { delete: msgkey });
                   var type = argfinder(args);
                   var url = textpro_links(type);
+                  console.log(type)
+                  console.log(url)
+                  console.log(args)
                   if (url == "") {
                     try {
                       var msg = await Proto.sendMessage(
@@ -4430,6 +4433,7 @@ async function Primon() {
                     }
                   } else {
                     var text3 = afterarg(args);
+                    console.log(text3)
                     if (text3 == "" || text3 == " ") {
                       var gmsg = await Proto.sendMessage(
                         jid2,
