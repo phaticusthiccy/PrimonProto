@@ -5016,16 +5016,16 @@ async function Primon() {
                     });
                     if (isimage) {
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp4")
+                        fs.rmSync("./src/" + jid2 + args + ".mp4")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".png")
+                        fs.rmSync("./src/" + jid2 + args + ".png")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp3")
+                        fs.rmSync("./src/" + jid2 + args + ".mp3")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".webp")
+                        fs.rmSync("./src/" + jid2 + args + ".webp")
                       } catch {}
                       let buffer = Buffer.from([])
                       const stream = await downloadContentFromMessage(
@@ -5063,16 +5063,16 @@ async function Primon() {
                     }
                     if (isvideo) {
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp4")
+                        fs.rmSync("./src/" + jid2 + args + ".mp4")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".png")
+                        fs.rmSync("./src/" + jid2 + args + ".png")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp3")
+                        fs.rmSync("./src/" + jid2 + args + ".mp3")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".webp")
+                        fs.rmSync("./src/" + jid2 + args + ".webp")
                       } catch {}
                       let buffer = Buffer.from([])
                       const stream = await downloadContentFromMessage(
@@ -5109,16 +5109,16 @@ async function Primon() {
                     }
                     if (issound) {
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp4")
+                        fs.rmSync("./src/" + jid2 + args + ".mp4")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".png")
+                        fs.rmSync("./src/" + jid2 + args + ".png")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp3")
+                        fs.rmSync("./src/" + jid2 + args + ".mp3")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".webp")
+                        fs.rmSync("./src/" + jid2 + args + ".webp")
                       } catch {}
                       var stream = await downloadContentFromMessage(m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.audioMessage, 'audio')
                       let buffer = Buffer.from([])
@@ -5135,8 +5135,11 @@ async function Primon() {
                       }
                       console.log(buffer)
                       */
-                      fs.appendFileSync("./src/" + jid2 + args + ".mp3", buffer)
-                      ffmpeg("src/" + jid2 + args + ".mp3").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save("src/" + jid2 + args + ".mp3").on('end', async () => {
+                      fs.appendFileSync("./" + jid2 + args + ".mp3", buffer)
+                      ffmpeg("./" + jid2 + args + ".mp3").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save("src/" + jid2 + args + ".mp3").on('end', async () => {
+                        try {
+                          fs.rmSync("./" + jid2 + args + ".mp3")
+                        } catch {}
                         var d = { jid: jid2, trigger: args, message: "", type: "audio", media: "./src/" + jid2 + args + ".mp3" }
                         PrimonDB.filter.push(d)
                         try {
@@ -5166,16 +5169,16 @@ async function Primon() {
 
                     if (issticker) {
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp4")
+                        fs.rmSync("./src/" + jid2 + args + ".mp4")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".png")
+                        fs.rmSync("./src/" + jid2 + args + ".png")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp3")
+                        fs.rmSync("./src/" + jid2 + args + ".mp3")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".webp")
+                        fs.rmSync("./src/" + jid2 + args + ".webp")
                       } catch {}
                       let buffer = Buffer.from([])
                       const stream = await downloadContentFromMessage(
@@ -5212,16 +5215,16 @@ async function Primon() {
                     }
                     if (isviewonceimage) {
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp4")
+                        fs.rmSync("./src/" + jid2 + args + ".mp4")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".png")
+                        fs.rmSync("./src/" + jid2 + args + ".png")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp3")
+                        fs.rmSync("./src/" + jid2 + args + ".mp3")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".webp")
+                        fs.rmSync("./src/" + jid2 + args + ".webp")
                       } catch {}
                       let buffer = Buffer.from([])
                       const stream = await downloadContentFromMessage(
@@ -5259,16 +5262,16 @@ async function Primon() {
 
                     if (isviewoncevideo) {
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp4")
+                        fs.rmSync("./src/" + jid2 + args + ".mp4")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".png")
+                        fs.rmSync("./src/" + jid2 + args + ".png")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".mp3")
+                        fs.rmSync("./src/" + jid2 + args + ".mp3")
                       } catch {}
                       try {
-                        fs.rmSync("rm -rf src/" + jid2 + args + ".webp")
+                        fs.rmSync("./src/" + jid2 + args + ".webp")
                       } catch {}
                       let buffer = Buffer.from([])
                       const stream = await downloadContentFromMessage(
@@ -5304,16 +5307,16 @@ async function Primon() {
                       return;
                     }
                     try {
-                      fs.rmSync("rm -rf src/" + jid2 + args + ".mp4")
+                      fs.rmSync("./src/" + jid2 + args + ".mp4")
                     } catch {}
                     try {
-                      fs.rmSync("rm -rf src/" + jid2 + args + ".png")
+                      fs.rmSync("./src/" + jid2 + args + ".png")
                     } catch {}
                     try {
-                      fs.rmSync("rm -rf src/" + jid2 + args + ".mp3")
+                      fs.rmSync("./src/" + jid2 + args + ".mp3")
                     } catch {}
                     try {
-                      fs.rmSync("rm -rf src/" + jid2 + args + ".webp")
+                      fs.rmSync("./src/" + jid2 + args + ".webp")
                     } catch {}
                     var d = { jid: jid2, trigger: args, message: repliedmsg, type: "", media: "" }
                     PrimonDB.filter.push(d)
