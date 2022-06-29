@@ -1475,8 +1475,7 @@ async function Primon() {
                   arg.b.push(e);
                 });
                 arg.b.shift(); // ["argument"]
-                arg.b[0].split("") // ['a', 'r', 'g','u', 'm', 'e','n', 't']
-                arg.c = arg.b.join(""); // argument
+                arg.c = arg.b.join(" "); // argument
                 args = arg.c;
               } else {
                 args = "";
@@ -4405,9 +4404,6 @@ async function Primon() {
                   await Proto.sendMessage(jid2, { delete: msgkey });
                   var type = argfinder(args);
                   var url = textpro_links(type);
-                  console.log(type + "\n")
-                  console.log(url + "\n")
-                  console.log(args + "\n")
                   if (url == "") {
                     try {
                       var msg = await Proto.sendMessage(
@@ -4433,7 +4429,6 @@ async function Primon() {
                     }
                   } else {
                     var text3 = afterarg(args);
-                    console.log(text3)
                     if (text3 == "" || text3 == " ") {
                       var gmsg = await Proto.sendMessage(
                         jid2,
