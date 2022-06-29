@@ -201,7 +201,7 @@ async function fsts() {
       console.log("API LIMIT")
     }
     
-    fs.writeFileSync("./db.json", JSON.stringify(PrimonDB))
+    fs.writeFileSync("./db.json", JSON.stringify(PrimonDB, null, 2))
   }
   PrimonDB = JSON.parse(fs.readFileSync("./db.json"))
   return;
@@ -243,7 +243,7 @@ setInterval(async () => {
       console.log("API LIMIT")
     }
     
-    fs.writeFileSync("./db.json", JSON.stringify(PrimonDB))
+    fs.writeFileSync("./db.json", JSON.stringify(PrimonDB, null, 2))
   }
 }, 180000)
 
@@ -305,26 +305,34 @@ setInterval(() => {
   if (lngt > 10000) {
     try {
       var index = 0
-      Object.keys(require("./baileys_store_multi.json").messages).map((Element) => {
+      require("./baileys_store_multi.json").messages.map((Element) => {
         if (
           new_store.messages[Element].length > 20
         ) {
           var last_data = new_store.messages[Element][Element.length - 1]
+          var last_data2 = new_store.messages[Element][Element.length - 2]
+          var last_data3 = new_store.messages[Element][Element.length - 3]
+          var last_data4 = new_store.messages[Element][Element.length - 4]
+          var last_data5 = new_store.messages[Element][Element.length - 5]
+          
           wait(50)
-          delete new_store.messages[Element]
+          new_store.messages[Element] = []
           wait(50)
-          new_store[Element] = []
-          wait(50)
-          new_store[Element].push(last_data)
+          new_store.messages[Element].push(last_data5)
+          new_store.messages[Element].push(last_data4)
+          new_store.messages[Element].push(last_data3)
+          new_store.messages[Element].push(last_data2)
+          new_store.messages[Element].push(last_data)
           index++
         }
       })
       wait(50)
       fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(new_store, null, 2))
-      console.log("Edited %d Keys In Memory Store", index)
-      return
+      if (index !== 0) {
+        console.log("Edited %d Keys In Memory Store", index)
+      }
     } catch (error) {
-      return console.log("Error -- ", error)
+      console.log("Error -- ", error)
     }
   }
 }, 120000)
@@ -336,7 +344,7 @@ var command_list = [
   "tagadmin", "workmode", "sudo", "supersudo", 
   "view", "tagsuperadmin", "carbon"
 ] // 22
-var diff = [];
+
 
 
 function cmds(text, arguments = 3, cmd) {
@@ -1467,7 +1475,8 @@ async function Primon() {
                   arg.b.push(e);
                 });
                 arg.b.shift(); // ["argument"]
-                arg.c = arg.b.join(" "); // argument
+                arg.b[0].split("") // ['a', 'r', 'g','u', 'm', 'e','n', 't']
+                arg.c = arg.b.join(""); // argument
                 args = arg.c;
               } else {
                 args = "";
@@ -1541,68 +1550,92 @@ async function Primon() {
               // Carbon
               else if (attr == "carbon") {
                 var jid2 = jid
+                // Parameters:
+                var theme = [
+                  "abyss",
+                  "dark-plus",
+                  "light-plus",
+                  "github-dark",
+                  "github-light",
+                  "visual-studio-dark",
+                  "visual-studio-light",
+                  "high-contrast",
+                  "kimbie-dark",
+                  "dimmed-monokai",
+                  "monokai",
+                  "night-owl",
+                  "night-owl-no-italic",
+                  "night-owl-light",
+                  "night-owl-light-no-italic",
+                  "quietlight",
+                  "red",
+                  "solarized-dark",
+                  "solarized-light",
+                  "tomorrow-night-blue"
+                ]
+                var langs = [
+                  "ada", "batch", "c", "csharp",
+                  "cpp", "clojure", "cobol", "coffee",
+                  "commonlisp","crystal","css","gherkin",
+                  "dscript","dart","diff","django","dockerfile",
+                  "elixir","elm","erlang","fsharp","fortran",
+                  "git-commit","git-rebase","go","graphql",
+                  "groovy","handlebars","haskell","hlsl",
+                  "html","ignore","cfg","java","js","json",
+                  "jsonwithcomments","jsx","julia","kts",
+                  "latex","less","log","lua","makefile",
+                  "markdown","mathematica","ntriples","nginx",
+                  "nim","objective-c","objective-cpp","ocaml",
+                  "octave","pascal","perl","php","python",
+                  "powershell","r","racket","perl6","reason",
+                  "reason_lisp","rescript","riscv","ruby","rust",
+                  "sass","scala","scheme","scss","shaderlab",
+                  "shellscript","smalltalk","sql","swift","tcl",
+                  "toml","tsx","twig","ts","verilog","vhdl",
+                  "visualbasic","vue","xml","xquery","yaml","zig"
+                ]
+                // &theme={theme}
+                // &language={language}
                 await Proto.sendMessage(jid2, { delete: msgkey });
                 if (isreplied) {
-                  var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURI(repliedmsg), { responseType: "arraybuffer"})
+                  var args4 = repliedmsg.split("")
+                  if (langs.includes(args4[args4.length - 1])) {
+                    var lang_code = args4[args4.length - 1]
+                    args4.pop()
+                    var args5 = args4.join(" ") 
+                    var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURIComponent(args5) + "&language=" + lang_code, { responseType: "arraybuffer"})
 
-                  // Its my native API from https://open-apis-rest.up.railway.app
-                  // Name called "carbon" but the client ı wrote, not coming from carbon.now.sh
-                  // I can say, its look likes a carbon but not that
-                  // REST Native API for creating Code İmages.
-                  //
-                  // Parameters:
-                  /**
-                   * 
-                   var theme = [
-                    "abyss",
-                    "dark-plus",
-                    "light-plus",
-                    "github-dark",
-                    "github-light",
-                    "visual-studio-dark",
-                    "visual-studio-light",
-                    "high-contrast",
-                    "kimbie-dark",
-                    "dimmed-monokai",
-                    "monokai",
-                    "night-owl",
-                    "night-owl-no-italic",
-                    "night-owl-light",
-                    "night-owl-light-no-italic",
-                    "quietlight",
-                    "red",
-                    "solarized-dark",
-                    "solarized-light",
-                    "tomorrow-night-blue"
-                  ]
-                  var langs = [
-                    "ada", "batch", "c", "csharp",
-                    "cpp", "clojure", "cobol", "coffee",
-                    "commonlisp","crystal","css","gherkin",
-                    "dscript","dart","diff","django","dockerfile",
-                    "elixir","elm","erlang","fsharp","fortran",
-                    "git-commit","git-rebase","go","graphql",
-                    "groovy","handlebars","haskell","hlsl",
-                    "html","ignore","cfg","java","js","json",
-                    "jsonwithcomments","jsx","julia","kts",
-                    "latex","less","log","lua","makefile",
-                    "markdown","mathematica","ntriples","nginx",
-                    "nim","objective-c","objective-cpp","ocaml",
-                    "octave","pascal","perl","php","python",
-                    "powershell","r","racket","perl6","reason",
-                    "reason_lisp","rescript","riscv","ruby","rust",
-                    "sass","scala","scheme","scss","shaderlab",
-                    "shellscript","smalltalk","sql","swift","tcl",
-                    "toml","tsx","twig","ts","verilog","vhdl",
-                    "visualbasic","vue","xml","xquery","yaml","zig"
-                  ]
-                   */
-                  // &theme={theme}
-                  // &language={language}
-                  try {
-                    return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
-                  } catch {
-                    return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by })
+                    // Its my native API from https://open-apis-rest.up.railway.app
+                    // Name called "carbon" but the client ı wrote, not coming from carbon.now.sh
+                    // I can say, its look likes a carbon but not that
+                    // REST Native API for creating Code İmages.
+                  
+                    try {
+                      return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
+                    } catch {
+                      try {
+                        return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by })
+                      } catch (e) {
+                        console.log(e)
+                      }
+                    }
+                  } else {
+                    var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURIComponent(repliedmsg), { responseType: "arraybuffer"})
+
+                    // Its my native API from https://open-apis-rest.up.railway.app
+                    // Name called "carbon" but the client ı wrote, not coming from carbon.now.sh
+                    // I can say, its look likes a carbon but not that
+                    // REST Native API for creating Code İmages.
+                  
+                    try {
+                      return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
+                    } catch {
+                      try {
+                        return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by })
+                      } catch (e) {
+                        console.log(e)
+                      }
+                    }
                   }
                 } else {
                   if (args == "") {
@@ -1610,14 +1643,39 @@ async function Primon() {
                     saveMessageST(gmsg.key.id, modulelang.args)
                     return;
                   }
-                  var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURI(args), { responseType: "arraybuffer"})
-                  try {
-                    return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
-                  } catch {
-                    return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by })
+                  var args2 = args.split("")
+                  if (langs.includes(args2[args2.length - 1])) {
+
+                    var lang_code2 = args2[args2.length - 1]
+
+                    args2.pop()
+                    var args3 = args2.join(" ") 
+                    var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURIComponent(args3) + "&language=" + lang_code2, { responseType: "arraybuffer"})
+                    try {
+                      return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
+                    } catch {
+                      try {
+                        return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by })
+                      } catch (e) {
+                        console.log(e)
+                      }
+                    }
+                  } else {
+                    var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURIComponent(args), { responseType: "arraybuffer"})
+                    try {
+                      return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
+                    } catch {
+                      try {
+                        return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by })
+                      } catch (e) {
+                        console.log(e)
+                      }
+                    }
                   }
                 }
               }
+
+
               // View
               else if (attr == "view") {
                 var jid2 = jid
@@ -2720,17 +2778,19 @@ async function Primon() {
                     saveMessageST(gmsg.key.id, cmds(modulelang.term4, 4, cmd[0]))
                     return;
                   } else {
+                    var diff = [];
                     command_list.map((Element) => {
                       var similarity = test_diff(args, Element);
                       diff.push(similarity);
                     });
-                    var filt = diff.filter((mum) => mum > 0.8);
-                    if (filt[0] == undefined || filt[0] == "undefined") {
+                    var filt = diff.filter((mum) => mum > 0.700000000);
+                    if (filt.length == 0 || filt[0] == undefined || filt[0] == "undefined") {
                       var gmsg = await Proto.sendMessage(
                         jid2,
                         { text: modulelang.null }
                       );
                       saveMessageST(gmsg.key.id, modulelang.null)
+                      diff = [];
                       return;
                     } else {
                       var msg = await Proto.sendMessage(
@@ -4306,14 +4366,14 @@ async function Primon() {
               else if (attr == "textpro") {
                 var jid2 = jid
                 if (isreplied) {
-                  await Proto.sendMessage(jid, { delete: msgkey });
+                  await Proto.sendMessage(jid2, { delete: msgkey });
                   var style = textpro_links(args);
                   if (style !== "") {
                     try {
                       var img = await openapi.textpro(style, repliedmsg);
                     } catch {
                       var msg = await Proto.sendMessage(
-                        jid,
+                        jid2,
                         {
                           text: modulelang.textpro_null,
                         }
@@ -4332,7 +4392,7 @@ async function Primon() {
                     });
                   } else {
                     var msg = await Proto.sendMessage(
-                      jid,
+                      jid2,
                       {
                         text: modulelang.textpro_null,
                       }
@@ -4348,7 +4408,7 @@ async function Primon() {
                   } catch (e) {
                     connsole.log(e)
                     var msg = await Proto.sendMessage(
-                      jid,
+                      jid2,
                       {
                         text: modulelang.textpro_null,
                       }
@@ -4359,16 +4419,28 @@ async function Primon() {
                   }
                   var url = textpro_links(type);
                   if (url == "") {
-                    var msg = await Proto.sendMessage(
-                      jid,
-                      {
-                        text: modulelang.textpro_null,
-                      },
-                      { quoted: m.messages[0] }
-                    );
-                    await Proto.sendMessage(jid2, react(msg, "bad"));
-                    saveMessageST(msg.key.id, modulelang.textpro_null)
-                    return;
+                    try {
+                      var msg = await Proto.sendMessage(
+                        jid2,
+                        {
+                          text: modulelang.textpro_null,
+                        },
+                        { quoted: m.messages[0] }
+                      );
+                      await Proto.sendMessage(jid2, react(msg, "bad"));
+                      saveMessageST(msg.key.id, modulelang.textpro_null)
+                      return;
+                    } catch {
+                      var msg = await Proto.sendMessage(
+                        jid2,
+                        {
+                          text: modulelang.textpro_null,
+                        }
+                      );
+                      await Proto.sendMessage(jid2, react(msg, "bad"));
+                      saveMessageST(msg.key.id, modulelang.textpro_null)
+                      return;
+                    }
                   } else {
                     var text = afterarg(args);
                     if (text == "" || text == " ") {
@@ -4386,7 +4458,7 @@ async function Primon() {
                     } catch (e) {
                       connsole.log(e)
                       var msg = await Proto.sendMessage(
-                        jid,
+                        jid2,
                         {
                           text: modulelang.textpro_null,
                         }
@@ -4401,7 +4473,6 @@ async function Primon() {
                     return await Proto.sendMessage(jid2, {
                       image: Buffer.from(img2.data),
                       caption: modulelang.by,
-                      
                     });
                   }
                 }
@@ -4556,17 +4627,27 @@ async function Primon() {
                   )
                   return;
                 } else {
-                  var gmsg = await Proto.sendMessage(jid2, {
-                    text: pinglang.ping + timestep.toString() + "ms",
-                  }, { quoted: msg });
-                  saveMessageST(gmsg.key.id, pinglang.ping + timestep.toString() + "ms")
-                  return;
+                  try {
+                    var gmsg = await Proto.sendMessage(jid2, {
+                      text: pinglang.ping + timestep.toString() + "ms",
+                    }, { quoted: msg });
+                    saveMessageST(gmsg.key.id, pinglang.ping + timestep.toString() + "ms")
+                    return;
+                  } catch {
+                    var gmsg = await Proto.sendMessage(jid2, {
+                      text: pinglang.ping + timestep.toString() + "ms",
+                    });
+                    saveMessageST(gmsg.key.id, pinglang.ping + timestep.toString() + "ms")
+                    return;
+                  }
+                  
                 }
               }
 
               // Welcome
               else if (attr == "welcome") {
                 var jid2 = jid
+                await Proto.sendMessage(jid2, { delete: msgkey });
                 if (PrimonDB.public == true && isfromMe == false && (!sudo.includes(g_participant) || !super_sudo.includes(g_participant)) && g_participant !== oid) {
                   const metadata = await Proto.groupMetadata(jid2);
                   var users = [];
@@ -4576,12 +4657,17 @@ async function Primon() {
                     }
                   });
                   if (!users.includes(g_participant)) {
-                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_admin }, { quoted: m.messages[0]});
-                    saveMessageST(gmsg.key.id, modulelang.must_admin)
-                    return;
+                    try {
+                      var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_admin }, { quoted: m.messages[0]});
+                      saveMessageST(gmsg.key.id, modulelang.must_admin)
+                      return;
+                    } catch {
+                      var gmsg = await Proto.sendMessage(jid2, { text: modulelang.must_admin });
+                      saveMessageST(gmsg.key.id, modulelang.must_admin)
+                      return;
+                    }
                   }
                 }
-                await Proto.sendMessage(jid2, { delete: msgkey });
                 if (ispm) {
                   var gmsg = await Proto.sendMessage(
                     jid2,
@@ -4647,7 +4733,7 @@ async function Primon() {
                       }
                       var gmsg = await Proto.sendMessage(
                         jid2,
-                        { text: welcomelang.suc_set_welcome }
+                        { text: welcomelang.suc_set_welcome } 
                       );
                       saveMessageST(gmsg.key.id, welcomelang.suc_set_welcome)
                       return;
@@ -4954,7 +5040,7 @@ async function Primon() {
                       for await (const chunk of stream) {
                         buffer = Buffer.concat([buffer, chunk])
                       }
-                      fs.writeFileSync("./src/" + jid2 + args + ".png", buffer)
+                      fs.appendFileSync("./src/" + jid2 + args + ".png", buffer)
                       await delay(100)
                       var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".png" }
                       PrimonDB.filter.push(d)
@@ -4993,7 +5079,7 @@ async function Primon() {
                       for await (const chunk of stream) {
                         buffer = Buffer.concat([buffer, chunk])
                       }
-                      fs.writeFileSync("./src/" + jid2 + args + ".mp4", buffer)
+                      fs.appendFileSync("./src/" + jid2 + args + ".mp4", buffer)
                       var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".mp4" }
                       PrimonDB.filter.push(d)
                       try {
@@ -5038,7 +5124,7 @@ async function Primon() {
                         buffer = Buffer.concat([buffer, chunk])
                       }
                       */
-                      fs.writeFileSync("./src/" + jid2 + args + ".mp3", buffer)
+                      fs.appendFileSync("./src/" + jid2 + args + ".mp3", buffer)
                       ffmpeg("./src/" + jid2 + args + ".mp3").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save("./src/" + jid2 + args + ".mp3").on('end', async () => {
                         var d = { jid: jid2, trigger: args, message: "", type: "audio", media: "./src/" + jid2 + args + ".mp3" }
                         PrimonDB.filter.push(d)
@@ -5079,7 +5165,7 @@ async function Primon() {
                       for await (const chunk of stream) {
                         buffer = Buffer.concat([buffer, chunk])
                       }
-                      fs.writeFileSync("./src/" + jid2 + args + ".webp", buffer)
+                      fs.appendFileSync("./src/" + jid2 + args + ".webp", buffer)
                       var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "stiker", media: "./src/" + jid2 + args + ".webp" }
                       PrimonDB.filter.push(d)
                       try {
@@ -5117,7 +5203,7 @@ async function Primon() {
                       for await (const chunk of stream) {
                         buffer = Buffer.concat([buffer, chunk])
                       }
-                      fs.writeFileSync("./src/" + jid2 + args + ".png", buffer)
+                      fs.appendFileSync("./src/" + jid2 + args + ".png", buffer)
                       var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".png" }
                       PrimonDB.filter.push(d)
                       try {
@@ -5156,7 +5242,7 @@ async function Primon() {
                       for await (const chunk of stream) {
                         buffer = Buffer.concat([buffer, chunk])
                       }
-                      fs.writeFileSync("./src/" + jid2 + args + ".mp4", buffer)
+                      fs.appendFileSync("./src/" + jid2 + args + ".mp4", buffer)
                       var d = { jid: jid2, trigger: args, message: repliedmsg == undefined ? "" : repliedmsg, type: "image", media: "./src/" + jid2 + args + ".mp4" }
                       PrimonDB.filter.push(d)
                       try {
@@ -5495,32 +5581,32 @@ async function Primon() {
                 await Proto.sendMessage(jid2, { delete: msgkey });
 
                 if (PrimonDB.alive_msg_media.type == "") {
-                  return await Proto.sendMessage(jid, {
-                    text: PrimonDB.alive_msg
-                  })
+                  var gmsg = await Proto.sendMessage(jid2, { text: PrimonDB.alive_msg})
+                  saveMessageST(gmsg.key.id, PrimonDB.alive_msg)
+                  return;
                 } else {
                   if (PrimonDB.alive_msg_media.type == "image") {
                     if (fs.existsSync("./src/alive.png")) {
-                      return await Proto.sendMessage(jid, {
+                      return await Proto.sendMessage(jid2, {
                         image: fs.readFileSync("./src/alive.png"),
                         caption: PrimonDB.alive_msg
                       })
                     } else {
-                      return await Proto.sendMessage(jid, {
-                        text: PrimonDB.alive_msg
-                      })
+                      var gmsg = await Proto.sendMessage(jid2, { text: PrimonDB.alive_msg})
+                      saveMessageST(gmsg.key.id, PrimonDB.alive_msg)
+                      return;
                     }
                   }
                   if (PrimonDB.alive_msg_media.type == "video") {
                     if (fs.existsSync("./src/alive.mp4")) {
-                      return await Proto.sendMessage(jid, {
+                      return await Proto.sendMessage(jid2, {
                         video: fs.readFileSync("./src/alive.mp4"),
                         caption: PrimonDB.alive_msg
                       })
                     } else {
-                      return await Proto.sendMessage(jid, {
-                        text: PrimonDB.alive_msg
-                      })
+                      var gmsg = await Proto.sendMessage(jid2, { text: PrimonDB.alive_msg})
+                      saveMessageST(gmsg.key.id, PrimonDB.alive_msg)
+                      return;
                     }
                   }
                 }
