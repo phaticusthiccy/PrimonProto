@@ -2464,12 +2464,15 @@ async function Primon() {
                         responseType: "arraybuffer"
                       });
                   
-                      fs.appendFileSync("./song.mp3", Buffer.from(response.data));
-                      await Proto.sendMessage(jid2, {
-                        audio: fs.readFileSync("./song.mp3")
+                      fs.appendFileSync("./YT2.mp4", Buffer.from(response.data));
+                      ffmpeg("./YT2.mp4").audioBitrate('128k').save('./YT2.mp3').on('end', async () => {
+                        await Proto.sendMessage(jid2, {
+                          audio: fs.readFileSync("./YT2.mp3"),
+                          mimetype: "audio/mp4"
+                        })
+                        shell.exec("rm -rf ./YT2.mp3")
+                        return true;
                       })
-                      shell.exec("rm -rf ./song.mp3")
-                      return true;
                     } catch (e) {
                       console.log(e)
                       shell.exec("rm -rf./song.mp3")
@@ -2535,10 +2538,12 @@ async function Primon() {
                       });
                   
                       fs.appendFileSync("./YT2.mp4", Buffer.from(response.data));
-                      ffmpeg("./YT2.mp4").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save('./YT2.mp3').on('end', async () => {
-                        return await Proto.sendMessage(jid2, {
-                          audio: fs.readFileSync("./YT2.mp3")
+                      ffmpeg("./YT2.mp4").audioBitrate('128k').save('./YT2.mp3').on('end', async () => {
+                        await Proto.sendMessage(jid2, {
+                          audio: fs.readFileSync("./YT2.mp3"),
+                          mimetype: "audio/mp4"
                         })
+                        return shell.exec("rm -rf ./YT2.mp3")
                       })
                     } catch (e) {
                       console.log(e)
