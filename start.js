@@ -2537,8 +2537,7 @@ async function Primon() {
                       fs.appendFileSync("./YT2.mp4", Buffer.from(response.data));
                       ffmpeg("./YT2.mp4").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save('./YT2.mp3').on('end', async () => {
                         return await Proto.sendMessage(jid2, {
-                          audio: fs.readFileSync("./YT2.mp3"),
-                          mimetype: "audio/ogg; codecs=opus",
+                          audio: fs.readFileSync("./YT2.mp3")
                         })
                       })
                     } catch (e) {
