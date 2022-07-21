@@ -299,43 +299,7 @@ function delay2(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-setInterval(() => {
-  var lngt = (fs.readFileSync("./baileys_store_multi.json").toString()).length
-  var new_store = require("./baileys_store_multi.json")
-  if (lngt > 10000) {
-    try {
-      var index = 0
-      require("./baileys_store_multi.json").messages.map((Element) => {
-        if (
-          new_store.messages[Element].length > 20
-        ) {
-          var last_data = new_store.messages[Element][Element.length - 1]
-          var last_data2 = new_store.messages[Element][Element.length - 2]
-          var last_data3 = new_store.messages[Element][Element.length - 3]
-          var last_data4 = new_store.messages[Element][Element.length - 4]
-          var last_data5 = new_store.messages[Element][Element.length - 5]
-          
-          wait(50)
-          new_store.messages[Element] = []
-          wait(50)
-          new_store.messages[Element].push(last_data5)
-          new_store.messages[Element].push(last_data4)
-          new_store.messages[Element].push(last_data3)
-          new_store.messages[Element].push(last_data2)
-          new_store.messages[Element].push(last_data)
-          index++
-        }
-      })
-      wait(50)
-      fs.writeFileSync("./baileys_store_multi.json", JSON.stringify(new_store, null, 2))
-      if (index !== 0) {
-        console.log("Edited %d Keys In Memory Store", index)
-      }
-    } catch (error) {
-      console.log("Error -- ", error)
-    }
-  }
-}, 120000)
+
 var command_list = [
   "textpro", "tagall", "ping", "welcome", // 4
   "goodbye", "alive", "get", "set", 
@@ -1643,13 +1607,13 @@ async function Primon() {
                     return;
                   }
                   var args2 = args.split(" ")
-                  if (langs.includes(args2[args2.length - 1])) {
+                  if (langs.includes(args)) {
 
                     var lang_code2 = args2[args2.length - 1]
 
                     args2.pop()
                     var args3 = args2.join(" ") 
-                    var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURIComponent(args3) + "&language=" + lang_code2, { responseType: "arraybuffer"})
+                    var img_url = await axios.get("https://open-apis-rest.up.railway.app/api/codeimg?text=" + encodeURIComponent(args3) + "&language=" + args, { responseType: "arraybuffer"})
                     try {
                       return await Proto.sendMessage(jid2, { image: Buffer.from(img_url.data), caption: MenuLang.by }, { quoted: m.messages[0]})
                     } catch {
@@ -2441,73 +2405,148 @@ async function Primon() {
                     fs.unlinkSync("./YT2.mp3")
                   } catch {}
                   try {
-                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.song_down });
-                    saveMessageST(gmsg.key.id, modulelang.song_down)
-                    var songs = await nodeYoutubeMusic.searchMusics(args)
-                    var uri = "https://www.youtube.com/watch?v=" + songs[0]["youtubeId"]
-                    var h = await axios({
-                      url: "https://api.onlinevideoconverter.pro/api/convert",
-                      method: "post",
-                      data: {
-                        url: uri,
-                      },
-                    });
-                    var downs = [];
-                    h.data.url.map((Element) => {
-                      if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "144") {
-                        downs.push(Element.url)
+                    fs.unlinkSync("./song.mp3")
+                  } catch {}
+                  var valid_url = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/gm
+                  if (valid_url.test(args)) {
+                    try {
+                      var gmsg = await Proto.sendMessage(jid2, { text: modulelang.song_down });
+                      saveMessageST(gmsg.key.id, modulelang.song_down)
+                      var h = await axios({
+                        url: "https://api.onlinevideoconverter.pro/api/convert",
+                        method: "post",
+                        data: {
+                          url: args,
+                        },
+                      });
+                      var downs = [];
+                      h.data.url.map((Element) => {
+                        if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "144") {
+                          downs.push(Element.url)
+                        }
+                      })
+                  
+                      if (downs.length == 0) {
+                        h.data.url.map((Element) => {
+                          if (Element.name == "MP4" && Element.quality == "240") {
+                            downs.push(Element.url)
+                          }
+                        })
                       }
-                    })
-                
-                    if (downs.length == 0) {
+                  
+                      if (downs.length == 0) {
+                        h.data.url.map((Element) => {
+                          if (Element.name == "MP4" && Element.quality == "360") {
+                            downs.push(Element.url)
+                          }
+                        })
+                      }
+                  
+                      if (downs.length == 0) {
+                        h.data.url.map((Element) => {
+                          if (Element.name == "MP4" && Element.quality == "480") {
+                            downs.push(Element.url)
+                          }
+                        })
+                      }
+                  
+                      if (downs.length == 0) {
+                        h.data.url.map((Element) => {
+                          if (Element.name == "MP4" && Element.quality == "144") {
+                            downs.push(Element.url)
+                          }
+                        })
+                      }
+                  
+                      const response = await axios({
+                        method: "GET",
+                        url: downs[0],
+                        responseType: "arraybuffer"
+                      });
+                  
+                      fs.appendFileSync("./song.mp3", Buffer.from(response.data));
+                      await Proto.sendMessage(jid2, {
+                        audio: fs.readFileSync("./song.mp3")
+                      })
+                      shell.exec("rm -rf ./song.mp3")
+                      return true;
+                    } catch (e) {
+                      console.log(e)
+                      shell.exec("rm -rf./song.mp3")
+                      var gmsg = await Proto.sendMessage(jid2, { text: modulelang.song_not_found });
+                      saveMessageST(gmsg.key.id, modulelang.song_not_found)
+                      return;
+                    }
+                  } else {
+                    try {
+                      var gmsg = await Proto.sendMessage(jid2, { text: modulelang.song_down });
+                      saveMessageST(gmsg.key.id, modulelang.song_down)
+                      var songs = await nodeYoutubeMusic.searchMusics(args)
+                      var uri = "https://www.youtube.com/watch?v=" + songs[0]["youtubeId"]
+                      var h = await axios({
+                        url: "https://api.onlinevideoconverter.pro/api/convert",
+                        method: "post",
+                        data: {
+                          url: uri,
+                        },
+                      });
+                      var downs = [];
                       h.data.url.map((Element) => {
-                        if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "240") {
+                        if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "144") {
                           downs.push(Element.url)
                         }
                       })
-                    }
+                  
+                      if (downs.length == 0) {
+                        h.data.url.map((Element) => {
+                          if (Element.downloadable == true && Element.name == "MP4" && Element.quality == "240") {
+                            downs.push(Element.url)
+                          }
+                        })
+                      }
 
-                    if (downs.length == 0) {
-                      h.data.url.map((Element) => {
-                        if (Element.name == "MP4" && Element.quality == "144") {
-                          downs.push(Element.url)
-                        }
+                      if (downs.length == 0) {
+                        h.data.url.map((Element) => {
+                          if (Element.name == "MP4" && Element.quality == "144") {
+                            downs.push(Element.url)
+                          }
+                        })
+                      }
+                  
+                      if (downs.length == 0) {
+                        h.data.url.map((Element) => {
+                          if (Element.name == "MP4" && Element.quality == "240") {
+                            downs.push(Element.url)
+                          }
+                        })
+                      }
+                  
+                      if (downs.length == 0) {
+                        h.data.url.map((Element) => {
+                          if (Element.name == "MP4" && Element.quality == "360") {
+                            downs.push(Element.url)
+                          }
+                        })
+                      }
+                      const response = await axios({
+                        method: "GET",
+                        url: downs[0],
+                        responseType: "arraybuffer"
+                      });
+                  
+                      fs.appendFileSync("./YT2.mp4", Buffer.from(response.data));
+                      ffmpeg("./YT2.mp4").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save('./YT2.mp3').on('end', async () => {
+                        return await Proto.sendMessage(jid2, {
+                          audio: fs.readFileSync("./YT2.mp3"),
+                          mimetype: "audio/ogg; codecs=opus",
+                        })
                       })
+                    } catch (e) {
+                      console.log(e)
+                      var gmsg = await Proto.sendMessage(jid2, { text: modulelang.song_not_found });
+                      saveMessageST(gmsg.key.id, modulelang.song_not_found)
+                      return;
                     }
-                
-                    if (downs.length == 0) {
-                      h.data.url.map((Element) => {
-                        if (Element.name == "MP4" && Element.quality == "240") {
-                          downs.push(Element.url)
-                        }
-                      })
-                    }
-                
-                    if (downs.length == 0) {
-                      h.data.url.map((Element) => {
-                        if (Element.name == "MP4" && Element.quality == "360") {
-                          downs.push(Element.url)
-                        }
-                      })
-                    }
-                    const response = await axios({
-                      method: "GET",
-                      url: downs[0],
-                      responseType: "arraybuffer"
-                    });
-                
-                    fs.appendFileSync("./YT2.mp4", Buffer.from(response.data));
-                    ffmpeg("./YT2.mp4").outputOptions(["-vn", "-ar 44100", "-ac 2", "-b:a 192k"]).save('./YT2.mp3').on('end', async () => {
-                      return await Proto.sendMessage(jid2, {
-                        audio: fs.readFileSync("./YT2.mp3"),
-                        mimetype: "audio/ogg; codecs=opus",
-                      })
-                    })
-                  } catch (e) {
-                    console.log(e)
-                    var gmsg = await Proto.sendMessage(jid2, { text: modulelang.song_not_found });
-                    saveMessageST(gmsg.key.id, modulelang.song_not_found)
-                    return;
                   }
                 }
               }
