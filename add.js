@@ -52,7 +52,8 @@ function bademojis() {
 }
 
 function textpro_links(type) {
-  var url;
+  var url;ü
+  type = type.includes(" ") === true ? type.split(" ")[0] : type
   if (type == "neon") {
     url = "https://textpro.me/create-glowing-neon-light-text-effect-online-free-1061.html";
   } else if (type == "neon2") {
