@@ -4445,8 +4445,33 @@ async function Primon() {
                   }
                 } else {
                   await Proto.sendMessage(jid2, { delete: msgkey });
-                  var type = argfinder(args);
-                  var url = textpro_links(type);
+                  var type = args.split(" ")
+
+                  if (type.length == 1) {
+                    try {
+                      var msg = await Proto.sendMessage(
+                        jid2,
+                        {
+                          text: modulelang.textpro_null,
+                        },
+                        { quoted: m.messages[0] }
+                      );
+                      await Proto.sendMessage(jid2, react(msg, "bad"));
+                      saveMessageST(msg.key.id, modulelang.textpro_null)
+                      return;
+                    } catch {
+                      var msg = await Proto.sendMessage(
+                        jid2,
+                        {
+                          text: modulelang.textpro_null,
+                        }
+                      );
+                      await Proto.sendMessage(jid2, react(msg, "bad"));
+                      saveMessageST(msg.key.id, modulelang.textpro_null)
+                      return;
+                    }
+                  }
+                  var url = textpro_links(type[0]);
                   if (url == "") {
                     try {
                       var msg = await Proto.sendMessage(
