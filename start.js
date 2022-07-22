@@ -4477,6 +4477,8 @@ async function Primon() {
                     }
                   } else {
                     var text3 = afterarg(args);
+                    console.log("\n\n")
+                    console.log(text3)
                     if (text3 == "" || text3 == " ") {
                       var gmsg = await Proto.sendMessage(
                         jid2,
