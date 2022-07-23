@@ -4472,6 +4472,7 @@ async function Primon() {
                   }
                   var url = textpro_links(type[0]);
                   console.log(type)
+                  console.log(url)
                   if (url == "") {
                     try {
                       var msg = await Proto.sendMessage(
