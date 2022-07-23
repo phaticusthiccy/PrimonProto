@@ -306,8 +306,9 @@ var command_list = [
   "filter", "stop", "sticker", "update", 
   "yt", "video", "term", "song", 
   "tagadmin", "workmode", "sudo", "supersudo", 
-  "view", "tagsuperadmin", "carbon"
-] // 22
+  "view", "tagsuperadmin", "carbon", "tiktok",
+  "insta", "game", "tts"
+] // 27
 
 
 
@@ -1807,12 +1808,17 @@ async function Primon() {
                       sudo_map += "_◽ " + Element + "_\n"
                     })
                     var gmsg = await Proto.sendMessage(jid2, { text: modulelang.super_sudo_list + sudo_map});
-                    saveMessageST(gmsg.key.id, modulelang.super_sudo_list)
+                    saveMessageST(gmsg.key.id, modulelang.super_sudo_list + sudo_map)
                     return;
                   }
                 } else {
                   var sudo_id = m.messages[0].message.extendedTextMessage.contextInfo.participant
-                  PrimonDB = PrimonDB.super_sudo.push(sudo_id)
+                  if (PrimonDB.super_sudo.includes(sudo_id)) {
+                    var gmsg2 = await Proto.sendMessage(jid2, { text: modulelang.same_super_sudo});
+                    saveMessageST(gmsg2.key.id, modulelang.super_sudo_list)
+                    return;
+                  }
+                  PrimonDB.super_sudo.push(sudo_id)
                   try {
                     await octokit.request("PATCH /gists/{gist_id}", {
                       gist_id: process.env.GITHUB_DB,
@@ -1829,7 +1835,6 @@ async function Primon() {
                     saveMessageST(gmsg.key.id, modulelang.limit)
                     return;
                   }
-                  
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.setted})
                   saveMessageST(gmsg.key.id, modulelang.setted)
                   return;
@@ -1838,15 +1843,14 @@ async function Primon() {
 
               // Sticker
               else if (attr == "sticker") {
+                var jid2 = jid
                 await Proto.sendMessage(jid, { delete: msgkey });
                 if (isreplied == false) {
-                  var jid2 = jid
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.reply });
                   saveMessageST(gmsg.key.id, modulelang.reply)
                   return;
                 }
                 if (isvideo) {
-                  var jid2 = jid
                   let buffer = Buffer.from([])
                   const stream = await downloadContentFromMessage(
                     m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.videoMessage, "video"
@@ -1876,7 +1880,6 @@ async function Primon() {
                     })
                 }
                 if (isimage) {
-                  var jid2 = jid
                   let buffer = Buffer.from([])
                   const stream = await downloadContentFromMessage(
                     m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.imageMessage, "image"
@@ -1916,7 +1919,6 @@ async function Primon() {
                   }
                 }
                 if (issticker) {
-                  var jid2 = jid
                   let buffer = Buffer.from([])
                   var stcs = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
                   const stream = await downloadContentFromMessage(
@@ -1953,7 +1955,6 @@ async function Primon() {
                   }
                 }
                 if (isviewoncevideo) {
-                  var jid2 = jid
                   let buffer = Buffer.from([])
                   const stream = await downloadContentFromMessage(
                     m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.videoMessage, "video"
@@ -1983,7 +1984,6 @@ async function Primon() {
                     })
                 }
                 if (isviewonceimage) {
-                  var jid2 = jid
                   let buffer = Buffer.from([])
                   const stream = await downloadContentFromMessage(
                     m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.imageMessage, "image"
@@ -2023,7 +2023,6 @@ async function Primon() {
                   }
                 }
                 if (isimage == false && isvideo == false && issticker == false && isviewonceimage == false && isviewoncevideo == false) {
-                  var jid2 = jid
                   var gmsg = await Proto.sendMessage(jid2, { text: modulelang.only_img_or_video });
                   saveMessageST(gmsg.key.id, modulelang.only_img_or_video)
                   return;
@@ -4472,6 +4471,7 @@ async function Primon() {
                     }
                   }
                   var url = textpro_links(type[0]);
+                  console.log(type)
                   if (url == "") {
                     try {
                       var msg = await Proto.sendMessage(

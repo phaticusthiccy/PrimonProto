@@ -191,7 +191,8 @@
       "args": "_Lütfen herhangi bir kelime girin!_",
       "carbon": "_Mesajınızı farklı stillerdeki kod ekran görüntüsüne çevirin!_",
       "carbon2": "```&carbon Thiccy```\n```&carbon <mesaja yanıt ver>```",
-      "carbon3": "{%d1}```{%c}carbon```\n{%d1}_Mesajınızı farklı stillerdeki kod ekran görüntüsüne çevirin!_\n{%d1}\n\n```{%c}carbon Thiccy```\n```{%c}carbon <mesaja yanıt ver>```"
+      "carbon3": "{%d1}```{%c}carbon```\n{%d1}_Mesajınızı farklı stillerdeki kod ekran görüntüsüne çevirin!_\n{%d1}\n\n```{%c}carbon Thiccy```\n```{%c}carbon <mesaja yanıt ver>```",
+      "same_super_sudo": "Bu kişi zaten SÜPER SUDO Listesinde!"
     }
   }
 }

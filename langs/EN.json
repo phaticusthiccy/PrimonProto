@@ -191,7 +191,8 @@
       "args": "_Please enter any word!_",
       "carbon": "_Turn your message into code screenshot in different styles!_",
       "carbon2": "```&carbon Thiccy```\n```&carbon <reply to message>```",
-      "carbon3": "{%d1}```{%c}carbon```\n{%d1}_Turn your message into code screenshot in different styles!_\n{%d1}\n\n```{%c}carbon Thiccy```\n```{%c}carbon <reply to message>```"
+      "carbon3": "{%d1}```{%c}carbon```\n{%d1}_Turn your message into code screenshot in different styles!_\n{%d1}\n\n```{%c}carbon Thiccy```\n```{%c}carbon <reply to message>```",
+      "same_super_sudo": "This User Already has SUPER SUDO authority!"
     }
   }
 }
