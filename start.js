@@ -47,6 +47,7 @@ const modulelang = Language.getString("module");
 const cmdlang = Language.getString("cmd");
 const pinglang = Language.getString("ping");
 const goodbyelang = Language.getString("goodbye");
+const gamelang = Language.getString("game")
 const welcomelang = Language.getString("welcome");
 const filterlang = Language.getString("filter");
 const stoplang = Language.getString("stop_f");
@@ -1293,6 +1294,10 @@ async function Primon() {
         cmdlang.command + "```" + cmd[0] + "sticker" + "```" + "\n" +
         cmdlang.info + modulelang.sticker1 + "\n" +
         cmdlang.example + "\n" + modulelang.sticker2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
+
+        cmdlang.command + "```" + cmd[0] + "game" + "```" + "\n" +
+        cmdlang.info + modulelang.game1 + "\n" +
+        cmdlang.example + "\n" + modulelang.game2.replace(/&/gi, cmd[0]) + "\n\n\n" + 
 
         cmdlang.command + "```" + cmd[0] + "workmode" + "```" + "\n" +
         cmdlang.info + modulelang.wmode2 + "\n" +
@@ -2751,6 +2756,17 @@ async function Primon() {
                       { text: cmds(modulelang.tagadmin1, 2, cmd[0]) }
                     );
                     saveMessageST(gmsg.key.id, cmds(modulelang.tagadmin1, 2, cmd[0]))
+                    return;
+                  } else if (
+                    args == "game" ||
+                    args == "Game" ||
+                    args == "GAME"
+                  ) {
+                    var gmsg = await Proto.sendMessage(
+                      jid2,
+                      { text: cmds(modulelang.game3, 3, cmd[0]) }
+                    );
+                    saveMessageST(gmsg.key.id, cmds(modulelang.game3, 3, cmd[0]))
                     return;
                   } else if (
                     args == "update" ||
@@ -4471,8 +4487,6 @@ async function Primon() {
                     }
                   }
                   var url = textpro_links(type[0]);
-                  console.log(type)
-                  console.log(url)
                   if (url == "") {
                     try {
                       var msg = await Proto.sendMessage(
@@ -4509,7 +4523,7 @@ async function Primon() {
                       return;
                     }
                     try {
-                      var img = await openapi.textpro(style, text3);
+                      var img = await openapi.textpro(url, text3);
                     } catch (e) {
                       console.log(e)
                       var msg = await Proto.sendMessage(
@@ -5041,6 +5055,82 @@ async function Primon() {
                         { text: goodbyelang.suc_set_goodbye }
                       );
                       saveMessageST(gmsg.key.id, goodbyelang.suc_set_goodbye)
+                      return;
+                    }
+                  }
+                }
+              }
+
+              // Game 
+              else if (attr == "game") {
+                var jid2 = jid
+                await Proto.sendMessage(jid2, { delete: msgkey });
+                if (PrimonDB.public == true && isfromMe == false && (!sudo.includes(g_participant) || !super_sudo.includes(g_participant)) && g_participant !== oid) {
+                  if (args == "") {
+                    var gmsg = await Proto.sendMessage(
+                      jid2,
+                      { text: modulelang.need_game }
+                    );
+                    saveMessageST(gmsg.key.id, modulelang.need_game)
+                    return;
+                  } else {
+                    try {
+                      var game_data = await openapi.system_requirements(args)
+                    } catch {
+                      var gmsg = await Proto.sendMessage(
+                        jid2,
+                        { text: modulelang.game_not_found }
+                      );
+                      saveMessageST(gmsg.key.id, modulelang.game_not_found)
+                      return;
+                    }
+                    var msg = 
+                      gamelang.name + game_data.game.name + "\n" +
+                      gamelang.release_date + game_data.game.release_date + "\n" +
+                      gamelang.genre + game_data.game.genre + "\n" +
+                      gamelang.developer + game_data.game.developer + "\n" +
+                      gamelang.hardware_requirements + game_data.game.hardware_requirements + "\n\n" +
+                      
+                      gamelang.min_system_requirements + "\n" +
+                      gamelang.min_cpu + game_data.system_requirements.minimum.cpu + "\n" +
+                      gamelang.min_gpu + game_data.system_requirements.minimum.gpu + "\n" +
+                      gamelang.min_ram + game_data.system_requirements.minimum.ram + "\n" +
+                      gamelang.min_hdd + game_data.system_requirements.minimum.hdd + "\n" +
+                      gamelang.min_directx + game_data.system_requirements.minimum.directx + "\n" +
+                      gamelang.min_os + game_data.system_requirements.minimum.os + "\n\n" +
+
+                      gamelang.recommend_system_requirements + "\n" +
+                      gamelang.recommend_cpu + game_data.system_requirements.recommend.cpu + "\n" +
+                      gamelang.recommend_gpu + game_data.system_requirements.recommend.gpu + "\n" +
+                      gamelang.recommend_ram + game_data.system_requirements.recommend.ram + "\n" +
+                      gamelang.recommend_hdd + game_data.system_requirements.recommend.hdd + "\n" +
+                      gamelang.recommend_directx + game_data.system_requirements.recommend.directx + "\n" +
+                      gamelang.recommend_os + game_data.system_requirements.recommend.os + "\n\n" +
+
+                      gamelang.reviews + "\n" +
+                      gamelang.reviews_popularity + game_data.reviews.popularity + "\n" +
+                      gamelang.reviews_graphics + game_data.reviews.graphics + "\n" +
+                      gamelang.reviews_desing + game_data.reviews.desing + "\n" +
+                      gamelang.reviews_gameplay + game_data.reviews.gameplay + "\n" +
+                      gamelang.reviews_sound + game_data.reviews.sound + "\n" +
+                      gamelang.reviews_music + game_data.reviews.music + "\n" +
+                      gamelang.reviews_overall + game_data.reviews.overall 
+
+                    if (game_data.game.hasOwnProperty("avatar")) {
+                      if (game_data.game.avatar !== undefined || game_data.game.avatar !== "") var img_avatar = game_data.game.avatar
+                      else var img_avatar = game_data.game.banner
+
+                      var imgdata = await axios.get(img_avatar, { responseType: "arraybuffer"})
+                      return await Proto.sendMessage(jid2, {
+                        image: Buffer.from(imgdata.data),
+                        caption: msg
+                      })
+                    } else {
+                      var gmsg2 = await Proto.sendMessage(
+                        jid2,
+                        { text: msg }
+                      );
+                      saveMessageST(gmsg.key.id, msg)
                       return;
                     }
                   }
