@@ -5071,45 +5071,46 @@ async function Primon() {
                     return;
                   }
 
+                  var msg32 = ""
                   try {
-                    var msg32 = 
-                    gamelang.name + game_data.game.name + "\n" +
-                    gamelang.release_date + game_data.game.release_date + "\n" +
-                    gamelang.genre + game_data.game.genre + "\n" +
-                    gamelang.developer + game_data.game.developer + "\n" +
-                    gamelang.hardware_requirements + game_data.game.hardware_requirements + "\n\n" +
-                    
-                    gamelang.min_system_requirements + "\n" +
-                    gamelang.min_cpu + game_data.system_requirements.minimum.cpu + "\n" +
-                    gamelang.min_gpu + game_data.system_requirements.minimum.gpu + "\n" +
-                    gamelang.min_ram + game_data.system_requirements.minimum.ram + "\n" +
-                    gamelang.min_hdd + game_data.system_requirements.minimum.hdd + "\n" +
-                    gamelang.min_directx + game_data.system_requirements.minimum.directx + "\n" +
-                    gamelang.min_os + game_data.system_requirements.minimum.os + "\n\n" +
+                    msg32 = 
+                      gamelang.name + game_data.game.name + "\n" +
+                      gamelang.release_date + game_data.game.release_date + "\n" +
+                      gamelang.genre + game_data.game.genre + "\n" +
+                      gamelang.developer + game_data.game.developer + "\n" +
+                      gamelang.hardware_requirements + game_data.game.hardware_requirements + "\n\n" +
+                      
+                      gamelang.min_system_requirements + "\n" +
+                      gamelang.min_cpu + game_data.system_requirements.minimum.cpu + "\n" +
+                      gamelang.min_gpu + game_data.system_requirements.minimum.gpu + "\n" +
+                      gamelang.min_ram + game_data.system_requirements.minimum.ram + "\n" +
+                      gamelang.min_hdd + game_data.system_requirements.minimum.hdd + "\n" +
+                      gamelang.min_directx + game_data.system_requirements.minimum.directx + "\n" +
+                      gamelang.min_os + game_data.system_requirements.minimum.os + "\n\n" +
 
-                    gamelang.recommend_system_requirements + "\n" +
-                    gamelang.recommend_cpu + game_data.system_requirements.recommended.cpu + "\n" +
-                    gamelang.recommend_gpu + game_data.system_requirements.recommended.gpu + "\n" +
-                    gamelang.recommend_ram + game_data.system_requirements.recommended.ram + "\n" +
-                    gamelang.recommend_hdd + game_data.system_requirements.recommended.hdd + "\n" +
-                    gamelang.recommend_directx + game_data.system_requirements.recommended.directx + "\n" +
-                    gamelang.recommend_os + game_data.system_requirements.recommended.os + "\n\n" +
+                      gamelang.recommend_system_requirements + "\n" +
+                      gamelang.recommend_cpu + game_data.system_requirements.recommended.cpu + "\n" +
+                      gamelang.recommend_gpu + game_data.system_requirements.recommended.gpu + "\n" +
+                      gamelang.recommend_ram + game_data.system_requirements.recommended.ram + "\n" +
+                      gamelang.recommend_hdd + game_data.system_requirements.recommended.hdd + "\n" +
+                      gamelang.recommend_directx + game_data.system_requirements.recommended.directx + "\n" +
+                      gamelang.recommend_os + game_data.system_requirements.recommended.os + "\n\n" +
 
-                    gamelang.reviews + "\n" +
-                    gamelang.reviews_popularity + game_data.reviews.popularity + "\n" +
-                    gamelang.reviews_graphics + game_data.reviews.graphics + "\n" +
-                    gamelang.reviews_desing + game_data.reviews.desing + "\n" +
-                    
-                    gamelang.reviews_gameplay + game_data.reviews.gameplay + "\n" +
-                    gamelang.reviews_sound + game_data.reviews.sound + "\n" +
-                    gamelang.reviews_music + game_data.reviews.music + "\n" +
-                    gamelang.reviews_overall + game_data.reviews.overall 
+                      gamelang.reviews + "\n" +
+                      gamelang.reviews_popularity + game_data.reviews.popularity + "\n" +
+                      gamelang.reviews_graphics + game_data.reviews.graphics + "\n" +
+                      gamelang.reviews_desing + game_data.reviews.desing + "\n" +
+                      
+                      gamelang.reviews_gameplay + game_data.reviews.gameplay + "\n" +
+                      gamelang.reviews_sound + game_data.reviews.sound + "\n" +
+                      gamelang.reviews_music + game_data.reviews.music + "\n" +
+                      gamelang.reviews_overall + game_data.reviews.overall 
                   } catch {
-                    var gmsg3 = await Proto.sendMessage(
+                    var gmsg33 = await Proto.sendMessage(
                       jid2,
                       { text: modulelang.game_not_found }
                     );
-                    saveMessageST(gmsg3.key.id, modulelang.game_not_found)
+                    saveMessageST(gmsg33.key.id, modulelang.game_not_found)
                     return;
                   }
 
