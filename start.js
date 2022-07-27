@@ -999,19 +999,6 @@ async function Primon() {
       }
     }
 
-    if ((isimage && isreplied) || (isvideo && isreplied) || (issound && isreplied) || (issticker && isreplied)) {
-      var reply_download_key = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage
-    }
-    
-    if ((isviewonceimage && isreplied) || (isviewoncevideo && isreplied)) {
-      if (isviewonceimage) {
-        var reply_download_key = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.imageMessage
-      }
-      if (isviewoncevideo) {
-        var reply_download_key = m.messages[0].message.extendedTextMessage.contextInfo.quotedMessage.viewOnceMessage.message.videoMessage
-      }
-    }
-
     try {
       if (m.messages[0].message.key.fromMe == true) {
         isfromMe = true;
@@ -5077,14 +5064,14 @@ async function Primon() {
                     try {
                       var game_data = await openapi.system_requirements(args)
                     } catch {
-                      var gmsg = await Proto.sendMessage(
+                      var gmsg3 = await Proto.sendMessage(
                         jid2,
                         { text: modulelang.game_not_found }
                       );
-                      saveMessageST(gmsg.key.id, modulelang.game_not_found)
+                      saveMessageST(gmsg3.key.id, modulelang.game_not_found)
                       return;
                     }
-                    var msg = 
+                    let msg = 
                       gamelang.name + game_data.game.name + "\n" +
                       gamelang.release_date + game_data.game.release_date + "\n" +
                       gamelang.genre + game_data.game.genre + "\n" +
@@ -5130,7 +5117,7 @@ async function Primon() {
                         jid2,
                         { text: msg }
                       );
-                      saveMessageST(gmsg.key.id, msg)
+                      saveMessageST(gmsg2.key.id, msg)
                       return;
                     }
                   }
