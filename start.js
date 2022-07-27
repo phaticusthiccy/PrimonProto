@@ -5099,12 +5099,13 @@ async function Primon() {
                       gamelang.reviews + "\n" +
                       gamelang.reviews_popularity + game_data.reviews.popularity + "\n" +
                       gamelang.reviews_graphics + game_data.reviews.graphics + "\n" +
-                      gamelang.reviews_desing + game_data.reviews.desing + "\n" +
-                      
+                      gamelang.reviews_desing + game_data.reviews.design + "\n" +
                       gamelang.reviews_gameplay + game_data.reviews.gameplay + "\n" +
                       gamelang.reviews_sound + game_data.reviews.sound + "\n" +
                       gamelang.reviews_music + game_data.reviews.music + "\n" +
+                      gamelang.innovations + game_data.reviews.innovations + "\n" +
                       gamelang.reviews_overall + game_data.reviews.overall 
+
                   } catch {
                     var gmsg33 = await Proto.sendMessage(
                       jid2,
