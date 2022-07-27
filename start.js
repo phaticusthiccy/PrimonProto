@@ -5071,7 +5071,8 @@ async function Primon() {
                       saveMessageST(gmsg3.key.id, modulelang.game_not_found)
                       return;
                     }
-                    let msg = 
+                    console.log(game_data)
+                    let msg32 = 
                       gamelang.name + game_data.game.name + "\n" +
                       gamelang.release_date + game_data.game.release_date + "\n" +
                       gamelang.genre + game_data.game.genre + "\n" +
@@ -5110,14 +5111,14 @@ async function Primon() {
                       var imgdata = await axios.get(img_avatar, { responseType: "arraybuffer"})
                       return await Proto.sendMessage(jid2, {
                         image: Buffer.from(imgdata.data),
-                        caption: msg
+                        caption: msg32
                       })
                     } else {
                       var gmsg2 = await Proto.sendMessage(
                         jid2,
-                        { text: msg }
+                        { text: msg32 }
                       );
-                      saveMessageST(gmsg2.key.id, msg)
+                      saveMessageST(gmsg2.key.id, msg32)
                       return;
                     }
                   }
@@ -5846,6 +5847,7 @@ async function Primon() {
 }
 try {
   Primon();
-} catch {
+} catch (error) {
+  console.log("system err - " + error)
   Primon();
 }
