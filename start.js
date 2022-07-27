@@ -5052,75 +5052,73 @@ async function Primon() {
               else if (attr == "game") {
                 var jid2 = jid
                 await Proto.sendMessage(jid2, { delete: msgkey });
-                if (PrimonDB.public == true && isfromMe == false && (!sudo.includes(g_participant) || !super_sudo.includes(g_participant)) && g_participant !== oid) {
-                  if (args == "") {
-                    var gmsg = await Proto.sendMessage(
+                if (args == "") {
+                  var gmsg = await Proto.sendMessage(
+                    jid2,
+                    { text: modulelang.need_game }
+                  );
+                  saveMessageST(gmsg.key.id, modulelang.need_game)
+                  return;
+                } else {
+                  try {
+                    var game_data = await openapi.system_requirements(args)
+                  } catch {
+                    var gmsg3 = await Proto.sendMessage(
                       jid2,
-                      { text: modulelang.need_game }
+                      { text: modulelang.game_not_found }
                     );
-                    saveMessageST(gmsg.key.id, modulelang.need_game)
+                    saveMessageST(gmsg3.key.id, modulelang.game_not_found)
                     return;
+                  }
+                  let msg32 = 
+                    gamelang.name + game_data.game.name + "\n" +
+                    gamelang.release_date + game_data.game.release_date + "\n" +
+                    gamelang.genre + game_data.game.genre + "\n" +
+                    gamelang.developer + game_data.game.developer + "\n" +
+                    gamelang.hardware_requirements + game_data.game.hardware_requirements + "\n\n" +
+                    
+                    gamelang.min_system_requirements + "\n" +
+                    gamelang.min_cpu + game_data.system_requirements.minimum.cpu + "\n" +
+                    gamelang.min_gpu + game_data.system_requirements.minimum.gpu + "\n" +
+                    gamelang.min_ram + game_data.system_requirements.minimum.ram + "\n" +
+                    gamelang.min_hdd + game_data.system_requirements.minimum.hdd + "\n" +
+                    gamelang.min_directx + game_data.system_requirements.minimum.directx + "\n" +
+                    gamelang.min_os + game_data.system_requirements.minimum.os + "\n\n" +
+
+                    gamelang.recommend_system_requirements + "\n" +
+                    gamelang.recommend_cpu + game_data.system_requirements.recommend.cpu + "\n" +
+                    gamelang.recommend_gpu + game_data.system_requirements.recommend.gpu + "\n" +
+                    gamelang.recommend_ram + game_data.system_requirements.recommend.ram + "\n" +
+                    gamelang.recommend_hdd + game_data.system_requirements.recommend.hdd + "\n" +
+                    gamelang.recommend_directx + game_data.system_requirements.recommend.directx + "\n" +
+                    gamelang.recommend_os + game_data.system_requirements.recommend.os + "\n\n" +
+
+                    gamelang.reviews + "\n" +
+                    gamelang.reviews_popularity + game_data.reviews.popularity + "\n" +
+                    gamelang.reviews_graphics + game_data.reviews.graphics + "\n" +
+                    gamelang.reviews_desing + game_data.reviews.desing + "\n" +
+                    
+                    gamelang.reviews_gameplay + game_data.reviews.gameplay + "\n" +
+                    gamelang.reviews_sound + game_data.reviews.sound + "\n" +
+                    gamelang.reviews_music + game_data.reviews.music + "\n" +
+                    gamelang.reviews_overall + game_data.reviews.overall 
+
+                  if (game_data.game.hasOwnProperty("avatar")) {
+                    if (game_data.game.avatar !== undefined || game_data.game.avatar !== "") var img_avatar = game_data.game.avatar
+                    else var img_avatar = game_data.game.banner
+
+                    var imgdata = await axios.get(img_avatar, { responseType: "arraybuffer"})
+                    return await Proto.sendMessage(jid2, {
+                      image: Buffer.from(imgdata.data),
+                      caption: msg32
+                    })
                   } else {
-                    try {
-                      var game_data = await openapi.system_requirements(args)
-                    } catch {
-                      var gmsg3 = await Proto.sendMessage(
-                        jid2,
-                        { text: modulelang.game_not_found }
-                      );
-                      saveMessageST(gmsg3.key.id, modulelang.game_not_found)
-                      return;
-                    }
-                    console.log(game_data)
-                    let msg32 = 
-                      gamelang.name + game_data.game.name + "\n" +
-                      gamelang.release_date + game_data.game.release_date + "\n" +
-                      gamelang.genre + game_data.game.genre + "\n" +
-                      gamelang.developer + game_data.game.developer + "\n" +
-                      gamelang.hardware_requirements + game_data.game.hardware_requirements + "\n\n" +
-                      
-                      gamelang.min_system_requirements + "\n" +
-                      gamelang.min_cpu + game_data.system_requirements.minimum.cpu + "\n" +
-                      gamelang.min_gpu + game_data.system_requirements.minimum.gpu + "\n" +
-                      gamelang.min_ram + game_data.system_requirements.minimum.ram + "\n" +
-                      gamelang.min_hdd + game_data.system_requirements.minimum.hdd + "\n" +
-                      gamelang.min_directx + game_data.system_requirements.minimum.directx + "\n" +
-                      gamelang.min_os + game_data.system_requirements.minimum.os + "\n\n" +
-
-                      gamelang.recommend_system_requirements + "\n" +
-                      gamelang.recommend_cpu + game_data.system_requirements.recommend.cpu + "\n" +
-                      gamelang.recommend_gpu + game_data.system_requirements.recommend.gpu + "\n" +
-                      gamelang.recommend_ram + game_data.system_requirements.recommend.ram + "\n" +
-                      gamelang.recommend_hdd + game_data.system_requirements.recommend.hdd + "\n" +
-                      gamelang.recommend_directx + game_data.system_requirements.recommend.directx + "\n" +
-                      gamelang.recommend_os + game_data.system_requirements.recommend.os + "\n\n" +
-
-                      gamelang.reviews + "\n" +
-                      gamelang.reviews_popularity + game_data.reviews.popularity + "\n" +
-                      gamelang.reviews_graphics + game_data.reviews.graphics + "\n" +
-                      gamelang.reviews_desing + game_data.reviews.desing + "\n" +
-                      gamelang.reviews_gameplay + game_data.reviews.gameplay + "\n" +
-                      gamelang.reviews_sound + game_data.reviews.sound + "\n" +
-                      gamelang.reviews_music + game_data.reviews.music + "\n" +
-                      gamelang.reviews_overall + game_data.reviews.overall 
-
-                    if (game_data.game.hasOwnProperty("avatar")) {
-                      if (game_data.game.avatar !== undefined || game_data.game.avatar !== "") var img_avatar = game_data.game.avatar
-                      else var img_avatar = game_data.game.banner
-
-                      var imgdata = await axios.get(img_avatar, { responseType: "arraybuffer"})
-                      return await Proto.sendMessage(jid2, {
-                        image: Buffer.from(imgdata.data),
-                        caption: msg32
-                      })
-                    } else {
-                      var gmsg2 = await Proto.sendMessage(
-                        jid2,
-                        { text: msg32 }
-                      );
-                      saveMessageST(gmsg2.key.id, msg32)
-                      return;
-                    }
+                    var gmsg2 = await Proto.sendMessage(
+                      jid2,
+                      { text: msg32 }
+                    );
+                    saveMessageST(gmsg2.key.id, msg32)
+                    return;
                   }
                 }
               }
