@@ -5070,7 +5070,9 @@ async function Primon() {
                     saveMessageST(gmsg3.key.id, modulelang.game_not_found)
                     return;
                   }
-                  let msg32 = 
+
+                  try {
+                    let msg32 = 
                     gamelang.name + game_data.game.name + "\n" +
                     gamelang.release_date + game_data.game.release_date + "\n" +
                     gamelang.genre + game_data.game.genre + "\n" +
@@ -5086,12 +5088,12 @@ async function Primon() {
                     gamelang.min_os + game_data.system_requirements.minimum.os + "\n\n" +
 
                     gamelang.recommend_system_requirements + "\n" +
-                    gamelang.recommend_cpu + game_data.system_requirements.recommend.cpu + "\n" +
-                    gamelang.recommend_gpu + game_data.system_requirements.recommend.gpu + "\n" +
-                    gamelang.recommend_ram + game_data.system_requirements.recommend.ram + "\n" +
-                    gamelang.recommend_hdd + game_data.system_requirements.recommend.hdd + "\n" +
-                    gamelang.recommend_directx + game_data.system_requirements.recommend.directx + "\n" +
-                    gamelang.recommend_os + game_data.system_requirements.recommend.os + "\n\n" +
+                    gamelang.recommend_cpu + game_data.system_requirements.recommended.cpu + "\n" +
+                    gamelang.recommend_gpu + game_data.system_requirements.recommended.gpu + "\n" +
+                    gamelang.recommend_ram + game_data.system_requirements.recommended.ram + "\n" +
+                    gamelang.recommend_hdd + game_data.system_requirements.recommended.hdd + "\n" +
+                    gamelang.recommend_directx + game_data.system_requirements.recommended.directx + "\n" +
+                    gamelang.recommend_os + game_data.system_requirements.recommended.os + "\n\n" +
 
                     gamelang.reviews + "\n" +
                     gamelang.reviews_popularity + game_data.reviews.popularity + "\n" +
@@ -5102,6 +5104,14 @@ async function Primon() {
                     gamelang.reviews_sound + game_data.reviews.sound + "\n" +
                     gamelang.reviews_music + game_data.reviews.music + "\n" +
                     gamelang.reviews_overall + game_data.reviews.overall 
+                  } catch {
+                    var gmsg3 = await Proto.sendMessage(
+                      jid2,
+                      { text: modulelang.game_not_found }
+                    );
+                    saveMessageST(gmsg3.key.id, modulelang.game_not_found)
+                    return;
+                  }
 
                   if (game_data.game.hasOwnProperty("avatar")) {
                     if (game_data.game.avatar !== undefined || game_data.game.avatar !== "") var img_avatar = game_data.game.avatar
