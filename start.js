@@ -5072,7 +5072,7 @@ async function Primon() {
                   }
 
                   try {
-                    let msg32 = 
+                    var msg32 = 
                     gamelang.name + game_data.game.name + "\n" +
                     gamelang.release_date + game_data.game.release_date + "\n" +
                     gamelang.genre + game_data.game.genre + "\n" +
