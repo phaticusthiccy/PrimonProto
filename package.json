@@ -1,39 +1,32 @@
 {
-   "name": "PrimonProto",
-   "version": "1.0.0",
-   "main": "start.js",
-   "scripts": {
-      "start": "bash pri.sh"
-   },
-   "repository": {
-      "type": "git",
-      "url": "git+https://github.com/phaticusthiccy/PrimonProto.git"
-   },
-   "author": "Phaticusthiccy",
-   "license": "GPL-3.0",
-   "bugs": {
-      "url": "https://github.com/phaticusthiccy/PrimonProto/issues"
-   },
-   "homepage": "https://github.com/phaticusthiccy/PrimonProto#readme",
-   "dependencies": {
-      "@adiwajshing/baileys": "github:adiwajshing/baileys",
-      "@adiwajshing/keyed-db": "latest",
-      "@ffmpeg-installer/ffmpeg": "latest",
-      "@ffprobe-installer/ffprobe": "latest",
-      "@hapi/boom": "latest",
-      "@octokit/core": "latest",
-      "@phaticusthiccy/open-apis": "latest",
-      "@railway/cli": "^1.8.0",
-      "axios": "latest",
-      "node-youtube-music": "latest",
-      "chalk": "4.1.2",
-      "child_process": "latest",
-      "fluent-ffmpeg": "latest",
-      "link-preview-js": "latest",
-      "path": "latest",
-      "pino": "latest",
-      "qrcode-terminal": "latest",
-      "shelljs": "latest",
-      "wa-sticker-formatter": "latest"
-   }
+  "dependencies": {
+    "@caed0/webp-conv": "^1.1.0",
+    "@google/generative-ai": "^0.21.0",
+    "@tobyg74/tiktok-api-dl": "^1.1.9",
+    "@whiskeysockets/baileys": "^6.7.8",
+    "axios": "^1.7.7",
+    "cheerio": "^1.0.0-rc.5",
+    "fluent-ffmpeg": "^2.1.3",
+    "got": "^14.4.3",
+    "ic3zy-mp3": "^0.0.9",
+    "ic3zyapi": "^0.1.4",
+    "imagemaker.js": "^2.0.4",
+    "jimp": "^0.16.13",
+    "lyrics-finder": "^21.7.0",
+    "mumaker": "^2.0.0",
+    "node-fetch": "^2.6.1",
+    "node-notifier": "^10.0.1",
+    "openai": "^4.67.1",
+    "path": "^0.12.7",
+    "pino": "^9.4.0",
+    "priyansh-ig-downloader": "^2.0.4",
+    "prompt-sync": "^4.2.0",
+    "qrcode-terminal": "^0.12.0",
+    "sharp": "^0.32.6",
+    "simple-git": "^3.27.0",
+    "sqlite3": "^5.1.7",
+    "webp-converter": "^2.3.3",
+    "yt-search": "^2.12.1",
+    "zrapi": "^0.0.7"
+  }
 }

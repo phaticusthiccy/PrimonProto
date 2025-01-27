@@ -1,0 +1,13 @@
+// const {addCommand, addDesc} = require('../../list'); // burada komutları index dosyasına push edecek fonksiyonu çağırıyoruz
+// addDesc([
+// { name: 'komut ismi', description: 'açıklama' } // bunu eklemek zorunda değiliz komutumuzu .asena menüsünde göstermek istiyorsak eklemeliyiz.
+// ])
+// addCommand(['test']); // eklemek istediğiniz komutunuzu buraya yazıyorsunuz 2 veya daha fazla ise : addCommand(['1.', '2.']); bu şekilde istediğiniz kadar ekleyebiliyorsunuz
+// module.exports = { // modülü dışa aktarıyoruz.
+//     handleCommand: async (sock, message) => { // index içinde çağırılabilmesi için burayı ellemiyoruz.
+//         for (prf of pattern) { // burda belirttiğiniz tüm HANDLER'ı kullanabilmek için for döngüsüne alıyoruz. Pattern ve intext argümanları global olarak tanımlı, yeniden tanımlamaya gerek yok. 
+//             if (intext===`${prf}test`) {sock.sendMessage(message.key.remoteJid, {text: 'çalışıyorum'});return;} // intext gelen mesaj anlamına gelir. sock.sendMessage(); argümanı ise mesaj göndermemizi sağlar. orn: sock.sendMessage(id, {text: 'mesajınız'}); burada id yerine gelen mesajın idsini almak istersek message.key.remoteJid kullanırız. text argümanı yerine image, video ve audio gibi mesajlar eklemek mümkün. return ifadesini unutmamak gerekir aksi halde kod 3 kez çalışacaktır.
+//             // eğerki 2. bir komut ekleyecekseniz if yerine else if kullanarak aynı şekilde ekleyebilirsiniz. Komutunuzu üstteki addCommand'a eklemeyi unutmayalım.
+//         }
+//     }
+// }
