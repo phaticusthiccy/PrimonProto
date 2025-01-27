@@ -1,5 +1,6 @@
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, delay } = require('@whiskeysockets/baileys');
 const fs = require('fs');
+const qrcode = require('qrcode-terminal'); // QR kodu terminalde göstermek için
 
 genQR(true);
 
@@ -7,12 +8,9 @@ async function genQR(qr) {
   let { version } = await fetchLatestBaileysVersion();
   let { state, saveCreds } = await useMultiFileAuthState('./session/');
   let sock = makeWASocket({
-    printQRInTerminal: qr,
-    markOnlineOnConnect: false,
     auth: state,
     version: version,
-    getMessage: async (key) => {
-    },
+    getMessage: async (key) => {},
   });
 
   if (!qr && !sock.authState.creds.registered) {
@@ -21,13 +19,15 @@ async function genQR(qr) {
   }
 
   sock.ev.on('connection.update', async (update) => {
-    let { connection } = update;
+    let { connection, qr: qrCode } = update;
+    if (qrCode) {
+      qrcode.generate(qrCode, { small: true }); // QR kodu terminalde göster
+    }
     if (connection === "connecting") {
       console.log("Connecting to WhatsApp... Please wait.");
     } else if (connection === 'open') {
       await delay(3000);
       let credentials = JSON.stringify(sock.authState.creds, null, 2);
-      let st = credentials; 
       fs.writeFileSync('.started', '1');
       console.clear();
       console.log("Run starts.js to start the bot.");
