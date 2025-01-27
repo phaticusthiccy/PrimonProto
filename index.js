@@ -18,21 +18,21 @@ async function Primon() {
     version: version,
   });
   sock.ev.on('connection.update', async (update) => {
-    const { connection, lastDisconnect, qr } = update;
+    const { connection, lastDisconnect } = update;
     if (connection === 'close') {
       const shouldReconnect = (lastDisconnect.error.output.statusCode !== 401);
       if (shouldReconnect) {
-        console.log('Bağlantı kesildi, yeniden bağlanılıyor...');
+        console.log('Disconnected, reconnecting...');
         Primon();
       } else {
-        console.log('QR kodu taranmadı.');
+        console.log('QR code was not scanned.');
       }
     } else if (connection === 'open') {
-      console.log('Bağlantı açıldı.');
+      console.log('The connection is opened.');
       const usrId = sock.user.id;
       const mappedId = usrId.split(':')[0]+`@s.whatsapp.net`;
       
-      await sock.sendMessage(mappedId, {text: 'Bot Aktif!'});
+      await sock.sendMessage(mappedId, {text: 'Primon Online!'});
     }
 
   });
@@ -49,8 +49,6 @@ async function Primon() {
       const text = msg.message.conversation || msg.message.extendedTextMessage?.text;
       if ((msg.key && msg.key.remoteJid == "status@broadcast") || !text) return;
         
-      console.log(msg);
-
       if (text == ".ping") {
         return await sock.sendMessage(grupId, {text: "Pong!", edit: msg.key});
       }
