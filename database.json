@@ -1,0 +1,12 @@
+{
+  "handlers": [
+    "/",
+    ".",
+    "!"
+  ],
+  "aliveMessage": {
+    "type": "text",
+    "media": "",
+    "content": "I'am Alive!"
+  }
+}

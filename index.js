@@ -1,12 +1,38 @@
-const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadMediaMessage } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadMediaMessage, downloadContentFromMessage } = require('@whiskeysockets/baileys');
 const fs = require('fs');
 const pino = require('pino');
-require('./events'); // global olarak tanımlandığı için syntax vermiyoruz
-const logger = pino({ level: 'debug' });
+const axios = require('axios');
+require('./events');
+
+/**
+ * Saves the global database object to a file every 5 seconds.
+ */
+setInterval(() => {
+  fs.writeFileSync("./database.json", JSON.stringify(global.database, null, 2));
+}, 5000);
+
+/**
+ * Configures the logger with the specified options.
+ *
+ * @param {Object} options - The logger configuration options.
+ * @param {string} [options.level='silent'] - The minimum log level to record.
+ * @param {Object} [options.customLevels] - Custom log levels and their corresponding numeric values.
+ */
+var logger = pino({
+  level: "silent",
+  customLevels: {
+    trace: 10000,
+    debug: 10000,
+    info: 10000,
+    warn: 10000,
+    error: 10000,
+    fatal: 10000,
+  },
+});
 
 async function Primon() {
   let { version } = await fetchLatestBaileysVersion();
-  let { state, saveCreds } = await useMultiFileAuthState(__dirname + "/session/");
+  let { state } = await useMultiFileAuthState(__dirname + "/session/");
 
   const sock = makeWASocket({
     logger: logger,
@@ -31,8 +57,7 @@ async function Primon() {
       console.log('The connection is opened.');
       const usrId = sock.user.id;
       const mappedId = usrId.split(':')[0] + `@s.whatsapp.net`;
-
-      await sock.sendMessage(mappedId, { text: 'Primon Online!' });
+      await sock.sendMessage(mappedId, { text: 'Primon Online!\n\nUse /menu to see the list of commands.' });
     }
   });
 
@@ -41,19 +66,17 @@ async function Primon() {
       if (!msg.hasOwnProperty("messages")) return;
       if (msg.messages.length == 0) return;
 
+      var rawMessage = msg
       msg = msg.messages[0];
-      const owenerId = sock.user.id;
-      const grupId = msg.key.remoteJid;
-
       const text = msg.message.conversation || msg.message.extendedTextMessage?.text;
+      const quotedMessage = msg.message.extendedTextMessage?.contextInfo?.quotedMessage || undefined;
+      msg.quotedMessage = quotedMessage
       if ((msg.key && msg.key.remoteJid == "status@broadcast") || !text) return;
-
-      await start_command(msg, sock);
+      await start_command(msg, sock, rawMessage);
 
     } catch (error) {
       console.log(error);
-      const owenerId = sock.user.id;
-      await sock.sendMessage(owenerId, { text: `Primon Error:\n${error}` });
+      await sock.sendMessage(sock.user.id, { text: `Primon Error:\n${error}` });
     }
   });
 
@@ -67,3 +90,30 @@ async function Primon() {
 }
 
 Primon();
+
+
+/**
+ * Downloads an image from a WhatsApp message and saves it to the specified file path.
+ *
+ * @param {Object} message - The WhatsApp message object containing the image.
+ * @param {string} type - The type of the image (e.g. "image", "video", "document").
+ * @param {string} filepath - The file path to save the downloaded image.
+ * @returns {Promise<void>} - A Promise that resolves when the image has been downloaded and saved.
+*/
+global.downloadMedia = async (message, type, filepath) => {
+  var stream = await downloadContentFromMessage(
+    {
+      url: message.url,
+      directPath: message.directPath,
+      mediaKey: message.mediaKey,
+    },
+    type
+  );
+
+  var writeStream = fs.createWriteStream(filepath);
+  await new Promise((resolve, reject) => {
+    stream.pipe(writeStream);
+    writeStream.on("finish", resolve);
+    writeStream.on("error", reject);
+  });
+};
