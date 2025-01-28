@@ -1,9 +1,8 @@
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadMediaMessage } = require('@whiskeysockets/baileys');
 const fs = require('fs');
 const pino = require('pino');
-const logger = pino({
-  level: 'debug', 
-});
+require('./events'); // global olarak tanımlandığı için syntax vermiyoruz
+const logger = pino({ level: 'debug' });
 
 async function Primon() {
   let { version } = await fetchLatestBaileysVersion();
@@ -17,6 +16,7 @@ async function Primon() {
     auth: state,
     version: version,
   });
+
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect } = update;
     if (connection === 'close') {
@@ -30,36 +30,40 @@ async function Primon() {
     } else if (connection === 'open') {
       console.log('The connection is opened.');
       const usrId = sock.user.id;
-      const mappedId = usrId.split(':')[0]+`@s.whatsapp.net`;
-      
-      await sock.sendMessage(mappedId, {text: 'Primon Online!'});
-    }
+      const mappedId = usrId.split(':')[0] + `@s.whatsapp.net`;
 
+      await sock.sendMessage(mappedId, { text: 'Primon Online!' });
+    }
   });
-  
+
   sock.ev.on("messages.upsert", async (msg) => {
     try {
       if (!msg.hasOwnProperty("messages")) return;
       if (msg.messages.length == 0) return;
 
       msg = msg.messages[0];
-      var owenerId = sock.user.id;
-      var grupId = msg.key.remoteJid;
-      
+      const owenerId = sock.user.id;
+      const grupId = msg.key.remoteJid;
+
       const text = msg.message.conversation || msg.message.extendedTextMessage?.text;
       if ((msg.key && msg.key.remoteJid == "status@broadcast") || !text) return;
-        
-      if (text == ".ping") {
-        return await sock.sendMessage(grupId, {text: "Pong!", edit: msg.key});
-      }
-      
+
+      await start_command(msg, sock);
+
     } catch (error) {
       console.log(error);
-      var owenerId = sock.user.id;
-      await sock.sendMessage(owenerId, {text: `Primon Error:\n${error}`});
+      const owenerId = sock.user.id;
+      await sock.sendMessage(owenerId, { text: `Primon Error:\n${error}` });
     }
-  })
-  
+  });
+
+  const modulePath = __dirname + "/modules";
+  fs.readdirSync(modulePath).forEach((file) => {
+    if (file.endsWith(".js")) {
+      console.log(`Loading plugin: ${file}`);
+      require(`${modulePath}/${file}`);
+    }
+  });
 }
 
 Primon();
