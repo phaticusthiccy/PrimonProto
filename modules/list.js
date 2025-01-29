@@ -13,14 +13,27 @@
  * @param {Object} sock - The socket object for sending messages.
  * @returns {Promise<void>} - A promise that resolves when the message is sent.
 */
-addCommand( {pattern: "^men(u|ü)$", fromMe: true, dontAddCommandList: true}, async (msg, match, sock) => {
-    const menuText = global.commands
-        .filter(x => !x.commandInfo.dontAddCommandList)
-        .map((x, index, array) => {
-            const { pattern, desc, usage, warn } = x.commandInfo;
-            return `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}${index !== array.length - 1 ? '\n\n' : ''}`;
-        })
-        .join('');
+addCommand( {pattern: "^men(u|ü) ?(.*)", fromMe: true, dontAddCommandList: true}, async (msg, match, sock) => {
+    const inputCommand = match[2].trim();
+    let menuText;
+
+    if (inputCommand) {
+        const command = global.commands.find(x => x.commandInfo.pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "").replace(/ /gmi, "") === inputCommand.replace(/ /gmi, ""));
+        if (command) {
+            const { pattern, desc, usage, warn } = command.commandInfo;
+            menuText = `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}`;
+        } else {
+            menuText = `❌ Komut bulunamadı: ${inputCommand}`;
+        }
+    } else {
+        menuText = global.commands
+            .filter(x => !x.commandInfo.dontAddCommandList)
+            .map((x, index, array) => {
+                const { pattern, desc, usage, warn } = x.commandInfo;
+                return `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}${index !== array.length - 1 ? '\n\n' : ''}`;
+            })
+            .join('');
+    }
 
     const grupId = msg.key.remoteJid;
     await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`, edit: msg.key });
