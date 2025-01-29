@@ -4,7 +4,7 @@
     "/",
     "!"
   ],
-  "version": "*0.1.2",
+  "version": "0.1.5",
   "filters": [
     {
       "chat": "000000@g.us",
@@ -17,7 +17,7 @@
     }
   ],
   "aliveMessage": {
-    "type": "image",
+    "type": "text",
     "media": "",
     "content": "I'm alive!"
   },

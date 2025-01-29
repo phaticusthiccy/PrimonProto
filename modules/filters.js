@@ -49,7 +49,7 @@ addCommand( {pattern: "^filter ?([\\s\\S]*)", fromMe: true, desc: "_Add filters 
     if (!match[1].trim()) {
         const find = global.database.filters.find(x => x.chat === msg.key.remoteJid);
         if (find && find.filters.length > 0) {
-            const text = "📜 _Filters In This Chat_\n" + find.filters.map((x, index) => `\n*${index + 1}.* \`\`\`${x.incoming.replace(/[[\\s][\\S]\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '')}\`\`\``).join('');
+            const text = "📜 _Filters In This Chat_\n" + find.filters.map((x, index) => `\n*${index + 1}.* \`\`\`${x.incoming.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '')}\`\`\``).join('');
             return await sock.sendMessage(groupId, { text, edit: msg.key });
         } else {
             return await sock.sendMessage(groupId, { text: "_❌ No filters found._", edit: msg.key });

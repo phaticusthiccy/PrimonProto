@@ -18,7 +18,7 @@ addCommand( {pattern: "^men(u|ü)$", fromMe: true, dontAddCommandList: true}, as
         .filter(x => !x.commandInfo.dontAddCommandList)
         .map((x, index, array) => {
             const { pattern, desc, usage, warn } = x.commandInfo;
-            return `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\\s\\S\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '')}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}${index !== array.length - 1 ? '\n\n' : ''}`;
+            return `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}${index !== array.length - 1 ? '\n\n' : ''}`;
         })
         .join('');
 
