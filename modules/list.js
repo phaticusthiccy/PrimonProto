@@ -23,7 +23,7 @@ addCommand( {pattern: "^men(u|ü) ?(.*)", fromMe: true, dontAddCommandList: true
             const { pattern, desc, usage, warn } = command.commandInfo;
             menuText = `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}`;
         } else {
-            menuText = `❌ Komut bulunamadı: ${inputCommand}`;
+            menuText = `❌ Command not found: ${inputCommand}`
         }
     } else {
         menuText = global.commands
