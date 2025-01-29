@@ -14,7 +14,7 @@ async function stindex() {
     });
 }
 async function qr() {
-    const process = exec('node pcqr.js');
+    const process = exec('node qr.js');
     process.stdout.on('data', (data) => {
       console.log(`stdout: ${data}`);
     });

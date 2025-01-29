@@ -43,17 +43,46 @@ async function start_command(msg, sock, rawMessage) {
       validText = text.slice(prefix.length).trim();
       break;
     }
+    for (const command2 of commands) {
+      if (command2.commandInfo.pattern == "onMessage") {
+        matchedPrefix = true;
+      } 
+    }
   }
 
   if (!matchedPrefix) return;
 
+  // ! Command Extras
+  // .fromMe - If the command can only be executed by the bot owner.
+  // .notAvaliablePersonelChat - If the command is not available in personal chat.
+  // .dontAddCommandList - If the command should not be added to the command list.
+  // .onlyInGroups - If the command is only available in groups.
+  // .pattern - The pattern to match the command.
+  // .desc - The description of the command.
+  // .usage - The usage of the command.
+  // .warn - A warning message of the command.
+
+  // callback {match} - Arguments of the command.
+  // callback {sock} - Socket object.
+  // callback {rawMessage} - Raw message object.
+  // callback {msg} - Message object.
+
   for (const { commandInfo, callback } of commands) {
-    const match = validText.match(new RegExp(commandInfo.pattern, "i"));
+    
+    const match = validText.match(new RegExp(commandInfo.pattern, "im"));
     if (match) {
       if (commandInfo.fromMe && !msg.key.fromMe) return;
       if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid == sock.user.id.split(':')[0] + `@s.whatsapp.net`) return;
+      if (commandInfo.onlyInGroups && !msg.key.remoteJid.endsWith('@g.us')) return;
+      return await callback(msg, match, sock, rawMessage);
+    }
+    
+    if (commandInfo.pattern == "onMessage") {
+      if (commandInfo.fromMe && !msg.key.fromMe) return;
+      if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid == sock.user.id.split(':')[0] + `@s.whatsapp.net`) return;
+      if (commandInfo.onlyInGroups && !msg.key.remoteJid.endsWith('@g.us')) return;
+      msg.text = text;
       await callback(msg, match, sock, rawMessage);
-      return;
     }
   }
 }

@@ -1,12 +1,40 @@
 {
   "handlers": [
-    "/",
     ".",
+    "/",
     "!"
   ],
+  "version": "*0.1.2",
+  "filters": [
+    {
+      "chat": "000000@g.us",
+      "filters": [
+        {
+          "incoming": "^hi",
+          "outgoing": "Hello!"
+        }
+      ]
+    }
+  ],
   "aliveMessage": {
-    "type": "text",
+    "type": "image",
     "media": "",
-    "content": "I'am Alive!"
-  }
+    "content": "I'm alive!"
+  },
+  "welcomeMessage": [
+    {
+      "chat": "0000000@g.us",
+      "type": "text",
+      "content": "Hello!",
+      "media": ""
+    }
+  ],
+  "goodbyeMessage": [
+    {
+      "chat": "0000000@g.us",
+      "type": "text",
+      "content": "Goodbye!",
+      "media": ""
+    }
+  ]
 }

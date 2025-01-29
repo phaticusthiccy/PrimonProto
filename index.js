@@ -1,7 +1,6 @@
-const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadMediaMessage, downloadContentFromMessage } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadContentFromMessage } = require('@whiskeysockets/baileys');
 const fs = require('fs');
 const pino = require('pino');
-const axios = require('axios');
 require('./events');
 
 /**
@@ -13,12 +12,8 @@ setInterval(() => {
 
 /**
  * Configures the logger with the specified options.
- *
- * @param {Object} options - The logger configuration options.
- * @param {string} [options.level='silent'] - The minimum log level to record.
- * @param {Object} [options.customLevels] - Custom log levels and their corresponding numeric values.
  */
-var logger = pino({
+const logger = pino({
   level: "silent",
   customLevels: {
     trace: 10000,
@@ -31,16 +26,16 @@ var logger = pino({
 });
 
 async function Primon() {
-  let { version } = await fetchLatestBaileysVersion();
-  let { state } = await useMultiFileAuthState(__dirname + "/session/");
+  const { version } = await fetchLatestBaileysVersion();
+  const { state } = await useMultiFileAuthState(__dirname + "/session/");
 
   const sock = makeWASocket({
-    logger: logger,
+    logger,
     printQRInTerminal: true,
     markOnlineOnConnect: false,
     browser: ["Ubuntu", "Chrome", "20.0.04"],
     auth: state,
-    version: version,
+    version,
   });
 
   sock.ev.on('connection.update', async (update) => {
@@ -63,15 +58,14 @@ async function Primon() {
 
   sock.ev.on("messages.upsert", async (msg) => {
     try {
-      if (!msg.hasOwnProperty("messages")) return;
-      if (msg.messages.length == 0) return;
+      if (!msg.hasOwnProperty("messages") || msg.messages.length === 0) return;
 
-      var rawMessage = msg
+      const rawMessage = structuredClone(msg);
       msg = msg.messages[0];
-      const text = msg.message.conversation || msg.message.extendedTextMessage?.text;
-      const quotedMessage = msg.message.extendedTextMessage?.contextInfo?.quotedMessage || undefined;
-      msg.quotedMessage = quotedMessage
-      if ((msg.key && msg.key.remoteJid == "status@broadcast") || !text) return;
+      const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
+      const quotedMessage = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+      msg.quotedMessage = quotedMessage;
+      if ((msg.key && msg.key.remoteJid === "status@broadcast") || !text) return;
       await start_command(msg, sock, rawMessage);
 
     } catch (error) {
@@ -80,7 +74,50 @@ async function Primon() {
     }
   });
 
-  const modulePath = __dirname + "/modules";
+  sock.ev.on("group-participants.update", async (participant) => {
+    if (participant.action === 'add') {
+      const welcomeMessage = global.database.welcomeMessage.find(welcome => welcome.chat === participant.id);
+      if (welcomeMessage) {
+        const mediaPath = `./welcome.${welcomeMessage.type}`;
+        if (['image', 'video'].includes(welcomeMessage.type)) {
+          if (!fs.existsSync(mediaPath)) {
+            fs.writeFileSync(mediaPath, welcomeMessage.media, "base64");
+          }
+          const messageOptions = {
+            [welcomeMessage.type]: { url: mediaPath },
+            caption: welcomeMessage.content || undefined,
+            mentions: participant.participants
+          };
+          await sock.sendMessage(participant.id, messageOptions);
+        } else {
+          await sock.sendMessage(participant.id, { text: welcomeMessage.content, mentions: participant.participants });
+        }
+      }
+    } else if (participant.action === 'remove') {
+      const goodbyeMessage = global.database.goodbyeMessage.find(goodbye => goodbye.chat === participant.id);
+      if (goodbyeMessage) {
+        const mediaPath = `./goodbye.${goodbyeMessage.type}`;
+        if (['image', 'video'].includes(goodbyeMessage.type)) {
+          if (!fs.existsSync(mediaPath)) {
+            fs.writeFileSync(mediaPath, goodbyeMessage.media, "base64");
+          }
+          const messageOptions = {
+            [goodbyeMessage.type]: { url: mediaPath },
+            caption: goodbyeMessage.content || undefined,
+            mentions: participant.participants
+          };
+          await sock.sendMessage(participant.id, messageOptions);
+        } else {
+          await sock.sendMessage(participant.id, { text: goodbyeMessage.content, mentions: participant.participants });
+        }
+      }
+    }
+  })
+
+  loadModules(__dirname + "/modules");
+}
+
+function loadModules(modulePath) {
   fs.readdirSync(modulePath).forEach((file) => {
     if (file.endsWith(".js")) {
       console.log(`Loading plugin: ${file}`);
@@ -91,17 +128,16 @@ async function Primon() {
 
 Primon();
 
-
 /**
- * Downloads an image from a WhatsApp message and saves it to the specified file path.
+ * Downloads media from a WhatsApp message and saves it to the specified file path.
  *
- * @param {Object} message - The WhatsApp message object containing the image.
- * @param {string} type - The type of the image (e.g. "image", "video", "document").
- * @param {string} filepath - The file path to save the downloaded image.
- * @returns {Promise<void>} - A Promise that resolves when the image has been downloaded and saved.
-*/
+ * @param {Object} message - The WhatsApp message object containing the media.
+ * @param {string} type - The type of the media (e.g. "image", "video", "document").
+ * @param {string} filepath - The file path to save the downloaded media.
+ * @returns {Promise<void>} - A Promise that resolves when the media has been downloaded and saved.
+ */
 global.downloadMedia = async (message, type, filepath) => {
-  var stream = await downloadContentFromMessage(
+  const stream = await downloadContentFromMessage(
     {
       url: message.url,
       directPath: message.directPath,
@@ -110,7 +146,7 @@ global.downloadMedia = async (message, type, filepath) => {
     type
   );
 
-  var writeStream = fs.createWriteStream(filepath);
+  const writeStream = fs.createWriteStream(filepath);
   await new Promise((resolve, reject) => {
     stream.pipe(writeStream);
     writeStream.on("finish", resolve);

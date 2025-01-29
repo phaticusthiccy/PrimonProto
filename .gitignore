@@ -2,5 +2,11 @@ node_modules
 .started
 session
 package-lock.json
+*.image
+*.video
 *.mp4
+*.mp3
+.DS_Store
 *.png
+*.jpg
+*.jpeg
