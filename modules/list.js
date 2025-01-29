@@ -13,7 +13,7 @@
  * @param {Object} sock - The socket object for sending messages.
  * @returns {Promise<void>} - A promise that resolves when the message is sent.
 */
-addCommand( {pattern: "^men(u|ü)$", fromMe: true, dontAddCommandList: true}, async (msg, match, sock) => {
+addCommand( {pattern: "^men(u|ü)$", access: "all", dontAddCommandList: true}, async (msg, match, sock) => {
     const menuText = global.commands
         .filter(x => !x.commandInfo.dontAddCommandList)
         .map((x, index, array) => {
@@ -23,5 +23,10 @@ addCommand( {pattern: "^men(u|ü)$", fromMe: true, dontAddCommandList: true}, as
         .join('');
 
     const grupId = msg.key.remoteJid;
-    await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`, edit: msg.key });
+    if(msg.key.fromMe) {
+        await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`, edit: msg.key });
+    }
+    else {
+        await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`});
+    }
 })

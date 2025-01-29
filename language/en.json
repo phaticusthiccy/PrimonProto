@@ -1,0 +1,25 @@
+{
+    "edit": {
+        "edit_desc": "_Edit configurations._",
+        "enter_configuration": "_Please enter the configuration to edit._",
+        "available_configurations": "_Avaliable Configurations ::_",
+        "reply_message_needed": "_Please reply to a message or media to edit._",
+        "success_message_prefix": "_✅",
+        "success_message_suffix": "message updated successfully.",
+        "unsupported_message_type": "_❌ Unsupported message type._"        
+    },
+    "alive": {
+        "desc": "_Checks if the bot is alive._",
+        "aliveMessageContent": "_The bot is currently alive!_"
+      },
+      "filters": {
+        "desc": "_Add filters that automatically respond to your chats. Supports regexp._",
+        "listFilters": "📜 _Filters In This Chat_",
+        "noFiltersFound": "_❌ No filters found._",
+        "filterDeleted": "_✅ Filter deleted successfully._\n_Deleted Filter ::_ ```{filter}```",
+        "invalidFormat": "_❌ Invalid filter format!_\n_Use_ ```.filter add <incoming> <outgoing>```",
+        "filterUpdated": "_✅ Filter updated successfully._",
+        "filterAdded": "_✅ Filter added successfully._"
+      }
+      
+}

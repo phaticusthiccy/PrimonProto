@@ -15,26 +15,25 @@
 */
 
 const fs = require('fs');
-
-addCommand({ pattern: "^alive$", fromMe: true, desc: "_Check if the bot is alive._" }, async (msg, match, sock) => {
+const lang = require(`../language/${database.language}.json`).alive;
+addCommand({ pattern: "^alive$", access: "all", desc: lang.desc }, async (msg, match, sock) => {
     const grupId = msg.key.remoteJid;
     const aliveMessage = global.database.aliveMessage;
     const mediaPath = `./alive.${aliveMessage.type}`;
 
     if (aliveMessage.type === "text") {
-        return await sock.sendMessage(grupId, {
-            edit: msg.key,
-            text: aliveMessage.content
-        });
+        if (msg.key.fromMe) {
+            return await sock.sendMessage(grupId, {text: lang.aliveMessageContent, edit: msg.key});
+        }
+        else {
+            return await sock.sendMessage(grupId, {text: aliveMessage.content}); // komutu başka birisi yazdığında düzenlemeyi deneyip hata fırlatmayacak.
+        }
+        
     }
 
     if (!fs.existsSync(mediaPath)) {
         fs.writeFileSync(mediaPath, aliveMessage.media, "base64");
     }
-
-    await sock.sendMessage(grupId, {
-        delete: msg.key
-    });
 
     const messageOptions = {
         [aliveMessage.type]: { url: mediaPath },

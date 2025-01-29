@@ -36,7 +36,6 @@ async function start_command(msg, sock, rawMessage) {
 
   let matchedPrefix = false;
   let validText = text;
-
   for (const prefix of PREFIX) {
     if (text.startsWith(prefix)) {
       matchedPrefix = true;
@@ -49,7 +48,6 @@ async function start_command(msg, sock, rawMessage) {
       } 
     }
   }
-
   if (!matchedPrefix) return;
 
   // ! Command Extras
@@ -68,17 +66,31 @@ async function start_command(msg, sock, rawMessage) {
   // callback {msg} - Message object.
 
   for (const { commandInfo, callback } of commands) {
-    
+
     const match = validText.match(new RegExp(commandInfo.pattern, "im"));
+    console.log(match)
     if (match) {
-      if (commandInfo.fromMe && !msg.key.fromMe) return;
+      const groupCheck = msg.key.remoteJid.endsWith('@g.us');
+      let userId = groupCheck ? msg.key.participant : msg.key.remoteJid;
+      let permission = false;
+      if (msg.key.fromMe) permission = true;
+      else {
+        for (var i of database.sudo) {
+          if (i == userId) {
+            permission = true
+            break;
+      }}};
+      // bot private ise permission da false ise sonlandıracak
+      if (!permission && database.worktype == "private") return;
+      // addcommand değişkenlerinden fromMe kısmını silip access verisi ekledim, ve o veri eğerki sudo ise permission true dönmedikce kullanılamaz.
+      else if (commandInfo.access == "sudo" && !permission) return;
+
       if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid == sock.user.id.split(':')[0] + `@s.whatsapp.net`) return;
-      if (commandInfo.onlyInGroups && !msg.key.remoteJid.endsWith('@g.us')) return;
+      if (commandInfo.onlyInGroups && !groupCheck) return;
       return await callback(msg, match, sock, rawMessage);
     }
     
     if (commandInfo.pattern == "onMessage") {
-      if (commandInfo.fromMe && !msg.key.fromMe) return;
       if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid == sock.user.id.split(':')[0] + `@s.whatsapp.net`) return;
       if (commandInfo.onlyInGroups && !msg.key.remoteJid.endsWith('@g.us')) return;
       msg.text = text;
