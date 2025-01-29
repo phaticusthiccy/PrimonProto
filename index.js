@@ -1,6 +1,7 @@
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadContentFromMessage } = require('@whiskeysockets/baileys');
 const fs = require('fs');
 const pino = require('pino');
+global.database = require("./database.json");
 require('./events');
 
 /**
