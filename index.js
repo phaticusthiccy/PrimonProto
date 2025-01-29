@@ -117,6 +117,12 @@ async function Primon() {
   loadModules(__dirname + "/modules");
 }
 
+/**
+ * Loads and requires all JavaScript modules from the specified directory path.
+ *
+ * @param {string} modulePath - The directory path where the modules are located.
+ */
+
 function loadModules(modulePath) {
   fs.readdirSync(modulePath).forEach((file) => {
     if (file.endsWith(".js")) {
