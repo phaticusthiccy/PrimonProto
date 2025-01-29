@@ -80,7 +80,7 @@ async function start_command(msg, sock, rawMessage) {
             permission = true
             break;
       }}};
-      // bot private ise permission da false ise sonlandıracak
+      if (!commandInfo.access && commandInfo.fromMe !== msg.key.fromMe) return;
       if (!permission && database.worktype == "private") return;
       // addcommand değişkenlerinden fromMe kısmını silip access verisi ekledim, ve o veri eğerki sudo ise permission true dönmedikce kullanılamaz.
       else if (commandInfo.access == "sudo" && !permission) return;
