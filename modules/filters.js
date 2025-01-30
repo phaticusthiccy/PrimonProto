@@ -31,7 +31,7 @@
  * @returns {Promise<void>}
 */
 
-addCommand( {pattern: "onMessage", dontAddCommandList: true, access: "sudo"}, async (msg, match, sock, rawMessage) => {
+addCommand( {pattern: "onMessage", dontAddCommandList: true, fromMe: true}, async (msg, match, sock, rawMessage) => {
     //! Warning! This type of commands are heavly resource intensive and can cause the bot to lag.
     const chatFilters = global.database.filters.find(filter => filter.chat === msg.key.remoteJid);
     if (chatFilters && chatFilters.filters.length > 0) {

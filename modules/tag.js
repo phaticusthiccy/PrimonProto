@@ -1,4 +1,4 @@
-addCommand({ pattern: "^tagall ?(.*)", access: "sudo", onlyInGroups: true}, async (msg, match, sock) => {
+addCommand({ pattern: "^tagall ?(.*)", desc: "_It allows you to tag all users in the group._", access: "sudo", onlyInGroups: true}, async (msg, match, sock) => {
     const groupId = msg.key.remoteJid;
     console.log(match[1])
     if (!await checkAdmin(msg, sock, groupId)) {
@@ -26,7 +26,7 @@ addCommand({ pattern: "^tagall ?(.*)", access: "sudo", onlyInGroups: true}, asyn
     }
 }); 
 
-addCommand({ pattern: "^tagadmin ?(.*)", access: "sudo", onlyInGroups: true }, async (msg, match, sock) => {
+addCommand({ pattern: "^tagadmin ?(.*)", desc: "_It allows you to tag the admins in the group._", access: "sudo", onlyInGroups: true }, async (msg, match, sock) => {
     const groupId = msg.key.remoteJid;
     
     if (!await checkAdmin(msg, sock, groupId)) {

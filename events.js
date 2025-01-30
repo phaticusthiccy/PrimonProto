@@ -82,7 +82,6 @@ async function start_command(msg, sock, rawMessage) {
       }}};
       if (!commandInfo.access && commandInfo.fromMe !== msg.key.fromMe) return;
       if (!permission && database.worktype == "private") return;
-      // addcommand değişkenlerinden fromMe kısmını silip access verisi ekledim, ve o veri eğerki sudo ise permission true dönmedikce kullanılamaz.
       else if (commandInfo.access == "sudo" && !permission) return;
       if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid == sock.user.id.split(':')[0] + `@s.whatsapp.net`) return;
       if (commandInfo.onlyInGroups && !groupCheck) return;
@@ -90,6 +89,7 @@ async function start_command(msg, sock, rawMessage) {
     }
     
     if (commandInfo.pattern == "onMessage") {
+      if (!commandInfo.access && commandInfo.fromMe !== msg.key.fromMe) return;
       if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid == sock.user.id.split(':')[0] + `@s.whatsapp.net`) return;
       if (commandInfo.onlyInGroups && !msg.key.remoteJid.endsWith('@g.us')) return;
       msg.text = text;
