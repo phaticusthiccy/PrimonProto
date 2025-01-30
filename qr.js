@@ -28,7 +28,7 @@ async function genQR(qr) {
       await delay(3000);
       fs.writeFileSync('.started', '1');
       console.clear();
-      console.log("Run starts.js to start the bot.");
+      console.log("Run index.js to start the bot.");
       process.exit(1);
     } else if (connection === 'close') {
       await genQR(qr);

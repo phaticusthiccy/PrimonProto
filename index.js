@@ -35,7 +35,7 @@ async function Primon() {
     markOnlineOnConnect: false,
     browser: ["Ubuntu", "Chrome", "20.0.04"],
     auth: state,
-    version,
+    version: version,
   });
 
   sock.ev.on('connection.update', async (update) => {
@@ -66,6 +66,7 @@ async function Primon() {
       const quotedMessage = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
       msg.quotedMessage = quotedMessage;
       if ((msg.key && msg.key.remoteJid === "status@broadcast") || !text) return;
+      
       await start_command(msg, sock, rawMessage);
 
     } catch (error) {

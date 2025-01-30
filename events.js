@@ -68,28 +68,17 @@ async function start_command(msg, sock, rawMessage) {
   // callback {msg} - Message object.
 
   for (const { commandInfo, callback } of commands) {
+    
     const match = validText.match(new RegExp(commandInfo.pattern, "im"));
     if (match) {
-      const groupCheck = msg.key.remoteJid.endsWith('@g.us');
-      let userId = groupCheck ? msg.key.participant : msg.key.remoteJid;
-      let permission = false;
-      if (msg.key.fromMe) permission = true;
-      else {
-        for (var i of database.sudo) {
-          if (i == userId) {
-            permission = true
-            break;
-      }}};
-      if (!commandInfo.access && commandInfo.fromMe !== msg.key.fromMe) return;
-      if (!permission && database.worktype == "private") return;
-      else if (commandInfo.access == "sudo" && !permission) return;
+      if (commandInfo.fromMe && !msg.key.fromMe) return;
       if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid == sock.user.id.split(':')[0] + `@s.whatsapp.net`) return;
-      if (commandInfo.onlyInGroups && !groupCheck) return;
+      if (commandInfo.onlyInGroups && !msg.key.remoteJid.endsWith('@g.us')) return;
       return await callback(msg, match, sock, rawMessage);
     }
     
     if (commandInfo.pattern == "onMessage") {
-      if (!commandInfo.access && commandInfo.fromMe !== msg.key.fromMe) return;
+      if (commandInfo.fromMe && !msg.key.fromMe) return;
       if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid == sock.user.id.split(':')[0] + `@s.whatsapp.net`) return;
       if (commandInfo.onlyInGroups && !msg.key.remoteJid.endsWith('@g.us')) return;
       msg.text = text;
