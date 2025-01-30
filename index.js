@@ -160,3 +160,26 @@ global.downloadMedia = async (message, type, filepath) => {
     writeStream.on("error", reject);
   });
 };
+/**
+ * Checks if the number is an admin in the group.
+ *
+ * @param {Object} msg - The message object.
+ * @param {Object} sock - The WhatsApp socket object.
+ * @param {string} groupId - The ID of the group to check.
+ * @param {string|boolean} number - Optional number. If false, the bot's own number is used.
+ * @returns {Promise<boolean>} - Returns true if the bot is an admin, otherwise false.
+ */
+
+global.checkAdmin = async function (msg, sock, groupId, number = false) {
+  try {
+      const groupMetadata = await sock.groupMetadata(groupId);
+      let Number = number ? number : sock.user.id.split(":")[0] + "@s.whatsapp.net";
+      return groupMetadata.participants.some(participant => 
+          participant.id === Number && participant.admin
+      );
+  } catch (error) {
+      console.error("An error occurred while checking admin status: ", error);
+      return false;
+  }
+};
+
