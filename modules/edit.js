@@ -18,15 +18,25 @@
 */
 const fs = require('fs');
 
-addCommand( {pattern: "^edit ?(.*)", fromMe: true, notAvaliablePersonelChat: true, desc: "_Edit configurations._", usage: global.handlers[0] + "edit <alive || welcome || goodbye>"}, async (msg, match, sock) => {
+addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: true, desc: "_Edit configurations._", usage: global.handlers[0] + "edit <alive || welcome || goodbye>"}, async (msg, match, sock) => {
 
     const grupId = msg.key.remoteJid;
     if (!match[1]) {
-        return await sock.sendMessage(grupId, { text: "_Please enter the configuration to edit._\n\n_Avaliable Configurations ::_ ```alive, welcome, goodbye```", edit: msg.key });
+        if (msg.key.fromMe) {
+            return await sock.sendMessage(grupId, { text: "_Please enter the configuration to edit._\n\n_Avaliable Configurations ::_ ```alive, welcome, goodbye```", edit: msg.key });
+        }
+        else {
+            return await sock.sendMessage(grupId, { text: "_Please enter the configuration to edit._\n\n_Avaliable Configurations ::_ ```alive, welcome, goodbye```"});
+        }
     }
 
     if (!msg.quotedMessage) {
-        return await sock.sendMessage(grupId, { text: "_Please reply to a message or media to edit._", edit: msg.key });
+        if (msg.key.fromMe) {
+            return await sock.sendMessage(grupId, { text: "_Please reply to a message or media to edit._", edit: msg.key });
+        }
+        else {
+            return await sock.sendMessage(grupId, { text: "_Please reply to a message or media to edit._"});
+        }
     }
 
     /*
@@ -63,7 +73,12 @@ addCommand( {pattern: "^edit ?(.*)", fromMe: true, notAvaliablePersonelChat: tru
                 config.content = content;
             }
         }
-        return await sock.sendMessage(grupId, { text: `_✅ ${configType.charAt(0).toUpperCase() + configType.slice(1)} message updated successfully._`, edit: msg.key });
+        if (msg.key.fromMe) {
+            return await sock.sendMessage(grupId, { text: `_✅ ${configType.charAt(0).toUpperCase() + configType.slice(1)} message updated successfully._`, edit: msg.key });
+        }
+        else {
+            return await sock.sendMessage(grupId, { text: `_✅ ${configType.charAt(0).toUpperCase() + configType.slice(1)} message updated successfully._`});
+        }
     };
 
     const { imageMessage, videoMessage, extendedTextMessage } = msg.quotedMessage;
@@ -81,7 +96,12 @@ addCommand( {pattern: "^edit ?(.*)", fromMe: true, notAvaliablePersonelChat: tru
         } else if (extendedTextMessage) {
             return await updateMessage("text", "", extendedTextMessage.text, configType);
         } else {
-            return await sock.sendMessage(grupId, { text: "_❌ Unsupported message type._", edit: msg.key });
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(grupId, { text: "_❌ Unsupported message type._", edit: msg.key });
+            }
+            else {
+                return await sock.sendMessage(grupId, { text: "_❌ Unsupported message type._"});
+            }
         }
     }
     

@@ -36,5 +36,9 @@
       "content": "Goodbye!",
       "media": ""
     }
-  ]
+  ],
+  "sudo": [
+    ""
+  ],
+  "worktype": "public"
 }
