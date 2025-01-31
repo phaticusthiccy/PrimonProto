@@ -26,7 +26,8 @@ addCommand({ pattern: "^update$", access: "sudo", desc: "_Update the bot._" }, a
 
     
 
-    git.pull((async (err, update) => {
+    await git.stash();
+    git.pull(async (err, update) => {
         if (err) {
             if (msg.key.fromMe) {
                 await sock.sendMessage(groupId, { text: `❌ Update failed.`, edit: msg.key });
@@ -35,13 +36,14 @@ addCommand({ pattern: "^update$", access: "sudo", desc: "_Update the bot._" }, a
             }
             return;
         }
-        if(update && update.summary.changes) {
+        if (update && update.summary.changes) {
             if (msg.key.fromMe) {
                 await sock.sendMessage(groupId, { text: `✅ Update successful.`, edit: msg.key });
             } else {
                 await sock.sendMessage(groupId, { text: `✅ Update successful.`, edit: publicMessage.key });
             }
         }
+        await git.stash(['pop']);
         exec('npm install').stderr.pipe(process.stderr);
-    }));
+    });
 });
