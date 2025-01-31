@@ -27,28 +27,25 @@ addCommand({ pattern: "^update$", access: "sudo", desc: "_Update the bot._" }, a
     
 
     await git.stash();
-    git.pull(async (err, update) => {
-        if (err) {
-            if (msg.key.fromMe) {
-                await sock.sendMessage(groupId, { text: `❌ Update failed.`, edit: msg.key });
-            } else {
-                await sock.sendMessage(groupId, { text: `❌ Update failed.`, edit: publicMessage.key });
-            }
-            return;
+    try {
+        await git.pull();
+        if (msg.key.fromMe) {
+            await sock.sendMessage(groupId, { text: `✅ Update successful.`, edit: msg.key });
+        } else {
+            await sock.sendMessage(groupId, { text: `✅ Update successful.`, edit: publicMessage.key });
         }
-        if (update && update.summary.changes) {
-            if (msg.key.fromMe) {
-                await sock.sendMessage(groupId, { text: `✅ Update successful.`, edit: msg.key });
-            } else {
-                await sock.sendMessage(groupId, { text: `✅ Update successful.`, edit: publicMessage.key });
-            }
+    } catch (err) {
+        if (msg.key.fromMe) {
+            await sock.sendMessage(groupId, { text: `❌ Update failed.`, edit: msg.key });
+        } else {
+            await sock.sendMessage(groupId, { text: `❌ Update failed.`, edit: publicMessage.key });
         }
-        await git.stash(['pop']);
-        try {
-            execSync('nvm use --lts && npm install', { stdio: 'inherit' });
-        } catch (error) {
-            console.error('Failed to update dependencies:', error);
-        }
-        process.exit(0);
-    });
+    }
+    await git.stash(['pop']);
+    try {
+        execSync('nvm use --lts && npm install', { stdio: 'inherit' });
+    } catch (error) {
+        console.error('Failed to update dependencies:', error);
+    }
+    process.exit(0);
 });
