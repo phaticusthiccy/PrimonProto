@@ -17,20 +17,41 @@ PrimonProto is a powerful and flexible WhatsApp bot designed for automation and 
 
 ## Installation
 
-1. **Clone the repository**:
+1. <h3 style="color: red;">Clone the repository</h3>
+
     ```sh
     git clone https://github.com/phaticusthiccy/PrimonProto.git
     cd PrimonProto
     ```
 
-2. **Install dependencies**:
+2. <h3 style="color: red;">Install dependencies</h3>
+
     ```sh
     npm install
     ```
 
-3. **Start the bot**:
+3. <h3 style="color: red;">Scan QR Code</h3>
+
     ```sh
-    node index.js
+    node qr.js
+    ```
+4. <h3 style="color: red;">Start the bot</h3>
+
+    > You dont need to scan QR code again if you have session file. Just type this command in your terminal.
+    ```sh
+    pm2 start index.js
+    ```
+
+5. <h3 style="color: blue;">Logging</h3>
+
+    ```sh
+    pm2 logs
+    ```
+
+6. <h3 style="color: blue;">Stopping the bot</h3>
+
+    ```sh
+    pm2 kill
     ```
 
 ## Usage

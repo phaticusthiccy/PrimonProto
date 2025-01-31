@@ -5,7 +5,48 @@ genQR(true);
 var openedSocket = false;
 var chat_count = 0;
 
+// ask question
+/**
+ * Prompts the user with a question and returns their answer as a Promise.
+ * @param {string} question - The question to ask the user.
+ * @returns {Promise<string>} - The user's answer.
+ */
+function askQuestion(question) {
+  return new Promise((resolve) => {
+    const rl = require('readline').createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer);
+    });
+  });
+}
+
 async function genQR(qr) {
+  if (fs.existsSync('./session/')) {
+    let answer = await askQuestion("There is other active session! Old session will be deleted. Do you want to continue? (y/n): ");
+    if (answer.toLowerCase() === 'y') {
+      let activeDevices = await askQuestion("Are there any active devices in WhatsApp? (y/n): ");
+      if (activeDevices.toLowerCase() === 'y') {
+        console.clear();
+        console.log("Please log out from all devices before continuing.");
+        process.exit(1);
+      }
+      fs.rmSync('./session/', { recursive: true, force: true });
+    } else {
+      process.exit(1);
+    }
+  }
+
+  let activeDevices2 = await askQuestion("Are there any active or inactive devices in WhatsApp? (y/n): ");
+  if (activeDevices2.toLowerCase() === 'y') {
+    console.clear();
+    console.log("Please log out from all devices before continuing.");
+    process.exit(1);
+  }
+
   let { version } = await fetchLatestBaileysVersion();
   let { state, saveCreds } = await useMultiFileAuthState('./session/');
   let sock = makeWASocket({
