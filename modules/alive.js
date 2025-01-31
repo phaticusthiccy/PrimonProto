@@ -16,7 +16,7 @@
 
 const fs = require('fs');
 
-addCommand({ pattern: "^alive$", access: "all", desc: "_Check if the bot is alive._" }, async (msg, match, sock) => {
+addCommand({ pattern: "^alive$", access: "all", desc: "_Check if the bot is alive._" }, async (msg, match, sock, rawMessage) => {
     const grupId = msg.key.remoteJid;
     const aliveMessage = global.database.aliveMessage;
     const mediaPath = `./alive.${aliveMessage.type}`;
@@ -27,11 +27,10 @@ addCommand({ pattern: "^alive$", access: "all", desc: "_Check if the bot is aliv
                 edit: msg.key,
                 text: aliveMessage.content
             });
-        }
-        else {
+        } else {
             return await sock.sendMessage(grupId, {
                 text: aliveMessage.content
-            });
+            }, { quoted: rawMessage.messages[0] });
         }
     }
 
@@ -39,14 +38,16 @@ addCommand({ pattern: "^alive$", access: "all", desc: "_Check if the bot is aliv
         fs.writeFileSync(mediaPath, aliveMessage.media, "base64");
     }
 
-    await sock.sendMessage(grupId, {
-        delete: msg.key
-    });
+    if (msg.key.fromMe) {
+        await sock.sendMessage(grupId, {
+            delete: msg.key
+        });
+    }
 
     const messageOptions = {
         [aliveMessage.type]: { url: mediaPath },
-        caption: aliveMessage.content || undefined
+        caption: aliveMessage.content == "" ? undefined : aliveMessage.content
     };
 
-    return await sock.sendMessage(grupId, messageOptions);
+    return await sock.sendMessage(grupId, messageOptions, { quoted: rawMessage.messages[0] });
 });

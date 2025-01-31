@@ -1,19 +1,16 @@
-
 /**
- * Adds a command to display the Primon menu.
+ * Handles the "menu" command, which allows users to view a list of available commands and their descriptions.
  *
- * @param {Object} command - The command object.
- * @param {string} command.pattern - The regex pattern to match the command.
- * @param {boolean} command.fromMe - Indicates if the command is from the user.
- * @param {boolean} command.dontAddCommandList - Indicates if the command should be added to the command list.
- * @param {Function} callback - The callback function to execute when the command is matched.
- * @param {Object} msg - The message object.
- * @param {string} msg.key.remoteJid - The ID of the group or chat where the message was sent.
- * @param {Object} match - The matched pattern.
- * @param {Object} sock - The socket object for sending messages.
- * @returns {Promise<void>} - A promise that resolves when the message is sent.
-*/
-addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: true}, async (msg, match, sock) => {
+ * The command can be invoked with or without an argument. If an argument is provided, it will search for a matching command and display its details. If no argument is provided, it will display a list of all available commands.
+ *
+ * @param {object} msg - The message object containing the command.
+ * @param {string[]} match - An array containing the matched parts of the command pattern.
+ * @param {object} sock - The WhatsApp socket connection.
+ * @param {object} rawMessage - The raw message object.
+ * @returns {Promise<void>} - A promise that resolves when the message has been sent.
+ */
+
+addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: true}, async (msg, match, sock, rawMessage) => {
     const inputCommand = match[2].trim();
     let menuText;
 
@@ -37,10 +34,9 @@ addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: tru
 
     const grupId = msg.key.remoteJid;
     if (msg.key.fromMe) {
-        await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`, edit: msg.key });
-    }
-    else {
-        await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`});
+        return await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`, edit: msg.key });
+    } else {
+        return await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`}, { quoted: rawMessage.messages[0]});
     }
 
 })

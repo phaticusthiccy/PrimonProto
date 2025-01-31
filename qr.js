@@ -2,6 +2,8 @@ const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion,
 const fs = require('fs');
 const qrcode = require('qrcode-terminal');
 genQR(true);
+var openedSocket = false;
+var chat_count = 0;
 
 async function genQR(qr) {
   let { version } = await fetchLatestBaileysVersion();
@@ -19,6 +21,7 @@ async function genQR(qr) {
 
   sock.ev.on('connection.update', async (update) => {
     let { connection, qr: qrCode } = update;
+    
     if (qrCode) {
       qrcode.generate(qrCode, { small: true });
     }
@@ -28,8 +31,14 @@ async function genQR(qr) {
       await delay(3000);
       fs.writeFileSync('.started', '1');
       console.clear();
-      console.log("Run starts.js to start the bot.");
-      process.exit(1);
+      if (openedSocket == false) {
+        openedSocket = true;
+        try {
+          const chats = await sock.groupFetchAllParticipating();
+          chat_count = Object.keys(chats).length
+        } catch {}
+      }
+      
     } else if (connection === 'close') {
       await genQR(qr);
     }
@@ -37,3 +46,21 @@ async function genQR(qr) {
 
   sock.ev.on('creds.update', saveCreds);
 }
+
+let countdown = Math.max(150, chat_count * 1.875);
+setInterval(async () => {
+  
+  if (openedSocket == false && chat_count <= 0) {
+    return;
+  }
+  console.clear();
+  console.log(`Bot is syncing messages... (${(countdown / 10).toFixed(2)}s left)`);
+  countdown--;
+  
+  if (countdown < 0) {
+    console.clear();
+    console.log("Run index.js to start the bot.");
+    process.exit(1);
+  }
+
+}, 100);

@@ -1,32 +1,33 @@
 const ytdl = require("@distube/ytdl-core");
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
+const e = require("express");
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 
-addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from YouTube.", usage: global.handlers[0] + "video <query || url>" }, async (msg, match, sock) => {
+addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from YouTube.", usage: global.handlers[0] + "video <query || url>" }, async (msg, match, sock, rawMessage) => {
     const query = match[1];
+    console.log(query, msg.key)
     if (!query) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please provide a video to search for._", edit: msg.key });
-        }
-        else {
-            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please provide a video to search for._"});
+        } else {
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please provide a video to search for._"}, { quoted: rawMessage.messages[0] });
         }
     }
 
     if (msg.key.fromMe) {
         await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Video Downloading.._", edit: msg.key });
-    }
-    else {
-        await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Video Downloading.._"});
+    } else {
+        var publicMessage = await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Video Downloading.._"}, { quoted: rawMessage.messages[0] });
     }
 
     let videoId;
-    if (query.match(/^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/)) {
+    if (query.match(/^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be|youtube\.com\/shorts)\/.+(\?.+)?$/)) {
         const urlParams = new URLSearchParams(new URL(query).search);
         videoId = urlParams.get('v');
+        if (String(videoId) == "null") videoId = query
     } else {
         const ytVideo = await import('libmuse');
         
@@ -34,9 +35,8 @@ addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from 
         if (!searchResults || searchResults.length === 0) {
             if (msg.key.fromMe) {
                 return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._", edit: msg.key });
-            }
-            else {
-                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._"});
+            } else {
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._"}, { edit: publicMessage.key });
             }
         }
 
@@ -44,9 +44,8 @@ addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from 
         if (!videos || videos.results.length === 0) {
             if (msg.key.fromMe) {
                 return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No videos found for this query._", edit: msg.key });
-            }
-            else {
-                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No videos found for this query._"});
+            } else {
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No videos found for this query._"}, { edit: publicMessage.key });
             }
         }
 
@@ -54,13 +53,12 @@ addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from 
     }
 
     try {
-        var video = await ytdl.getInfo(`https://www.youtube.com/watch?v=${videoId}`);
+        var video = await ytdl.getInfo(videoId.length > 15 ? videoId : `https://www.youtube.com/watch?v=${videoId}`);
     } catch {
         if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No video found for this query._", edit: msg.key });
-        }
-        else {
-            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No video found for this query._"});
+        } else {
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No video found for this query._"}, { edit: publicMessage.key });
         }
     }
 
@@ -72,18 +70,30 @@ addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from 
     const downloadSuccess = await downloadVideo(url, mediaPath, video.videoDetails.lengthSeconds);
     await convertToMp4(mediaPath, mp4Path);
 
-    if (!downloadSuccess) return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download video._", edit: msg.key });
+    if (!downloadSuccess) {
+        if (msg.key.fromMe) {
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download video._", edit: msg.key });
+        } else {
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download video._"}, { edit: publicMessage.key });
+        }
+    }
 
     if (msg.key.fromMe) {
         await sock.sendMessage(msg.key.remoteJid, { delete: msg.key });
+    } else {
+        await sock.sendMessage(msg.key.remoteJid, { delete: publicMessage.key });
     }
 
     const messageOptions = {
         video: { url: mp4Path },
-        caption: video.videoDetails.author.name + " - " + video.videoDetails.title,
+        caption: video.videoDetails.author.name + " - " + video.videoDetails.title
     };
 
-    await sock.sendMessage(msg.key.remoteJid, messageOptions);
+    if (msg.key.fromMe) {
+        await sock.sendMessage(msg.key.remoteJid, messageOptions);
+    } else {
+        await sock.sendMessage(msg.key.remoteJid, messageOptions, { quoted: rawMessage.messages[0] });
+    }
 
     [mediaPath, mp4Path].forEach(file => {
         if (fs.existsSync(file)) fs.unlinkSync(file);
@@ -94,14 +104,14 @@ addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from 
 })
 
 
-addCommand({ pattern: "^music ?(.*)", access: "all", desc: "Download music from YouTube.", usage: global.handlers[0] + "music <query || url>" }, async (msg, match, sock) => {
+addCommand({ pattern: "^music ?(.*)", access: "all", desc: "Download music from YouTube.", usage: global.handlers[0] + "music <query || url>" }, async (msg, match, sock, rawMessage) => {
     const query = match[1];
     if (!query) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please provide a music to search for._", edit: msg.key });
         }
         else {
-            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please provide a music to search for._"});
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please provide a music to search for._"}, { quoted: rawMessage.messages[0] });
         }
     }
 
@@ -109,25 +119,42 @@ addCommand({ pattern: "^music ?(.*)", access: "all", desc: "Download music from 
         await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Music Downloading.._", edit: msg.key });
     }
     else {
-        await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Music Downloading.._"});
+        await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Music Downloading.._"}, { quoted: rawMessage.messages[0] });
     }
 
     let url;
-    if (query.match(/^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/)) {
+    if (query.match(/^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be|youtube\.com\/shorts)\/.+(\?.+)?$/)) {
         const urlParams = new URLSearchParams(new URL(query).search);
         url = "https://www.youtube.com/watch?v=" + urlParams.get('v')
     } else {
         const ytMusic = await import('libmuse');
         
         const searchResults = await ytMusic.search(query);
-        if (!searchResults || searchResults.length === 0) return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._", edit: msg.key });
+        if (!searchResults || searchResults.length === 0) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._", edit: msg.key });
+            } else {
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._"}, { quoted: rawMessage.messages[0] });
+            }
+        }
 
         const songs = searchResults.categories.find(x => x.title === "Songs");
-        if (!songs || songs.results.length === 0) return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No songs found for this query._", edit: msg.key });
+        if (!songs || songs.results.length === 0) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No songs found for this query._", edit: msg.key });
+            } else {
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No songs found for this query._"}, { quoted: rawMessage.messages[0] });
+            }
+        }
 
         const song = songs.results[0];
-        if (!song) return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No song found for this query._", edit: msg.key });
-
+        if (!song) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No song found for this query._", edit: msg.key });
+            } else {
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No song found for this query._"}, { quoted: rawMessage.messages[0] });
+            }
+        }
         url = `https://www.youtube.com/watch?v=${song.videoId}`;
     }
 
@@ -135,14 +162,25 @@ addCommand({ pattern: "^music ?(.*)", access: "all", desc: "Download music from 
     const oggFilePath = "./music.ogg";
 
     const downloadSuccess = await downloadAudio(url, audioFilePath);
-    if (!downloadSuccess) return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download audio._", edit: msg.key });
+    if (!downloadSuccess) {
+        if (msg.key.fromMe) {
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download audio._", edit: msg.key });
+        } else {
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download audio._"}, { quoted: rawMessage.messages[0] });
+        }
+    }
 
     await convertToOgg(audioFilePath);
 
     if (msg.key.fromMe) {
         await sock.sendMessage(msg.key.remoteJid, { delete: msg.key });
     }
-    await sock.sendMessage(msg.key.remoteJid, { audio: { url: oggFilePath }, mimetype: 'audio/mp4' });
+
+    if (msg.key.fromMe) {
+        await sock.sendMessage(msg.key.remoteJid, { audio: { url: oggFilePath }, mimetype: 'audio/ogg' });
+    } else {
+        await sock.sendMessage(msg.key.remoteJid, { audio: { url: oggFilePath }, mimetype: 'audio/ogg' }, { quoted: rawMessage.messages[0] });
+    }
 
     [audioFilePath, oggFilePath].forEach(file => {
         if (fs.existsSync(file)) fs.unlinkSync(file);

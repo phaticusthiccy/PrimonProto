@@ -1,13 +1,30 @@
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadContentFromMessage } = require('@whiskeysockets/baileys');
 const fs = require('fs');
+const axios = require('axios');
 const pino = require('pino');
 require('./events');
+var currentVersion = "", versionCheckInterval = 180
+var sock;
 
 /**
  * Saves the global database object to a file every 5 seconds.
  */
-setInterval(() => {
+setInterval(async () => {
   fs.writeFileSync("./database.json", JSON.stringify(global.database, null, 2));
+  versionCheckInterval--
+  if (versionCheckInterval == 0) {
+    var getLatestCommit = await axios.get("https://api.github.com/repos/phaticusthiccy/PrimonProto/commits")
+
+    if (currentVersion == "") {
+      currentVersion = getLatestCommit.data[0].sha
+    } else {
+      if (getLatestCommit.data[0].sha != currentVersion) {
+        currentVersion = getLatestCommit.data[0].sha
+        await sock.sendMessage(sock.user.id, `_New version available!_\n_Please update your bot via .update_`);
+      }  
+    }
+    versionCheckInterval = 180
+  }
 }, 5000);
 
 /**
@@ -29,13 +46,13 @@ async function Primon() {
   const { version } = await fetchLatestBaileysVersion();
   const { state } = await useMultiFileAuthState(__dirname + "/session/");
 
-  const sock = makeWASocket({
+  sock = makeWASocket({
     logger,
     printQRInTerminal: true,
     markOnlineOnConnect: false,
     browser: ["Ubuntu", "Chrome", "20.0.04"],
     auth: state,
-    version,
+    version: version,
   });
 
   sock.ev.on('connection.update', async (update) => {
@@ -66,6 +83,7 @@ async function Primon() {
       const quotedMessage = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
       msg.quotedMessage = quotedMessage;
       if ((msg.key && msg.key.remoteJid === "status@broadcast") || !text) return;
+      
       await start_command(msg, sock, rawMessage);
 
     } catch (error) {
@@ -182,3 +200,27 @@ global.checkAdmin = async function (msg, sock, groupId, number = false) {
   }
 };
 
+global.getAdmins = async function (msg, sock, groupId) {
+  try {
+      const groupMetadata = await sock.groupMetadata(groupId);
+      const admins = groupMetadata.participants.filter(p => p.admin === 'admin' || p.admin === 'superadmin').map(p => p.id);
+      return admins
+  } catch (error) {
+      console.error("An error occurred while getting admin list: ", error);
+      return [];
+  }
+};
+/**
+ * Downloads the contents of the given URL as an arraybuffer.
+ *
+ * @param {string} url - The URL to download.
+ * @returns {Promise<ArrayBuffer>} - A Promise that resolves to the arraybuffer, or an empty string if the download fails.
+ */
+global.downloadarraybuffer = async function (url) {
+  try {
+    const response = await axios.get(url, { responseType: "arraybuffer" });
+    return response.data;
+  } catch (error) {
+    return ""
+  }
+}
