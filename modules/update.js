@@ -14,7 +14,7 @@ addCommand({ pattern: "^update$", access: "sudo", desc: "_Update the bot._" }, a
     const branch = 'main';
     await git.fetch();
     var commits = await git.log([branch + '..origin/' + branch]);
-
+    
     if (commits.total === 0) {
         if (msg.key.fromMe) {
             await sock.sendMessage(groupId, { text: `🔄 No updates available.`, edit: msg.key });
@@ -25,11 +25,6 @@ addCommand({ pattern: "^update$", access: "sudo", desc: "_Update the bot._" }, a
     }
 
     
-    commits['all'].map(
-        (commit) => {
-            "🆕 New Updates\n\n" += '▫️ [' + commit.date.substring(0, 10) + ']: ' + commit.message + ' <' + commit.author_name + '>\n';
-        }
-    );
 
     git.pull((async (err, update) => {
         if (err) {
