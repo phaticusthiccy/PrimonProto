@@ -1,7 +1,6 @@
 const ytdl = require("@distube/ytdl-core");
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
-const e = require("express");
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 ffmpeg.setFfmpegPath(ffmpegPath);
 

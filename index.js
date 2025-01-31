@@ -69,7 +69,7 @@ async function Primon() {
       console.log('The connection is opened.');
       const usrId = sock.user.id;
       const mappedId = usrId.split(':')[0] + `@s.whatsapp.net`;
-      await sock.sendMessage(mappedId, { text: 'Primon Online!\n\nUse /menu to see the list of commands.' });
+      await sock.sendMessage(mappedId, { text: "Primon Online!\n\nUse " + global.handlers[0] + "menu to see the list of commands." });;
     }
   });
 
