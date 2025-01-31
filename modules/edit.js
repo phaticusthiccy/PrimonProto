@@ -81,7 +81,7 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
         }
     };
 
-    const { imageMessage, videoMessage, extendedTextMessage } = msg.quotedMessage;
+    const { imageMessage, videoMessage, extendedTextMessage, conversation } = msg.quotedMessage;
     const configType = match[1];
 
     if (configType === "alive" || configType === "welcome" || configType === "goodbye") {
@@ -95,6 +95,8 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
             return await updateMessage("video", mediaPath, videoMessage.caption || "", configType);
         } else if (extendedTextMessage) {
             return await updateMessage("text", "", extendedTextMessage.text, configType);
+        } else if (conversation) {
+            return await updateMessage("text", "", conversation, configType);
         } else {
             if (msg.key.fromMe) {
                 return await sock.sendMessage(grupId, { text: "_❌ Unsupported message type._", edit: msg.key });
