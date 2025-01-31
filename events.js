@@ -33,7 +33,6 @@ function addCommand(commandInfo, callback) {
 async function start_command(msg, sock, rawMessage) { 
   const text = 
     msg.message.conversation || msg.message.extendedTextMessage?.text; 
-  console.log(text);
   let matchedPrefix = false; 
   let validText = text; 
  
