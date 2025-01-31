@@ -14,17 +14,24 @@ addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: tru
     const inputCommand = match[2].trim();
     let menuText;
 
+    const userId = msg.key.participant || msg.key.remoteJid;
+    const isSudo = msg.key.fromMe || global.database.sudo.includes(userId.split("@")[0]);
+
     if (inputCommand) {
         const command = global.commands.find(x => x.commandInfo.pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "").replace(/ /gmi, "") === inputCommand.replace(/ /gmi, ""));
         if (command) {
-            const { pattern, desc, usage, warn } = command.commandInfo;
-            menuText = `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}`;
+            const { pattern, desc, usage, warn, access } = command.commandInfo;
+            if (access === "sudo" && !isSudo) {
+                menuText = `❌ Command not found: ${inputCommand}`;
+            } else {
+                menuText = `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}`;
+            }
         } else {
-            menuText = `❌ Command not found: ${inputCommand}`
+            menuText = `❌ Command not found: ${inputCommand}`;
         }
     } else {
         menuText = global.commands
-            .filter(x => !x.commandInfo.dontAddCommandList)
+            .filter(x => !x.commandInfo.dontAddCommandList && (x.commandInfo.access !== "sudo" || isSudo))
             .map((x, index, array) => {
                 const { pattern, desc, usage, warn } = x.commandInfo;
                 return `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}${index !== array.length - 1 ? '\n\n' : ''}`;

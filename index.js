@@ -37,9 +37,7 @@ require('./events');
 var currentVersion = "", versionCheckInterval = 180
 var sock;
 
-/**
- * Saves the global database object to a file every 5 seconds.
- */
+
 setInterval(async () => {
   fs.writeFileSync("./database.json", JSON.stringify(global.database, null, 2));
   versionCheckInterval--
@@ -110,10 +108,11 @@ async function Primon() {
 
       const rawMessage = structuredClone(msg);
       msg = msg.messages[0];
-      const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
       const quotedMessage = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
       msg.quotedMessage = quotedMessage;
-      if ((msg.key && msg.key.remoteJid === "status@broadcast") || !text) return;
+
+      if ((msg.key && msg.key.remoteJid === "status@broadcast")) return;
+      
       
       await start_command(msg, sock, rawMessage);
 
@@ -129,9 +128,7 @@ async function Primon() {
       if (welcomeMessage) {
         const mediaPath = `./welcome.${welcomeMessage.type}`;
         if (['image', 'video'].includes(welcomeMessage.type)) {
-          if (!fs.existsSync(mediaPath)) {
-            fs.writeFileSync(mediaPath, welcomeMessage.media, "base64");
-          }
+          fs.writeFileSync(mediaPath, welcomeMessage.media, "base64");
           const messageOptions = {
             [welcomeMessage.type]: { url: mediaPath },
             caption: welcomeMessage.content || undefined,
@@ -147,9 +144,7 @@ async function Primon() {
       if (goodbyeMessage) {
         const mediaPath = `./goodbye.${goodbyeMessage.type}`;
         if (['image', 'video'].includes(goodbyeMessage.type)) {
-          if (!fs.existsSync(mediaPath)) {
-            fs.writeFileSync(mediaPath, goodbyeMessage.media, "base64");
-          }
+          fs.writeFileSync(mediaPath, goodbyeMessage.media, "base64");
           const messageOptions = {
             [goodbyeMessage.type]: { url: mediaPath },
             caption: goodbyeMessage.content || undefined,

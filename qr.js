@@ -59,7 +59,7 @@ setInterval(async () => {
   
   if (countdown < 0) {
     console.clear();
-    console.log("Run index.js to start the bot.");
+    console.log("Run `pm2 start index.js` to start the bot.");
     process.exit(1);
   }
 

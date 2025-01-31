@@ -11,7 +11,7 @@ addCommand( {pattern: "onMessage", dontAddCommandList: true, fromMe: false}, asy
     }
 })
 
-addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", adminOnly: true, desc: "_Add filters that automatically respond to your chats. Supports regexp._", usage: global.handlers[0] + "filter - " + global.handlers[0] + "filter <add || delete>"}, async (msg, match, sock, rawMessage) => {
+addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "all", desc: "_Add filters that automatically respond to your chats. Supports regexp._", usage: global.handlers[0] + "filter - " + global.handlers[0] + "filter <add || delete>"}, async (msg, match, sock, rawMessage) => {
     const groupId = msg.key.remoteJid;
 
     var admins = await global.getAdmins(msg.key.remoteJid);
