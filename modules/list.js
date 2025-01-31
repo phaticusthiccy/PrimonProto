@@ -35,8 +35,7 @@ addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: tru
     const grupId = msg.key.remoteJid;
     if (msg.key.fromMe) {
         return await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`, edit: msg.key });
-    }
-    else {
+    } else {
         return await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`}, { quoted: rawMessage.messages[0]});
     }
 

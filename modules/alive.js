@@ -16,7 +16,7 @@
 
 const fs = require('fs');
 
-addCommand({ pattern: "^alive$", fromMe:true, desc: "_Check if the bot is alive._" }, async (msg, match, sock, rawMessage) => {
+addCommand({ pattern: "^alive$", access: "all", desc: "_Check if the bot is alive._" }, async (msg, match, sock, rawMessage) => {
     const grupId = msg.key.remoteJid;
     const aliveMessage = global.database.aliveMessage;
     const mediaPath = `./alive.${aliveMessage.type}`;
@@ -27,8 +27,7 @@ addCommand({ pattern: "^alive$", fromMe:true, desc: "_Check if the bot is alive.
                 edit: msg.key,
                 text: aliveMessage.content
             });
-        }
-        else {
+        } else {
             return await sock.sendMessage(grupId, {
                 text: aliveMessage.content
             }, { quoted: rawMessage.messages[0] });
@@ -47,7 +46,7 @@ addCommand({ pattern: "^alive$", fromMe:true, desc: "_Check if the bot is alive.
 
     const messageOptions = {
         [aliveMessage.type]: { url: mediaPath },
-        caption: aliveMessage.content || undefined
+        caption: aliveMessage.content == "" ? undefined : aliveMessage.content
     };
 
     return await sock.sendMessage(grupId, messageOptions, { quoted: rawMessage.messages[0] });

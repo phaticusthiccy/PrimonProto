@@ -1,5 +1,6 @@
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadContentFromMessage } = require('@whiskeysockets/baileys');
 const fs = require('fs');
+const axios = require('axios');
 const pino = require('pino');
 require('./events');
 
@@ -182,4 +183,17 @@ global.checkAdmin = async function (msg, sock, groupId, number = false) {
       return false;
   }
 };
-
+/**
+ * Downloads the contents of the given URL as an arraybuffer.
+ *
+ * @param {string} url - The URL to download.
+ * @returns {Promise<ArrayBuffer>} - A Promise that resolves to the arraybuffer, or an empty string if the download fails.
+ */
+global.downloadarraybuffer = async function (url) {
+  try {
+    const response = await axios.get(url, { responseType: "arraybuffer" });
+    return response.data;
+  } catch (error) {
+    return ""
+  }
+}

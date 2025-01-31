@@ -12,9 +12,8 @@ addCommand( {pattern: "^lyrics ?(.*)", access: "all", desc: "_Get lyrics of a so
     }
     if (msg.key.fromMe) {
         await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Lyrics Downloading.._", edit: msg.key });
-    }
-    else {
-        await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Lyrics Downloading.._"}, { quoted: rawMessage.messages[0] });
+    } else {
+        var publicMessage = await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Lyrics Downloading.._"}, { quoted: rawMessage.messages[0] });
     }
 
     try {
@@ -29,8 +28,8 @@ addCommand( {pattern: "^lyrics ?(.*)", access: "all", desc: "_Get lyrics of a so
         if (msg.key.fromMe) {
             await sock.sendMessage(msg.key.remoteJid, { delete: msg.key });
             await sock.sendMessage(msg.key.remoteJid, { image: { url: imageUrl }, caption: title + "\n\n" + lyrics });
-        }
-        else {
+        } else {
+            await sock.sendMessage(msg.key.remoteJid, { delete: publicMessage.key });
             await sock.sendMessage(msg.key.remoteJid, { image: { url: imageUrl }, caption: title + "\n\n" + lyrics }, { quoted: rawMessage.messages[0] });
         }
     
@@ -39,7 +38,7 @@ addCommand( {pattern: "^lyrics ?(.*)", access: "all", desc: "_Get lyrics of a so
        if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No lyrics found for this song._", edit: msg.key });
        } else {
-        return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No lyrics found for this song._"}, { quoted: rawMessage.messages[0] });
+        return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No lyrics found for this song._"}, { edit: publicMessage.key });
        }
     }
 })

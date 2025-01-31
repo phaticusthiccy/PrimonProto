@@ -11,7 +11,7 @@ addCommand( {pattern: "onMessage", dontAddCommandList: true, fromMe: false}, asy
     }
 })
 
-addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", desc: "_Add filters that automatically respond to your chats. Supports regexp._", usage: global.handlers[0] + "filter - " + global.handlers[0] + "filter <add || delete>"}, async (msg, match, sock, rawMessage) => {
+addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", adminOnly: true, desc: "_Add filters that automatically respond to your chats. Supports regexp._", usage: global.handlers[0] + "filter - " + global.handlers[0] + "filter <add || delete>"}, async (msg, match, sock, rawMessage) => {
     const groupId = msg.key.remoteJid;
     if (!match[1].trim()) {
         const find = global.database.filters.find(x => x.chat === msg.key.remoteJid);
@@ -19,15 +19,13 @@ addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", desc: "_Add filter
             const text = "📜 _Filters In This Chat_\n" + find.filters.map((x, index) => `\n*${index + 1}.* \`\`\`${x.incoming.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '')}\`\`\``).join('');
             if (msg.key.fromMe) {
                 return await sock.sendMessage(groupId, { text, edit: msg.key });
-            }
-            else {
+            } else {
                 return await sock.sendMessage(groupId, { text }, { quoted: rawMessage.messages[0] });
             }
         } else {
             if (msg.key.fromMe) {
                 return await sock.sendMessage(groupId, { text: "_❌ No filters found._", edit: msg.key });
-            }
-            else {
+            } else {
                 return await sock.sendMessage(groupId, { text: "_❌ No filters found._"}, { quoted: rawMessage.messages[0] });
             }
         }
@@ -38,8 +36,7 @@ addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", desc: "_Add filter
         if (!find || find.filters.length === 0) {
             if (msg.key.fromMe) {
                 return await sock.sendMessage(groupId, { text: "_❌ No filters found._", edit: msg.key });
-            }
-            else {
+            } else {
                 return await sock.sendMessage(groupId, { text: "_❌ No filters found._"}, { quoted: rawMessage.messages[0] });
             }
         }
@@ -47,8 +44,7 @@ addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", desc: "_Add filter
         if (!filterToDelete) {
             if (msg.key.fromMe) {
                 return await sock.sendMessage(groupId, { text: "_❌ No filters found._", edit: msg.key });
-            }
-            else {
+            } else {
                 return await sock.sendMessage(groupId, { text: "_❌ No filters found._"}, { quoted: rawMessage.messages[0] });
             }
 
@@ -58,15 +54,13 @@ addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", desc: "_Add filter
             find.filters.splice(filterIndex, 1);
             if (msg.key.fromMe) {
                 return await sock.sendMessage(groupId, { text: `_✅ Filter deleted successfully._\n_Deleted Filter ::_ \`\`\`${filterToDelete}\`\`\``, edit: msg.key });
-            }
-            else {
+            } else {
                 return await sock.sendMessage(groupId, { text: `_✅ Filter deleted successfully._\n_Deleted Filter ::_ \`\`\`${filterToDelete}\`\`\``}, { quoted: rawMessage.messages[0] });
             }
         } else {
             if (msg.key.fromMe) {
                 return await sock.sendMessage(groupId, { text: "_❌ No filters found._", edit: msg.key });
-            }
-            else {
+            } else {
                 return await sock.sendMessage(groupId, { text: "_❌ No filters found._"}, { quoted: rawMessage.messages[0] });
             }
         }
@@ -83,8 +77,7 @@ addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", desc: "_Add filter
         if (!incoming || !outgoing) {
             if (msg.key.fromMe) {
                 return await sock.sendMessage(groupId, { text: "_❌ Invalid filter format!_\n_Use_ ```.filter add <incoming> <outgoing>```", edit: msg.key });
-            }
-            else {
+            } else {
                 return await sock.sendMessage(groupId, { text: "_❌ Invalid filter format!_\n_Use_ ```.filter add <incoming> <outgoing>```"}, { quoted: rawMessage.messages[0] });
             }
         }
@@ -93,16 +86,14 @@ addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", desc: "_Add filter
             find.filters[filterIndex].outgoing = outgoing;
             if (msg.key.fromMe) {
                 return await sock.sendMessage(groupId, { text: "_✅ Filter updated successfully._", edit: msg.key });
-            }
-            else {
+            } else {
                 return await sock.sendMessage(groupId, { text: "_✅ Filter updated successfully._"}, { quoted: rawMessage.messages[0] });
             }
         }
         find.filters.push({ incoming, outgoing });
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, { text: "_✅ Filter added successfully._", edit: msg.key });
-        }
-        else {
+        } else {
             return await sock.sendMessage(groupId, { text: "_✅ Filter added successfully._"}, { quoted: rawMessage.messages[0] });
         }
     }
