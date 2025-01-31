@@ -7,11 +7,11 @@
  * @returns {Promise<boolean>} - True if the operation was successful, false otherwise.
  */
 async function replaceUserPosition(sock, groupJid, userJid, argm) {
-	try {
-		await sock.groupParticipantsUpdate(groupJid, [userJid], argm);
-	} catch (error) {
-		return false
-	}
+    try {
+        await sock.groupParticipantsUpdate(groupJid, [userJid], argm);
+    } catch (error) {
+        return false
+    }
 }
 
 addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the group.", access: "all", onlyInGroups: true}, (async (msg, match, sock, rawMessage) => {
