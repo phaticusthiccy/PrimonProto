@@ -24,5 +24,8 @@
     "qrcode": "^1.5.4",
     "ytdl-core": "latest",
     "simple-git": "^2.37.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }

@@ -44,6 +44,6 @@ addCommand({ pattern: "^update$", access: "sudo", desc: "_Update the bot._" }, a
             }
         }
         await git.stash(['pop']);
-        exec('npm install').stderr.pipe(process.stderr);
+        exec('  npm install').stderr.pipe(process.stderr);
     });
 });
