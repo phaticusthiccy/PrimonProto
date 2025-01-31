@@ -26,19 +26,19 @@ addCommand({ pattern: "^tiktok ?(.*)", access: "all", desc: "Download video from
             } else {
                 await sock.sendMessage(msg.key.remoteJid, { delete: publicMessage.key });
             }
-            return await sock.sendMessage(groupId, { video: { url: url }, caption: tk.result?.description || undefined }, { quoted: rawMessage.messages[0] });
+            return await sock.sendMessage(sg.key.remoteJid, { video: { url: url }, caption: tk.result?.description || undefined }, { quoted: rawMessage.messages[0] });
         } else {
             if (msg.key.fromMe) {
                 return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this url!_", edit: msg.key });
             } else {
-                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this url!_"}, { edit: publicMessage.key });
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this url!_", edit: publicMessage.key });
             }
         }
     } else {
         if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this url!_", edit: msg.key });
         } else {
-            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this url!_"}, { edit: publicMessage.key });
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this url!_", edit: publicMessage.key });
         }
     }
 })

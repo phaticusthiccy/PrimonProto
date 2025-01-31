@@ -26,7 +26,7 @@ addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", adminOnly: true, d
     if (!match[1].trim()) {
         const find = global.database.filters.find(x => x.chat === msg.key.remoteJid);
         if (find && find.filters.length > 0) {
-            const text = "📜 _Filters In This Chat_\n" + find.filters.map((x, index) => `\n*${index + 1}.* \`\`\`${x.incoming.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '')}\`\`\``).join('');
+            const text = "📜 _Filters In This Chat_\n" + find.filters.map((x, index) => `\n*${index + 1}.* \`\`\`${x.incoming}\`\`\``).join('');
             if (msg.key.fromMe) {
                 return await sock.sendMessage(groupId, { text, edit: msg.key });
             } else {
@@ -59,7 +59,7 @@ addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", adminOnly: true, d
             }
 
         }
-        const filterIndex = find.filters.findIndex(x => x.incoming.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '') === filterToDelete);
+        const filterIndex = find.filters.findIndex(x => x.incoming === filterToDelete);
         if (filterIndex !== -1) {
             find.filters.splice(filterIndex, 1);
             if (msg.key.fromMe) {

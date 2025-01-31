@@ -1,5 +1,36 @@
-const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadContentFromMessage } = require('@whiskeysockets/baileys');
+const Module = require('module');
+const originalRequire = Module.prototype.require;
+const execSync = require('child_process').execSync;
+const path = require('path');
 const fs = require('fs');
+
+const installedPackages = new Set();
+Module.prototype.require = function(packageName) {
+    try {
+        return originalRequire.apply(this, arguments);
+    } catch (err) {
+        if (err.code === 'MODULE_NOT_FOUND' && !packageName.startsWith('.')) {
+            if (!installedPackages.has(packageName)) {
+                console.log(`Package ${packageName} not found. Installing...`);
+                
+                try {
+                  const rootDir = process.cwd();
+                  const packageJsonPath = path.join(rootDir, 'package.json');
+                  
+                  execSync(`npm install ${packageName}`, { stdio: 'inherit' });
+                  installedPackages.add(packageName);
+                  
+                  return originalRequire.apply(this, arguments);
+                } catch (installError) {
+                  console.error(`Package installation error: ${installError.message}`);
+                }
+            }
+        }
+        throw err;
+    }
+};
+
+const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadContentFromMessage } = require('@whiskeysockets/baileys');
 const axios = require('axios');
 const pino = require('pino');
 require('./events');

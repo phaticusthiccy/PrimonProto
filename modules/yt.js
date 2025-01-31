@@ -35,7 +35,7 @@ addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from 
             if (msg.key.fromMe) {
                 return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._", edit: msg.key });
             } else {
-                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._"}, { edit: publicMessage.key });
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._", edit: publicMessage.key });
             }
         }
 
@@ -44,7 +44,7 @@ addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from 
             if (msg.key.fromMe) {
                 return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No videos found for this query._", edit: msg.key });
             } else {
-                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No videos found for this query._"}, { edit: publicMessage.key });
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No videos found for this query._", edit: publicMessage.key });
             }
         }
 
@@ -57,14 +57,14 @@ addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from 
         if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No video found for this query._", edit: msg.key });
         } else {
-            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No video found for this query._"}, { edit: publicMessage.key });
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No video found for this query._", edit: publicMessage.key });
         }
     }
 
     const url = video.videoDetails.video_url;
 
-    const mediaPath = `./video.mp4`;
-    const mp4Path = `./video_converted.mp4`;
+    const mediaPath = `./video` + (Math.floor(Math.random() * 1000)) + `.mp4`;
+    const mp4Path = `./video_converted` + (Math.floor(Math.random() * 1000)) + `.mp4`;
 
     const downloadSuccess = await downloadVideo(url, mediaPath, video.videoDetails.lengthSeconds);
     await convertToMp4(mediaPath, mp4Path);
@@ -73,7 +73,7 @@ addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from 
         if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download video._", edit: msg.key });
         } else {
-            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download video._"}, { edit: publicMessage.key });
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download video._", edit: publicMessage.key });
         }
     }
 
@@ -118,7 +118,7 @@ addCommand({ pattern: "^music ?(.*)", access: "all", desc: "Download music from 
         await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Music Downloading.._", edit: msg.key });
     }
     else {
-        await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Music Downloading.._"}, { quoted: rawMessage.messages[0] });
+        var publicMessage = await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Music Downloading.._"}, { quoted: rawMessage.messages[0] });
     }
 
     let url;
@@ -133,7 +133,7 @@ addCommand({ pattern: "^music ?(.*)", access: "all", desc: "Download music from 
             if (msg.key.fromMe) {
                 return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._", edit: msg.key });
             } else {
-                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._"}, { quoted: rawMessage.messages[0] });
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No results found for this query._", edit: publicMessage.key });
             }
         }
 
@@ -142,7 +142,7 @@ addCommand({ pattern: "^music ?(.*)", access: "all", desc: "Download music from 
             if (msg.key.fromMe) {
                 return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No songs found for this query._", edit: msg.key });
             } else {
-                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No songs found for this query._"}, { quoted: rawMessage.messages[0] });
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No songs found for this query._", edit: publicMessage.key });
             }
         }
 
@@ -151,25 +151,25 @@ addCommand({ pattern: "^music ?(.*)", access: "all", desc: "Download music from 
             if (msg.key.fromMe) {
                 return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No song found for this query._", edit: msg.key });
             } else {
-                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No song found for this query._"}, { quoted: rawMessage.messages[0] });
+                return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No song found for this query._", edit: publicMessage.key });
             }
         }
         url = `https://www.youtube.com/watch?v=${song.videoId}`;
     }
 
-    const audioFilePath = "./music.mp3";
-    const oggFilePath = "./music.ogg";
+    const audioFilePath = "./music" + Date.now() + ".mp3";
+    const oggFilePath = "./music" + Date.now() + ".ogg";
 
     const downloadSuccess = await downloadAudio(url, audioFilePath);
     if (!downloadSuccess) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download audio._", edit: msg.key });
         } else {
-            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download audio._"}, { quoted: rawMessage.messages[0] });
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Failed to download audio._", edit: publicMessage.key });
         }
     }
 
-    await convertToOgg(audioFilePath);
+    await convertToOgg(audioFilePath, oggFilePath);
 
     if (msg.key.fromMe) {
         await sock.sendMessage(msg.key.remoteJid, { delete: msg.key });
@@ -236,16 +236,18 @@ async function downloadVideo(link, file, duration) {
     }
 }
 
+
 /**
- * Converts an audio file to ogg format.
- * @param {string} file - The path to the audio file to convert.
+ * Converts a video file to OGG format.
+ * @param {string} file - The path to the video file to convert.
+ * @param {string} output - The path to save the converted video file.
  * @returns {Promise<void>} - A Promise that resolves when the conversion is complete.
  */
-async function convertToOgg(file) {
+async function convertToOgg(file, output) {
     return new Promise((resolve, reject) => {
       ffmpeg(file)
         .audioChannels(1)
-        .output(file.replace(".mp3", ".ogg"))
+        .output(output)
         .on('end', () => {
           resolve();
         })
