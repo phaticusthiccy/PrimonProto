@@ -33,7 +33,7 @@ function addCommand(commandInfo, callback) {
 async function start_command(msg, sock, rawMessage) { 
   const text = 
     msg.message.conversation || msg.message.extendedTextMessage?.text; 
- 
+  console.log(text);
   let matchedPrefix = false; 
   let validText = text; 
  
@@ -78,10 +78,16 @@ async function start_command(msg, sock, rawMessage) {
           }
         }
       }
-      
+      if (groupCheck && commandInfo.adminOnly && !await checkAdmin(msg, sock, msg.key.remoteJid, userId || groupCheck && commandInfo.adminOnly === "users" && !await checkAdmin(msg, sock, msg.key.remoteJid))) {
+        if (msg.key.fromMe) {
+          return sock.sendMessage(msg.key.remoteJid, { text: "_You are not an admin in this group!_", edit: msg.key })
+        } else {
+          return sock.sendMessage(msg.key.remoteJid, { text: "_You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+        }
+      }
       if (!commandInfo.access && commandInfo.fromMe !== msg.key.fromMe) return; 
       if (!permission && database.worktype === "private") return; 
-      if (commandInfo.access === "sudo" && !permission && !commandInfo.adminOnly) return; 
+      if (commandInfo.access === "sudo" && !permission) return; 
       if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid === sock.user.id.split(':')[0] + "@s.whatsapp.net") return; 
       if (commandInfo.onlyInGroups && !groupCheck) return; 
        
