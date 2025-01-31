@@ -1,6 +1,6 @@
 const simpleGit = require('simple-git');
 const git = simpleGit();
-const exec = require('child_process').exec;
+const { execSync } = require('child_process');
 
 addCommand({ pattern: "^update$", access: "sudo", desc: "_Update the bot._" }, async (msg, match, sock, rawMessage) => {
     const groupId = msg.key.remoteJid;
@@ -44,6 +44,11 @@ addCommand({ pattern: "^update$", access: "sudo", desc: "_Update the bot._" }, a
             }
         }
         await git.stash(['pop']);
-        exec('  npm install').stderr.pipe(process.stderr);
+        try {
+            execSync('nvm use --lts && npm install', { stdio: 'inherit' });
+        } catch (error) {
+            console.error('Failed to update dependencies:', error);
+        }
+        process.exit(0);
     });
 });

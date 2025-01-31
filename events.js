@@ -78,6 +78,7 @@ async function start_command(msg, sock, rawMessage) {
           }
         }
       }
+      
       if (!commandInfo.access && commandInfo.fromMe !== msg.key.fromMe) return; 
       if (!permission && database.worktype === "private") return; 
       if (commandInfo.access === "sudo" && !permission && !commandInfo.adminOnly) return; 
