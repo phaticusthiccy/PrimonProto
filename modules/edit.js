@@ -24,8 +24,7 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
     if (!match[1]) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(grupId, { text: "_Please enter the configuration to edit._\n\n_Avaliable Configurations ::_ ```alive, welcome, goodbye```", edit: msg.key });
-        }
-        else {
+        } else {
             return await sock.sendMessage(grupId, { text: "_Please enter the configuration to edit._\n\n_Avaliable Configurations ::_ ```alive, welcome, goodbye```"}, { quoted: rawMessage.messages[0] });
         }
     }
@@ -33,8 +32,7 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
     if (!msg.quotedMessage) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(grupId, { text: "_Please reply to a message or media to edit._", edit: msg.key });
-        }
-        else {
+        } else {
             return await sock.sendMessage(grupId, { text: "_Please reply to a message or media to edit._"}, { quoted: rawMessage.messages[0] });
         }
     }
@@ -75,8 +73,7 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
         }
         if (msg.key.fromMe) {
             return await sock.sendMessage(grupId, { text: `_✅ ${configType.charAt(0).toUpperCase() + configType.slice(1)} message updated successfully._`, edit: msg.key });
-        }
-        else {
+        } else {
             return await sock.sendMessage(grupId, { text: `_✅ ${configType.charAt(0).toUpperCase() + configType.slice(1)} message updated successfully._`}, { quoted: rawMessage.messages[0] });
         }
     };
@@ -100,8 +97,7 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
         } else {
             if (msg.key.fromMe) {
                 return await sock.sendMessage(grupId, { text: "_❌ Unsupported message type._", edit: msg.key });
-            }
-            else {
+            } else {
                 return await sock.sendMessage(grupId, { text: "_❌ Unsupported message type._"}, { quoted: rawMessage.messages[0] });
             }
         }

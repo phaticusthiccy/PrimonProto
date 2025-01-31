@@ -1,13 +1,15 @@
 addCommand({ pattern: "^tagall ?([\\s\\S]*)", desc: "_It allows you to tag all users in the group._", access: "sudo", onlyInGroups: true, adminOnly: true}, async (msg, match, sock, rawMessage) => {
     const groupId = msg.key.remoteJid;
-    if (!await checkAdmin(msg, sock, groupId)) {
+
+    var admins = await global.getAdmins(msg.key.remoteJid);
+    if (!admins.includes(msg.key.participant)) {
         if (msg.key.fromMe) {
-            return sock.sendMessage(groupId, {text: "_Bot is not an admin in this group!_", edit: msg.key})
-        }
-        else {
-            return sock.sendMessage(groupId, {text: "_Bot is not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            return sock.sendMessage(groupId, { text: "_You are not an admin in this group!_", edit: msg.key })
+        } else {
+            return sock.sendMessage(groupId, { text: "_You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
         }
     }
+
     const groupMetadata = await sock.groupMetadata(groupId);
     const participants = groupMetadata.participants.map(p => p.id);
     if (match[1]) {
@@ -25,7 +27,7 @@ addCommand({ pattern: "^tagall ?([\\s\\S]*)", desc: "_It allows you to tag all u
     }
 }); 
 
-addCommand({ pattern: "^tagadmin ?([\\s\\S]*)", desc: "_It allows you to tag the admins in the group._", access: "sudo", onlyInGroups: true, adminOnly: true }, async (msg, match, sock, rawMessage) => {
+addCommand({ pattern: "^tagadmin ?([\\s\\S]*)", desc: "_It allows you to tag the admins in the group._", access: "all", onlyInGroups: true }, async (msg, match, sock, rawMessage) => {
     const groupId = msg.key.remoteJid;
     
     const groupMetadata = await sock.groupMetadata(groupId);

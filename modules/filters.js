@@ -13,6 +13,16 @@ addCommand( {pattern: "onMessage", dontAddCommandList: true, fromMe: false}, asy
 
 addCommand( {pattern: "^filter ?([\\s\\S]*)", access: "sudo", adminOnly: true, desc: "_Add filters that automatically respond to your chats. Supports regexp._", usage: global.handlers[0] + "filter - " + global.handlers[0] + "filter <add || delete>"}, async (msg, match, sock, rawMessage) => {
     const groupId = msg.key.remoteJid;
+
+    var admins = await global.getAdmins(msg.key.remoteJid);
+    if (!admins.includes(msg.key.participant)) {
+        if (msg.key.fromMe) {
+            return sock.sendMessage(groupId, { text: "_You are not an admin in this group!_", edit: msg.key })
+        } else {
+            return sock.sendMessage(groupId, { text: "_You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+        }
+    }
+
     if (!match[1].trim()) {
         const find = global.database.filters.find(x => x.chat === msg.key.remoteJid);
         if (find && find.filters.length > 0) {

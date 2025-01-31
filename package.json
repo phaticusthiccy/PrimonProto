@@ -4,7 +4,8 @@
   "description": "A bot for WhatsApp automation",
   "main": "index.js",
   "scripts": {
-    "debug": "node --inspect index.js"
+    "debug": "node --inspect index.js",
+    "postinstall": "npm install -g nodemon"
   },
   "keywords": [],
   "author": "Phaticusthiccy",
@@ -21,6 +22,7 @@
     "libmuse": "^0.1.1",
     "pino": "^9.6.0",
     "qrcode": "^1.5.4",
+    "unzipper": "^0.12.3",
     "ytdl-core": "latest"
   }
 }

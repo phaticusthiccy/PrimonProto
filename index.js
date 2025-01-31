@@ -3,12 +3,28 @@ const fs = require('fs');
 const axios = require('axios');
 const pino = require('pino');
 require('./events');
+var currentVersion = "", versionCheckInterval = 180
+var sock;
 
 /**
  * Saves the global database object to a file every 5 seconds.
  */
-setInterval(() => {
+setInterval(async () => {
   fs.writeFileSync("./database.json", JSON.stringify(global.database, null, 2));
+  versionCheckInterval--
+  if (versionCheckInterval == 0) {
+    var getLatestCommit = await axios.get("https://api.github.com/repos/phaticusthiccy/PrimonProto/commits")
+
+    if (currentVersion == "") {
+      currentVersion = getLatestCommit.data[0].sha
+    } else {
+      if (getLatestCommit.data[0].sha != currentVersion) {
+        currentVersion = getLatestCommit.data[0].sha
+        await sock.sendMessage(sock.user.id, `_New version available!_\n_Please update your bot via .update_`);
+      }  
+    }
+    versionCheckInterval = 180
+  }
 }, 5000);
 
 /**
@@ -30,7 +46,7 @@ async function Primon() {
   const { version } = await fetchLatestBaileysVersion();
   const { state } = await useMultiFileAuthState(__dirname + "/session/");
 
-  const sock = makeWASocket({
+  sock = makeWASocket({
     logger,
     printQRInTerminal: true,
     markOnlineOnConnect: false,
@@ -181,6 +197,17 @@ global.checkAdmin = async function (msg, sock, groupId, number = false) {
   } catch (error) {
       console.error("An error occurred while checking admin status: ", error);
       return false;
+  }
+};
+
+global.getAdmins = async function (msg, sock, groupId) {
+  try {
+      const groupMetadata = await sock.groupMetadata(groupId);
+      const admins = groupMetadata.participants.filter(p => p.admin === 'admin' || p.admin === 'superadmin').map(p => p.id);
+      return admins
+  } catch (error) {
+      console.error("An error occurred while getting admin list: ", error);
+      return [];
   }
 };
 /**
