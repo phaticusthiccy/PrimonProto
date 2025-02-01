@@ -22,7 +22,8 @@
     "pino": "^9.6.0",
     "qrcode-terminal": "latest",
     "simple-git": "^2.37.0",
-    "ytdl-core": "latest"
+    "ytdl-core": "latest",
+    "qs": "latest"
   },
   "engines": {
     "node": ">=22.0.0"

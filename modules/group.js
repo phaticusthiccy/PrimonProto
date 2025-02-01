@@ -8,7 +8,8 @@
  */
 async function replaceUserPosition(sock, groupJid, userJid, argm) {
     try {
-        await sock.groupParticipantsUpdate(groupJid, [userJid], argm);
+        var result = await sock.groupParticipantsUpdate(groupJid, [userJid], argm);
+        if (result[0].status == "408") return null
     } catch (error) {
         return false
     }
@@ -17,7 +18,7 @@ async function replaceUserPosition(sock, groupJid, userJid, argm) {
 addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the group.", access: "all", onlyInGroups: true}, (async (msg, match, sock, rawMessage) => {
     const groupId = msg.key.remoteJid;
 
-    var admins = await getAdmins(msg, sock, groupId);
+    var admins = await global.getAdmins(groupId);
     if (!admins.includes(msg.key.participant)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
@@ -27,7 +28,7 @@ addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the gro
         
     }
 
-    if (!await checkAdmin(msg, sock, groupId)) {
+    if (!await global.checkAdmin(msg, sock, groupId)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
         } else {
@@ -67,47 +68,95 @@ addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the gro
 addCommand({pattern: "^add ?(.*)", desc:"Allows you to add a person from the group.", access: "all", onlyInGroups: true}, (async (msg, match, sock) => {
     const groupId = msg.key.remoteJid;
     
-    var admins = await getAdmins(msg, sock, groupId);
+    if (msg.key.fromMe) {
+        await sock.sendMessage(groupId, {text: "_🔄 Adding..._", edit: msg.key});
+    } else {
+        var publicMessage = await sock.sendMessage(groupId, {text: "_🔄 Adding..._"}, { quoted: rawMessage.messages[0] });
+    }
+    var admins = await global.getAdmins(groupId);
     if (!admins.includes(msg.key.participant)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
         } else {
+            await sock.sendMessage(groupId, { delete: publicMessage.key });
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
         }
         
     }
 
-    if (!await checkAdmin(msg, sock, groupId)) {
+    if (!await global.checkAdmin(msg, sock, groupId)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
         } else {
+            await sock.sendMessage(groupId, { delete: publicMessage.key });
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
         }
     };
 
-    if (msg.message?.extendedTextMessage?.contextInfo?.quotedMessage) {
-        var quotedMessage = msg.message.extendedTextMessage.contextInfo.participant;
-        var result = await replaceUserPosition(sock, groupId, quotedMessage, "add");
+    if (msg.quotedMessage) {
+        const { extendedTextMessage, conversation } = msg.quotedMessage;
+        if (!extendedTextMessage && !conversation) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_", edit: msg.key})
+            } else {
+                await sock.sendMessage(groupId, { delete: publicMessage.key });
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_"}, { quoted: rawMessage.messages[0] })
+            }
+        }
+        var quotedText = extendedTextMessage?.text || conversation;
+        quotedText = quotedText.replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net";
+
+        const [result2] = await sock.onWhatsApp(quotedText)
+        if (!result2) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_", edit: msg.key})
+            } else {
+                await sock.sendMessage(groupId, { delete: publicMessage.key });
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_"}, { quoted: rawMessage.messages[0] })
+            }
+        }
+        var result = await replaceUserPosition(sock, groupId, quotedText, "add");
     } else if (match[1]) {
+        const [result2] = await sock.onWhatsApp(match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net")
+        if (!result2) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_", edit: msg.key})
+            } else {
+                await sock.sendMessage(groupId, { delete: publicMessage.key });
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_"}, { quoted: rawMessage.messages[0] })
+            }
+        }
         var result = await replaceUserPosition(sock, groupId, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net", "add")
-    } else {""
+    } else {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_Please enter a number!_", edit: msg.key});
         } else {
+            await sock.sendMessage(groupId, { delete: publicMessage.key });
             return await sock.sendMessage(groupId, {text: "_Please enter a number!_"}, { quoted: rawMessage.messages[0] });
         }
     }
+
     if (result) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_✅ The person has been successfully added to the group!_", edit: msg.key});
         } else {
+            await sock.sendMessage(groupId, { delete: publicMessage.key });
             return await sock.sendMessage(groupId, {text: "_✅ The person has been successfully added to the group!_"}, { quoted: rawMessage.messages[0] });
         }
     } else {
+        if (String(result) == "null") {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, you can't add this user to the group!_", edit: msg.key})
+            } else {
+                await sock.sendMessage(groupId, { delete: publicMessage.key });
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, you can't add this user to the group!_"}, { quoted: rawMessage.messages[0] })
+            }
+        }
         if (msg.key.fromMe) {
-            return await sock.sendMessage(groupId, {text: "_❌ Sorry, an error occurred while trying to add the user! Try this format: add <number wirh country code>_", edit: msg.key})
+            return await sock.sendMessage(groupId, {text: "_❌ Sorry, an error occurred while trying to add the user! Try this format: add <number with country code>_", edit: msg.key})
         } else {
-            return await sock.sendMessage(groupId, {text: "_❌ Sorry, an error occurred while trying to add the user! Try this format: add <number wirh country code>_"}, { quoted: rawMessage.messages[0] })
+            await sock.sendMessage(groupId, { delete: publicMessage.key });
+            return await sock.sendMessage(groupId, {text: "_❌ Sorry, an error occurred while trying to add the user! Try this format: add <number with country code>_"}, { quoted: rawMessage.messages[0] })
         }
     }
 }));
@@ -115,7 +164,7 @@ addCommand({pattern: "^add ?(.*)", desc:"Allows you to add a person from the gro
 addCommand({pattern: "^promote ?(.*)", desc:"Allows you to make the user an admin in the group.", access: "all", onlyInGroups: true}, (async (msg, match, sock, rawMessage) => {
     const groupId = msg.key.remoteJid;
 
-    var admins = await getAdmins(msg, sock, groupId);
+    var admins = await global.getAdmins(groupId);
     if (!admins.includes(msg.key.participant)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
@@ -124,7 +173,7 @@ addCommand({pattern: "^promote ?(.*)", desc:"Allows you to make the user an admi
         }   
     }
 
-    if (!await checkAdmin(msg, sock, groupId)) {
+    if (!await global.checkAdmin(msg, sock, groupId)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
         } else {
@@ -163,7 +212,7 @@ addCommand({pattern: "^promote ?(.*)", desc:"Allows you to make the user an admi
 addCommand({pattern: "^demote ?(.*)", desc:"Allows you to remove the user from admin in the group.", access: "all", onlyInGroups: true}, (async (msg, match, sock) => {
     const groupId = msg.key.remoteJid;
 
-    var admins = await getAdmins(msg, sock, groupId);
+    var admins = await global.getAdmins(groupId);
     if (!admins.includes(msg.key.participant)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
@@ -172,7 +221,7 @@ addCommand({pattern: "^demote ?(.*)", desc:"Allows you to remove the user from a
         }   
     }
 
-    if (!await checkAdmin(msg, sock, groupId)) {
+    if (!await global.checkAdmin(msg, sock, groupId)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
         } else {
@@ -210,7 +259,7 @@ addCommand({pattern: "^demote ?(.*)", desc:"Allows you to remove the user from a
 addCommand({pattern: "^mute ?(.*)", desc:"Allows you to mute the user in the group.", usage: "mute 1 <s || m || h>", access: "all", onlyInGroups: true}, (async (msg, match, sock) => {
     const groupId = msg.key.remoteJid;
 
-    var admins = await getAdmins(msg, sock, groupId);
+    var admins = await global.getAdmins(groupId);
     if (!admins.includes(msg.key.participant)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
@@ -219,7 +268,7 @@ addCommand({pattern: "^mute ?(.*)", desc:"Allows you to mute the user in the gro
         }
     }
 
-    if (!await checkAdmin(msg, sock, groupId)) {
+    if (!await global.checkAdmin(msg, sock, groupId)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
         } else {
@@ -261,7 +310,7 @@ addCommand({pattern: "^mute ?(.*)", desc:"Allows you to mute the user in the gro
 addCommand({pattern: "^unmute ?(.*)", desc:"Allows you to unmute the group.", usage: "unmute", access: "all", onlyInGroups: true}, (async (msg, match, sock) => {
     const groupId = msg.key.remoteJid;
 
-    var admins = await getAdmins(msg, sock, groupId);
+    var admins = await global.getAdmins(groupId);
     if (!admins.includes(msg.key.participant)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
@@ -270,7 +319,7 @@ addCommand({pattern: "^unmute ?(.*)", desc:"Allows you to unmute the group.", us
         }
     }
 
-    if (!await checkAdmin(msg, sock, groupId)) {
+    if (!await global.checkAdmin(msg, sock, groupId)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
         } else {

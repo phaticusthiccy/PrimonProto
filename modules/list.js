@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 /**
  * Handles the "menu" command, which allows users to view a list of available commands and their descriptions.
  *
@@ -12,13 +14,19 @@
 
 addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: true}, async (msg, match, sock, rawMessage) => {
     const inputCommand = match[2].trim();
-    let menuText;
+    let menuText = "";
 
     const userId = msg.key.participant || msg.key.remoteJid;
     const isSudo = msg.key.fromMe || global.database.sudo.includes(userId.split("@")[0]);
-
+    
     if (inputCommand) {
-        const command = global.commands.find(x => x.commandInfo.pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "").replace(/ /gmi, "") === inputCommand.replace(/ /gmi, ""));
+        var command = global.commands
+        .filter(x => !x.commandInfo.dontAddCommandList &&
+            (x.commandInfo.access !== "sudo" || isSudo) &&
+            (!x.commandInfo.onlyInGroups || msg.key.remoteJid.endsWith('@g.us')))
+        .find(x => x.commandInfo.pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "").replace(/ /gmi, "") === inputCommand.replace(/ /gmi, ""));
+        
+        if (fs.existsSync(`./modules/${inputCommand}.js`)) command = false
         if (command) {
             const { pattern, desc, usage, warn, access } = command.commandInfo;
             if (access === "sudo" && !isSudo) {
@@ -27,11 +35,35 @@ addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: tru
                 menuText = `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}`;
             }
         } else {
-            menuText = `❌ Command not found: ${inputCommand}`;
+            try {
+                const fileContent = fs.readFileSync(`./modules/${inputCommand}.js`, "utf8");
+                const patternValues = fileContent.match(/pattern:\s*"(.*?)"/g)?.map(match => match.split('"')[1].replace(/\\\\/g, "\\")) || [];
+                
+                patternValues.forEach(OGpattern => {
+                    const command = global.commands
+                    .filter(x => !x.commandInfo.dontAddCommandList &&
+                        (x.commandInfo.access !== "sudo" || isSudo) &&
+                        (!x.commandInfo.onlyInGroups || msg.key.remoteJid.endsWith('@g.us')))
+                    .find(x => x.commandInfo.pattern === OGpattern);
+
+                    if (command) {
+                        const { pattern, desc, usage, warn, access } = command.commandInfo;
+                        if (access === "sudo" && !isSudo) {
+                            menuText = `❌ Command not found: ${inputCommand}`;
+                        } else {
+                            menuText += `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}\n\n`;
+                        }
+                    }
+                });
+            } catch {
+                menuText = `❌ Command not found: ${inputCommand}`;
+            }
         }
     } else {
         menuText = global.commands
-            .filter(x => !x.commandInfo.dontAddCommandList && (x.commandInfo.access !== "sudo" || isSudo))
+            .filter(x => !x.commandInfo.dontAddCommandList &&
+                (x.commandInfo.access !== "sudo" || isSudo) &&
+                (!x.commandInfo.onlyInGroups || msg.key.remoteJid.endsWith('@g.us')))
             .map((x, index, array) => {
                 const { pattern, desc, usage, warn } = x.commandInfo;
                 return `⌨️ \`\`\`${global.handlers[0]}${pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}\`\`\`${desc ? `\nℹ️ ${desc}` : ''}${usage ? `\n💻 \`\`\`${usage}\`\`\`` : ''}${warn ? `\n⚠️ ${warn}` : ''}${index !== array.length - 1 ? '\n\n' : ''}`;
@@ -41,9 +73,9 @@ addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: tru
 
     const grupId = msg.key.remoteJid;
     if (msg.key.fromMe) {
-        return await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`, edit: msg.key });
+        return await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText.trimEnd()}`, edit: msg.key });
     } else {
-        return await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText}`}, { quoted: rawMessage.messages[0]});
+        return await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText.trimEnd()}`}, { quoted: rawMessage.messages[0]});
     }
 
 })

@@ -1,7 +1,6 @@
 const Module = require('module');
 const originalRequire = Module.prototype.require;
 const execSync = require('child_process').execSync;
-const path = require('path');
 const fs = require('fs');
 
 const installedPackages = new Set();
@@ -13,10 +12,7 @@ Module.prototype.require = function(packageName) {
             if (!installedPackages.has(packageName)) {
                 console.log(`Package ${packageName} not found. Installing...`);
                 
-                try {
-                  const rootDir = process.cwd();
-                  const packageJsonPath = path.join(rootDir, 'package.json');
-                  
+                try {                  
                   execSync(`npm install ${packageName}`, { stdio: 'inherit' });
                   installedPackages.add(packageName);
                   
@@ -49,7 +45,7 @@ setInterval(async () => {
     } else {
       if (getLatestCommit.data[0].sha != currentVersion) {
         currentVersion = getLatestCommit.data[0].sha
-        await sock.sendMessage(sock.user.id, `_New version available!_\n_Please update your bot via .update_`);
+        await sock.sendMessage(sock.user.id, { image: {url: "./src/new_version.png"}, caption: "*🆕 New Version Available!*\n\n_Please update your bot via_ ```.update```"});
       }  
     }
     versionCheckInterval = 180
@@ -112,8 +108,8 @@ async function Primon() {
       msg.quotedMessage = quotedMessage;
 
       if ((msg.key && msg.key.remoteJid === "status@broadcast")) return;
-      
-      
+      if (global.database.blacklist.includes(msg.key.remoteJid) && !msg.key.fromMe) return;
+
       await start_command(msg, sock, rawMessage);
 
     } catch (error) {
@@ -123,6 +119,7 @@ async function Primon() {
   });
 
   sock.ev.on("group-participants.update", async (participant) => {
+    if (global.database.blacklist.includes(participant.id)) return;
     if (participant.action === 'add') {
       const welcomeMessage = global.database.welcomeMessage.find(welcome => welcome.chat === participant.id);
       if (welcomeMessage) {
@@ -226,7 +223,7 @@ global.checkAdmin = async function (msg, sock, groupId, number = false) {
   }
 };
 
-global.getAdmins = async function (msg, sock, groupId) {
+global.getAdmins = async function (groupId) {
   try {
       const groupMetadata = await sock.groupMetadata(groupId);
       const admins = groupMetadata.participants.filter(p => p.admin === 'admin' || p.admin === 'superadmin').map(p => p.id);

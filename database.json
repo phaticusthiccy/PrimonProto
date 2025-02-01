@@ -4,10 +4,11 @@
     "/",
     "!"
   ],
-  "version": "0.3.0",
+  "version": "0.4",
   "filters": [
     {
-      "chat": "000000@g.us",
+      "chat": "0000000@g.us",
+      "active": true,
       "filters": [
         {
           "incoming": "^hi",
@@ -40,5 +41,12 @@
   "sudo": [
     ""
   ],
-  "worktype": "public"
+  "worktype": "public",
+  "globalMutes": [
+    {
+      "chat": "0000000@g.us",
+      "muted_users": []
+    }
+  ],
+  "blacklist": []
 }
