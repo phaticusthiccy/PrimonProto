@@ -23,7 +23,6 @@ rl.question('Do you have another active device in whatsapp? (y/n) ', (answer) =>
   rl.close();
 });
 
-
 async function genQR(qr) {
   let { version } = await fetchLatestBaileysVersion();
   let { state, saveCreds } = await useMultiFileAuthState('./session/');
