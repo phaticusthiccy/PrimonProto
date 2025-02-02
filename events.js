@@ -4,15 +4,15 @@ const fs = require("fs");
 var commands = [];   
 const axios = require("axios");
 
-fs.watch("./database.json", function () {  
-    delete require.cache[require.resolve("./database.json")];  
-    database = require("./database.json");  
-    PREFIX = database.handlers;  
-    global.handlers = PREFIX; 
-    global.commands = commands;  
-    global.database = database;
+fs.watch("./database.json", function () {
+    try { delete require.cache[require.resolve("./database.json")]; } catch {}
+    try { database = require("./database.json"); } catch {}
+    try { PREFIX = database.handlers; } catch {}
+    try { global.handlers = PREFIX; } catch {} 
+    try { global.commands = commands; } catch {}  
+    try { global.database = database; } catch {}
     commands = [];
-    global.loadModules(__dirname + "/modules", false, true);
+    try { global.loadModules(__dirname + "/modules", false, true); } catch {}
 });  
   
   
