@@ -1,20 +1,26 @@
 var database = require("./database.json");  
 var PREFIX = database.handlers;  
-const fs = require("fs");  
+var fs = require("fs");  
 var commands = [];   
 const axios = require("axios");
 
-fs.watch("./database.json", function () {
-    try { delete require.cache[require.resolve("./database.json")]; } catch {}
-    try { database = require("./database.json"); } catch {}
-    try { PREFIX = database.handlers; } catch {}
-    try { global.handlers = PREFIX; } catch {} 
-    try { global.commands = commands; } catch {}  
-    try { global.database = database; } catch {}
-    commands = [];
-    try { global.loadModules(__dirname + "/modules", false, true); } catch {}
-});  
-  
+function watchDatabase() {
+  try {
+    fs.watch("./database.json", function (event, filename) {
+      try { delete require.cache[require.resolve("./database.json")]; } catch {}
+      try { database = require("./database.json"); } catch {}
+      try { PREFIX = database.handlers; } catch {}
+      try { global.handlers = PREFIX; } catch {} 
+      try { global.commands = commands; } catch {}  
+      try { global.database = database; } catch {}
+      commands = [];
+      try { global.loadModules(__dirname + "/modules", false, true); } catch {}
+    });  
+  } catch {
+    return watchDatabase()
+  }
+}
+watchDatabase()
   
 /**  
  * Adds a new command to the list of commands.  
