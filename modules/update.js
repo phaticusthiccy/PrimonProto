@@ -28,7 +28,7 @@ addCommand({ pattern: "^update$", access: "sudo", desc: "_Update the bot._" }, a
             }
         );
 
-        news = news + "\n_Please type ```" + global.handlers[0] + "update now``` to update the bot._";
+        news = news + "\n_Please type ```" + global.handlers[0] + "update now``` _to update the bot._";
         if (msg.key.fromMe) {
             await sock.sendMessage(groupId, { text: news, edit: msg.key });
         } else {
