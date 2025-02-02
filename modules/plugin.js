@@ -168,9 +168,9 @@ addCommand({pattern: "^plinstall ?(.*)", access: "sudo", dontAddCommandList: tru
 
     fs.writeFileSync("./modules/" + plugin.pluginFileName + ".js", plugin.context);
     if (msg.key.fromMe) {
-        await sock.sendMessage(groupId, { text: "_✅ Plugin installed successfully._", edit: msg.key });
+        await sock.sendMessage(groupId, { text: "_✅ Plugin installed successfully._\n\n_Please type_ ```" + global.handlers[0] + plugin.usage + "``` _to use the plugin!_", edit: msg.key });
     } else {
-        await sock.sendMessage(groupId, { text: "_✅ Plugin installed successfully._"}, { quoted: rawMessage.messages[0] });
+        await sock.sendMessage(groupId, { text: "_✅ Plugin installed successfully._\n\n_Please type_ ```" + global.handlers[0] + plugin.usage + "``` _to use the plugin!_"}, { quoted: rawMessage.messages[0] });
     }
 })
 
