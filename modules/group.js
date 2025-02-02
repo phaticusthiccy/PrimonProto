@@ -15,6 +15,17 @@ async function replaceUserPosition(sock, groupJid, userJid, argm) {
     }
 }
 
+/**
+ * Checks if the given participant is the bot itself.
+ * @param {object} sock - The WhatsApp socket connection.
+ * @param {string} participant - The JID of the participant to check.
+ * @returns {boolean} - True if the participant is the bot itself, false otherwise.
+ */
+function preventOwner(sock, participant) {
+    if (participant == sock.user.id.split(':')[0] + `@s.whatsapp.net`) return true
+    else return false
+}
+
 addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the group.", access: "all", onlyInGroups: true}, (async (msg, match, sock, rawMessage) => {
     const groupId = msg.key.remoteJid;
 
@@ -23,7 +34,11 @@ addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the gro
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
         } else {
-            return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            }
         }
         
     }
@@ -38,10 +53,24 @@ addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the gro
 
 
     if (msg.message?.extendedTextMessage?.contextInfo?.quotedMessage) {
+        if (preventOwner(sock, msg.message.extendedTextMessage.contextInfo.participant) == true) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I can't ban myself!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I can't ban myself!_"}, { quoted: rawMessage.messages[0] })
+            }
+        }
         var quotedMessage = msg.message.extendedTextMessage.contextInfo.participant;
         var result = await replaceUserPosition(sock, groupId, quotedMessage, "remove");
     } else if (match[1]) {
-        var result = await replaceUserPosition(sock, groupId, match[1].replace("@", "")+"@s.whatsapp.net", "remove")
+        if (preventOwner(sock, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net") == true) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I can't ban myself!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I can't ban myself!_"}, { quoted: rawMessage.messages[0] })
+            }
+        }
+        var result = await replaceUserPosition(sock, groupId, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net", "remove")
     } else {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_Please reply to someone or mention them!_", edit: msg.key});
@@ -68,18 +97,16 @@ addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the gro
 addCommand({pattern: "^add ?(.*)", desc:"Allows you to add a person from the group.", access: "all", onlyInGroups: true}, (async (msg, match, sock) => {
     const groupId = msg.key.remoteJid;
     
-    if (msg.key.fromMe) {
-        await sock.sendMessage(groupId, {text: "_🔄 Adding..._", edit: msg.key});
-    } else {
-        var publicMessage = await sock.sendMessage(groupId, {text: "_🔄 Adding..._"}, { quoted: rawMessage.messages[0] });
-    }
     var admins = await global.getAdmins(groupId);
     if (!admins.includes(msg.key.participant)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
         } else {
-            await sock.sendMessage(groupId, { delete: publicMessage.key });
-            return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            }
         }
         
     }
@@ -88,7 +115,7 @@ addCommand({pattern: "^add ?(.*)", desc:"Allows you to add a person from the gro
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
         } else {
-            await sock.sendMessage(groupId, { delete: publicMessage.key });
+            
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
         }
     };
@@ -97,10 +124,9 @@ addCommand({pattern: "^add ?(.*)", desc:"Allows you to add a person from the gro
         const { extendedTextMessage, conversation } = msg.quotedMessage;
         if (!extendedTextMessage && !conversation) {
             if (msg.key.fromMe) {
-                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_", edit: msg.key})
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp!_", edit: msg.key})
             } else {
-                await sock.sendMessage(groupId, { delete: publicMessage.key });
-                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_"}, { quoted: rawMessage.messages[0] })
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp!_"}, { quoted: rawMessage.messages[0] })
             }
         }
         var quotedText = extendedTextMessage?.text || conversation;
@@ -109,10 +135,10 @@ addCommand({pattern: "^add ?(.*)", desc:"Allows you to add a person from the gro
         const [result2] = await sock.onWhatsApp(quotedText)
         if (!result2) {
             if (msg.key.fromMe) {
-                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_", edit: msg.key})
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp!_", edit: msg.key})
             } else {
-                await sock.sendMessage(groupId, { delete: publicMessage.key });
-                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_"}, { quoted: rawMessage.messages[0] })
+                
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp!_"}, { quoted: rawMessage.messages[0] })
             }
         }
         var result = await replaceUserPosition(sock, groupId, quotedText, "add");
@@ -120,10 +146,10 @@ addCommand({pattern: "^add ?(.*)", desc:"Allows you to add a person from the gro
         const [result2] = await sock.onWhatsApp(match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net")
         if (!result2) {
             if (msg.key.fromMe) {
-                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_", edit: msg.key})
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp!_", edit: msg.key})
             } else {
-                await sock.sendMessage(groupId, { delete: publicMessage.key });
-                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp_"}, { quoted: rawMessage.messages[0] })
+                
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, the user is not using whatsapp!_"}, { quoted: rawMessage.messages[0] })
             }
         }
         var result = await replaceUserPosition(sock, groupId, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net", "add")
@@ -131,7 +157,7 @@ addCommand({pattern: "^add ?(.*)", desc:"Allows you to add a person from the gro
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_Please enter a number!_", edit: msg.key});
         } else {
-            await sock.sendMessage(groupId, { delete: publicMessage.key });
+            
             return await sock.sendMessage(groupId, {text: "_Please enter a number!_"}, { quoted: rawMessage.messages[0] });
         }
     }
@@ -140,7 +166,7 @@ addCommand({pattern: "^add ?(.*)", desc:"Allows you to add a person from the gro
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_✅ The person has been successfully added to the group!_", edit: msg.key});
         } else {
-            await sock.sendMessage(groupId, { delete: publicMessage.key });
+            
             return await sock.sendMessage(groupId, {text: "_✅ The person has been successfully added to the group!_"}, { quoted: rawMessage.messages[0] });
         }
     } else {
@@ -148,14 +174,14 @@ addCommand({pattern: "^add ?(.*)", desc:"Allows you to add a person from the gro
             if (msg.key.fromMe) {
                 return await sock.sendMessage(groupId, {text: "_❌ Sorry, you can't add this user to the group!_", edit: msg.key})
             } else {
-                await sock.sendMessage(groupId, { delete: publicMessage.key });
+                
                 return await sock.sendMessage(groupId, {text: "_❌ Sorry, you can't add this user to the group!_"}, { quoted: rawMessage.messages[0] })
             }
         }
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, an error occurred while trying to add the user! Try this format: add <number with country code>_", edit: msg.key})
         } else {
-            await sock.sendMessage(groupId, { delete: publicMessage.key });
+            
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, an error occurred while trying to add the user! Try this format: add <number with country code>_"}, { quoted: rawMessage.messages[0] })
         }
     }
@@ -169,7 +195,11 @@ addCommand({pattern: "^promote ?(.*)", desc:"Allows you to make the user an admi
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
         } else {
-            return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            }
         }   
     }
 
@@ -184,8 +214,22 @@ addCommand({pattern: "^promote ?(.*)", desc:"Allows you to make the user an admi
 
     if (msg.message?.extendedTextMessage?.contextInfo?.quotedMessage) {
         var quotedMessage = msg.message.extendedTextMessage.contextInfo.participant;
+        if (preventOwner(sock, msg.message.extendedTextMessage.contextInfo.participant) == true) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I cant promote myself!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I cant promote myself!_"}, { quoted: rawMessage.messages[0] })
+            }
+        }
         var result = await replaceUserPosition(sock, groupId, quotedMessage, "promote");
     } else if (match[1]) {
+        if (preventOwner(sock, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net") == true) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I cant promote myself!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I cant promote myself!_"}, { quoted: rawMessage.messages[0] })
+            }
+        }
         var result = await replaceUserPosition(sock, groupId, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net", "promote")
     } else {
         if (msg.key.fromMe) {
@@ -217,7 +261,11 @@ addCommand({pattern: "^demote ?(.*)", desc:"Allows you to remove the user from a
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
         } else {
-            return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            }
         }   
     }
 
@@ -231,8 +279,22 @@ addCommand({pattern: "^demote ?(.*)", desc:"Allows you to remove the user from a
     
     if (msg.message?.extendedTextMessage?.contextInfo?.quotedMessage) {
         var quotedMessage = msg.message.extendedTextMessage.contextInfo.participant;
+        if (preventOwner(sock, msg.message.extendedTextMessage.contextInfo.participant) == true) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I cant demote myself!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I cant demote myself!_"}, { quoted: rawMessage.messages[0] })
+            }
+        }
         var result = await replaceUserPosition(sock, groupId, quotedMessage, "demote");
     } else if (match[1]) {
+        if (preventOwner(sock, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net") == true) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I cant demote myself!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I cant demote myself!_"}, { quoted: rawMessage.messages[0] })
+            }
+        }
         var result = await replaceUserPosition(sock, groupId, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net", "demote")
     } else {
         if (msg.key.fromMe) {
@@ -264,7 +326,11 @@ addCommand({pattern: "^mute ?(.*)", desc:"Allows you to mute the user in the gro
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
         } else {
-            return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            }
         }
     }
 
@@ -315,7 +381,11 @@ addCommand({pattern: "^unmute ?(.*)", desc:"Allows you to unmute the group.", us
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_", edit: msg.key})
         } else {
-            return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
+            } else {
+                return await sock.sendMessage(groupId, {text: "_❌ Sorry, You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
+            }
         }
     }
 

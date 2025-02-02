@@ -305,11 +305,12 @@ async function downloads(urlr, path) {
     return new Promise(async (resolve, reject) => {
         try {
             const urls = await geturl(urlr);
-            let fileEx = "";
-            if (urls.media_details[0].type === "video") fileEx = ".mp4";
-            else fileEx = ".png";
-            await downloadVideo(urls.media_details[0].url, path+fileEx);
-            resolve({path: path + fileEx, info: urls.post_info.caption, type: urls.media_details[0].type});
+            var medias = {
+                media: urls.url_list,
+                type: urls.media_details[0].type,
+                info: urls.post_info.caption
+            }
+            resolve(medias);
         } catch (error) {
             reject(error);
         }
@@ -347,19 +348,33 @@ addCommand({pattern: "^insta ?(.*)", desc: "Allows you to download videos/images
     if (data.type == "video") {
         if (msg.key.fromMe) {
             await sock.sendMessage(msg.key.remoteJid, {delete: msg.key});
-            await sock.sendMessage(msg.key.remoteJid, {video: { url: data.path }, caption: data.info});
+
+            for (var i = 0; i < data.media.length; i++) {
+                await sock.sendMessage(msg.key.remoteJid, {video: { url: data.media[i] }, caption: data.info});
+            }
+            
         } else {
             await sock.sendMessage(msg.key.remoteJid, {delete: publicMessage.key});
-            await sock.sendMessage(msg.key.remoteJid, {video: { url: data.path }, caption: data.info}, {quoted: rawMessage.messages[0]});
+
+            for (var i = 0; i < data.media.length; i++) {
+                await sock.sendMessage(msg.key.remoteJid, {video: { url: data.media[i] }, caption: data.info}, {quoted: rawMessage.messages[0]});
+            }
         }
     } else {
         if (msg.key.fromMe) {
             await sock.sendMessage(msg.key.remoteJid, {delete: msg.key});
-            await sock.sendMessage(msg.key.remoteJid, {image: { url: data.path }, caption: data.info});
+
+            for (var i = 0; i < data.media.length; i++) {
+                await sock.sendMessage(msg.key.remoteJid, {image: { url: data.media[i] }, caption: data.info});
+            }
         } else {
             await sock.sendMessage(msg.key.remoteJid, {delete: publicMessage.key});
-            await sock.sendMessage(msg.key.remoteJid, {image: { url: data.path }, caption: data.info}, {quoted: rawMessage.messages[0]});
+
+            for (var i = 0; i < data.media.length; i++) {
+                await sock.sendMessage(msg.key.remoteJid, {image: { url: data.media[i] }, caption: data.info}, {quoted: rawMessage.messages[0]});
+            }
         }
     }
-    await fs.unlinkSync(data.path);
+    try { fs.unlinkSync(data.path) } catch {}
+    return;
 });

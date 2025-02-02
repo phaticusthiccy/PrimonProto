@@ -7,7 +7,6 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from YouTube.", usage: global.handlers[0] + "video <query || url>" }, async (msg, match, sock, rawMessage) => {
     const query = match[1];
-    console.log(query, msg.key)
     if (!query) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please provide a video to search for._", edit: msg.key });
@@ -63,8 +62,8 @@ addCommand( {pattern: "^video ?(.*)", access: "all", desc: "Download video from 
 
     const url = video.videoDetails.video_url;
 
-    const mediaPath = `./video` + (Math.floor(Math.random() * 1000)) + `.mp4`;
-    const mp4Path = `./video_converted` + (Math.floor(Math.random() * 1000)) + `.mp4`;
+    const mediaPath = `src/video` + (Math.floor(Math.random() * 1000)) + `.mp4`;
+    const mp4Path = `src/video_converted` + (Math.floor(Math.random() * 1000)) + `.mp4`;
 
     const downloadSuccess = await downloadVideo(url, mediaPath, video.videoDetails.lengthSeconds);
     await convertToMp4(mediaPath, mp4Path);
@@ -157,8 +156,8 @@ addCommand({ pattern: "^music ?(.*)", access: "all", desc: "Download music from 
         url = `https://www.youtube.com/watch?v=${song.videoId}`;
     }
 
-    const audioFilePath = "./music" + Date.now() + ".mp3";
-    const oggFilePath = "./music" + Date.now() + ".ogg";
+    const audioFilePath = "src/music" + Date.now() + ".mp3";
+    const oggFilePath = "src/music" + Date.now() + ".ogg";
 
     const downloadSuccess = await downloadAudio(url, audioFilePath);
     if (!downloadSuccess) {
@@ -176,9 +175,9 @@ addCommand({ pattern: "^music ?(.*)", access: "all", desc: "Download music from 
     }
 
     if (msg.key.fromMe) {
-        await sock.sendMessage(msg.key.remoteJid, { audio: { url: oggFilePath }, mimetype: 'audio/ogg' });
+        await sock.sendMessage(msg.key.remoteJid, { audio: { url: oggFilePath }, mimetype: 'audio/mp4' });
     } else {
-        await sock.sendMessage(msg.key.remoteJid, { audio: { url: oggFilePath }, mimetype: 'audio/ogg' }, { quoted: rawMessage.messages[0] });
+        await sock.sendMessage(msg.key.remoteJid, { audio: { url: oggFilePath }, mimetype: 'audio/mp4' }, { quoted: rawMessage.messages[0] });
     }
 
     [audioFilePath, oggFilePath].forEach(file => {
@@ -246,18 +245,14 @@ async function downloadVideo(link, file, duration) {
 async function convertToOgg(file, output) {
     return new Promise((resolve, reject) => {
       ffmpeg(file)
-        .audioChannels(1)
+        .outputOptions('-avoid_negative_ts', 'make_zero', '-ac', '1', '-qscale:a', '0')
+        .audioBitrate('192k')
         .output(output)
-        .on('end', () => {
-          resolve();
-        })
-        .on('error', (err) => {
-          reject(err);
-        })
+        .on('end', resolve)
+        .on('error', reject)
         .run();
     });
 }
-
 
 /**
  * Converts a video file to MP4 format.
@@ -268,8 +263,10 @@ async function convertToOgg(file, output) {
 async function convertToMp4(file, output) {
     return new Promise((resolve, reject) => {
       ffmpeg(file)
-        .videoCodec('libx264')
-        .outputOptions('-preset', 'fast')
+        .videoCodec('libx265')
+        .audioCodec('aac')
+        .audioBitrate('192k')
+        .outputOptions('-preset', 'ultrafast', '-crf', '28', '-movflags', '+faststart')
         .output(output)
         .on('end', resolve)
         .on('error', reject)

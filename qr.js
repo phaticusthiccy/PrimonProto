@@ -26,8 +26,10 @@ function askQuestion(question) {
 
 async function genQR(qr) {
   if (fs.existsSync('./session/')) {
+    console.clear();
     let answer = await askQuestion("There is other active session! Old session will be deleted. Do you want to continue? (y/n): ");
     if (answer.toLowerCase() === 'y') {
+      console.clear();
       let activeDevices = await askQuestion("Are there any active devices in WhatsApp? (y/n): ");
       if (activeDevices.toLowerCase() === 'y') {
         console.clear();
@@ -39,7 +41,7 @@ async function genQR(qr) {
       process.exit(1);
     }
   }
-
+  console.clear();
   let activeDevices2 = await askQuestion("Are there any active or inactive devices in WhatsApp? (y/n): ");
   if (activeDevices2.toLowerCase() === 'y') {
     console.clear();

@@ -12,3 +12,4 @@ package-lock.json
 *.jpeg
 *test.js
 .readme
+test_modules

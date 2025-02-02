@@ -1,15 +1,6 @@
 addCommand({ pattern: "^tagall ?([\\s\\S]*)", desc: "_It allows you to tag all users in the group._", access: "all", onlyInGroups: true}, async (msg, match, sock, rawMessage) => {
     const groupId = msg.key.remoteJid;
 
-    var admins = await global.getAdmins(msg.key.remoteJid);
-    if (!admins.includes(msg.key.participant)) {
-        if (msg.key.fromMe) {
-            return sock.sendMessage(groupId, { text: "_You are not an admin in this group!_", edit: msg.key })
-        } else {
-            return sock.sendMessage(groupId, { text: "_You are not an admin in this group!_"}, { quoted: rawMessage.messages[0] })
-        }
-    }
-
     const groupMetadata = await sock.groupMetadata(groupId);
     const participants = groupMetadata.participants.map(p => p.id);
     if (match[1]) {

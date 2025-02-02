@@ -38,7 +38,7 @@ addCommand( {pattern: "^lyrics ?(.*)", access: "all", desc: "_Get lyrics of a so
        if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No lyrics found for this song._", edit: msg.key });
        } else {
-        return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No lyrics found for this song._", edit: publicMessage.key });
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ No lyrics found for this song._", edit: publicMessage.key });
        }
     }
 })

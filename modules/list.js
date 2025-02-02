@@ -25,7 +25,7 @@ addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: tru
             (x.commandInfo.access !== "sudo" || isSudo) &&
             (!x.commandInfo.onlyInGroups || msg.key.remoteJid.endsWith('@g.us')))
         .find(x => x.commandInfo.pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "").replace(/ /gmi, "") === inputCommand.replace(/ /gmi, ""));
-        
+
         if (fs.existsSync(`./modules/${inputCommand}.js`)) command = false
         if (command) {
             const { pattern, desc, usage, warn, access } = command.commandInfo;
@@ -56,7 +56,20 @@ addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: tru
                     }
                 });
             } catch {
-                menuText = `❌ Command not found: ${inputCommand}`;
+                command = global.commands
+                .filter(x => !x.commandInfo.dontAddCommandList &&
+                    (x.commandInfo.access !== "sudo" || isSudo) &&
+                    (!x.commandInfo.onlyInGroups || msg.key.remoteJid.endsWith('@g.us')))
+                    
+                var modules_means = []
+                await command.forEach(async (x) => {
+                    modules_means.push({
+                        pattern: `${x.commandInfo.pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "")}`,
+                        similarity_score: await global.similarity.default.stringSimilarity(inputCommand, x.commandInfo.pattern.replace(/[\^\$\.\*\+\?\(\)\[\]\{\}\\\/]/g, '').replace("sS", "").replace(global.handlers[0], ""))
+                    })
+                })
+                modules_means.sort((a, b) => b.similarity_score - a.similarity_score);
+                menuText = `_❌ Command not found: ${inputCommand}_\n\n_Did you mean:_ ` + "```" + global.handlers[0] + modules_means[0].pattern + "```";
             }
         }
     } else {
@@ -77,5 +90,4 @@ addCommand( {pattern: "^men(u|ü) ?(.*)", access: "all", dontAddCommandList: tru
     } else {
         return await sock.sendMessage(grupId, { text: `📜 *Primon Menu*\n\n${menuText.trimEnd()}`}, { quoted: rawMessage.messages[0]});
     }
-
 })

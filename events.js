@@ -1,17 +1,20 @@
 var database = require("./database.json");  
 var PREFIX = database.handlers;  
 const fs = require("fs");  
-  
+var commands = [];   
+const axios = require("axios");
+
 fs.watch("./database.json", function () {  
     delete require.cache[require.resolve("./database.json")];  
     database = require("./database.json");  
     PREFIX = database.handlers;  
-    global.handlers = PREFIX;  
+    global.handlers = PREFIX; 
     global.commands = commands;  
-    global.database = database;  
+    global.database = database;
+    commands = [];
+    global.loadModules(__dirname + "/modules", false, true);
 });  
   
-var commands = [];   
   
 /**  
  * Adds a new command to the list of commands.  
@@ -38,7 +41,7 @@ async function start_command(msg, sock, rawMessage) {
   let validText = text;  
   
   for (const prefix of PREFIX) {  
-    if (text?.startsWith(prefix)) {  
+    if (text?.trimStart().startsWith(prefix)) {  
       matchedPrefix = true;  
       validText = text.slice(prefix.length).trim();  
       break;  
@@ -84,6 +87,18 @@ async function start_command(msg, sock, rawMessage) {
       if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid === sock.user.id.split(':')[0] + "@s.whatsapp.net") return;  
       if (commandInfo.onlyInGroups && !groupCheck) return;  
         
+      if (commandInfo.pluginVersion && commandInfo.pluginId) {
+        var getPluginUpdate = await axios.get("https://create.thena.workers.dev/pluginMarket?id=" + commandInfo.pluginId);
+        if (getPluginUpdate.data.pluginVersion !== commandInfo.pluginVersion) {
+          fs.writeFileSync("./modules/" + getPluginUpdate.data.pluginFileName, getPluginUpdate.data.context);
+          if (msg.key.fromMe) {
+            await sock.sendMessage(msg.key.remoteJid, { text: "_🆕 " + getPluginUpdate.data.pluginName + " Plugin Updated To " + getPluginUpdate.data.pluginVersion + "._\n\n_Please try again._", edit: msg.key });
+          } else {
+            await sock.sendMessage(msg.key.remoteJid, { text: "_🆕 " + getPluginUpdate.data.pluginName + " Plugin Updated To " + getPluginUpdate.data.pluginVersion + "._\n\n_Please try again._" }, { quoted: rawMessage.messages[0]});
+          }
+          return;
+        }
+      }
       await callback(msg, match, sock, rawMessage);  
       return;  
     }  

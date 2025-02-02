@@ -4,7 +4,7 @@
     "/",
     "!"
   ],
-  "version": "0.4",
+  "version": "0.5",
   "filters": [
     {
       "chat": "0000000@g.us",
@@ -41,12 +41,13 @@
   "sudo": [
     ""
   ],
-  "worktype": "public",
+  "worktype": "private",
   "globalMutes": [
     {
       "chat": "0000000@g.us",
       "muted_users": []
     }
   ],
-  "blacklist": []
+  "blacklist": [],
+  "plugins": []
 }

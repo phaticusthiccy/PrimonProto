@@ -94,7 +94,8 @@ async function Primon() {
       console.log('The connection is opened.');
       const usrId = sock.user.id;
       const mappedId = usrId.split(':')[0] + `@s.whatsapp.net`;
-      await sock.sendMessage(mappedId, { text: "Primon Online!\n\nUse " + global.handlers[0] + "menu to see the list of commands." });;
+      if (!global.similarity) global.similarity = await import('string-similarity-js');
+      await sock.sendMessage(mappedId, { text: "_Primon Online!_\n\n_Use_ ```" + global.handlers[0] + "menu``` _to see the list of commands._" });;
     }
   });
 
@@ -104,7 +105,7 @@ async function Primon() {
 
       const rawMessage = structuredClone(msg);
       msg = msg.messages[0];
-      const quotedMessage = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+      const quotedMessage = msg?.message?.extendedTextMessage?.contextInfo?.quotedMessage;
       msg.quotedMessage = quotedMessage;
 
       if ((msg.key && msg.key.remoteJid === "status@broadcast")) return;
@@ -114,7 +115,7 @@ async function Primon() {
 
     } catch (error) {
       console.log(error);
-      await sock.sendMessage(sock.user.id, { text: `Primon Error:\n${error}` });
+      await sock.sendMessage(sock.user.id, { text: `*⚠️ Primon Error:*\n${error}` });
     }
   });
 
@@ -164,15 +165,20 @@ async function Primon() {
  * @param {string} modulePath - The directory path where the modules are located.
  */
 
-function loadModules(modulePath) {
+function loadModules(modulePath, logger = true, refresh = false) {
   fs.readdirSync(modulePath).forEach((file) => {
     if (file.endsWith(".js")) {
-      console.log(`Loading plugin: ${file}`);
-      require(`${modulePath}/${file}`);
+      if (refresh) {
+        delete require.cache[require.resolve(`${modulePath}/${file}`)];
+        logger ? console.log(`Reloading plugin: ${file}`) : null;
+        require(`${modulePath}/${file}`);
+      } else {
+        logger ? console.log(`Loading plugin: ${file}`) : null;
+      }
     }
   });
 }
-
+global.loadModules = loadModules;
 Primon();
 
 /**

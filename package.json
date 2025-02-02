@@ -21,9 +21,11 @@
     "libmuse": "^0.1.1",
     "pino": "^9.6.0",
     "qrcode-terminal": "latest",
+    "qs": "latest",
     "simple-git": "^2.37.0",
-    "ytdl-core": "latest",
-    "qs": "latest"
+    "string-similarity-js": "^2.1.4",
+    "supports-color": "^10.0.0",
+    "ytdl-core": "latest"
   },
   "engines": {
     "node": ">=22.0.0"
