@@ -6,6 +6,24 @@ var openedSocket = false;
 var chat_count = 0;
 try { fs.rmdirSync('./session', { recursive: true, force: true }); } catch {}
 
+// ask and get answer if user have anaother active device. use rl.question
+
+const rl = require('readline').createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+rl.question('Do you have another active device in whatsapp? (y/n) ', (answer) => {
+  if (answer.toLowerCase() === 'y') {
+    console.clear();
+    console.log("Please close any other active devices found in WhatsApp.");  } else {
+    process.exit(1);
+  }
+  console.clear();
+  rl.close();
+});
+
+
 async function genQR(qr) {
   let { version } = await fetchLatestBaileysVersion();
   let { state, saveCreds } = await useMultiFileAuthState('./session/');
