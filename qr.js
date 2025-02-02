@@ -66,7 +66,7 @@ async function genQR(qr) {
   sock.ev.on('creds.update', saveCreds);
 }
 
-let countdown = Math.max(150, chat_count * 2.1);
+let countdown = Math.max(150, chat_count * 3.125);
 setInterval(async () => {
   
   if (openedSocket == false && chat_count <= 0) {
