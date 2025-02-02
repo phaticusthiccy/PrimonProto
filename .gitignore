@@ -7,9 +7,6 @@ package-lock.json
 *.mp4
 *.mp3
 .DS_Store
-*.png
-*.jpg
-*.jpeg
 *test.js
 .readme
 test_modules

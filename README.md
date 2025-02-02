@@ -61,7 +61,7 @@ These instructions assume you have Node.js (version 16 or higher) and npm (or ya
 4. **Start the bot:**
 
    ```bash
-   pm2 start index.js
+   pm2 start main.js
    ```
 
    This will run the bot in the background using pm2.
@@ -69,8 +69,6 @@ These instructions assume you have Node.js (version 16 or higher) and npm (or ya
 ##  Management Commands (Using PM2)
 
 * **View Logs:** `pm2 logs`  (Useful for debugging)
-* **Stop the Bot:** `pm2 stop index.js`
-* **Restart the Bot:** `pm2 restart index.js`
 * **Kill (Force Stop):** `pm2 kill`
 
 ## Usage
@@ -105,6 +103,7 @@ PrimonProto uses handlers to trigger commands.  The default handlers are ".", "/
 * `!gmute` (reply to a user) - Globally mutes a user in all groups the bot is present.
 * `!ungmute` (reply to a user) - Globally unmutes a user.
 
+
 **Automation & Utilities:**
 
 * `!filter add <incoming message> <outgoing message>` - Adds a new filter.
@@ -120,7 +119,11 @@ PrimonProto uses handlers to trigger commands.  The default handlers are ".", "/
 * `!edit <alive|welcome|goodbye>` (reply to a message) - Edits welcome/goodbye messages or alive message (sudo only).
 * `!update` - Checks for bot updates (sudo only).
 * `!update now` - Updates the bot to the latest version (sudo only).
-
+* `!plugin <query>` - Searches for plugins.
+* `!plugin top` - Shows top plugins.
+* `!pinstall <plugin_id>` - Installs a plugin (sudo only).
+* `!pldelete <plugin_id>` - Deletes a plugin (sudo only).
+* `!ping` - Checks the bot's response time.
 
 ## Configuration
 
