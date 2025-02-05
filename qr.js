@@ -4,9 +4,9 @@ const qrcode = require('qrcode-terminal');
 const pino = require('pino');
 var openedSocket = false;
 var chat_count = 0;
-try { fs.rmdirSync('./session', { recursive: true, force: true }); } catch {}
+try { fs.rmSync('./session', { recursive: true, force: true }); } catch {}
 const logger = pino({
-  level: "debug",
+  level: "silent",
   customLevels: {
     trace: 10000,
     debug: 10000,
@@ -35,7 +35,7 @@ const rl = require('readline').createInterface({
 //   rl.close();
 // });
 
-rl.question("Login with QR code (1) or Phone Number (2)? ", async (answer) => {
+rl.question("Login with QR code (1) or Phone Number (2)\n\n⚠️ Logging with phone number is not recommend! :: ", async (answer) => {
   if (answer == "2") {
     rl.question("Enter your phone number. Example: 905123456789 ", async (number) => {
       await loginWithPhone(number);
@@ -104,6 +104,10 @@ async function loginWithPhone(phoneNumber) {
         await delay(3000);
         fs.writeFileSync('.started', '1');
         openedSocket = true;
+        try {
+          const chats = await sock.groupFetchAllParticipating();
+          chat_count = Object.keys(chats).length
+        } catch {}
       } else if (connection === 'close') {
         await loginWithPhone(phoneNumber);
       } else if (!connection && !sock.authState.creds.registered) {
