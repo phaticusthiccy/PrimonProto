@@ -4,6 +4,12 @@ var fs = require("fs");
 var commands = [];   
 const axios = require("axios");
 
+/**
+ * Watches the database.json file for changes and updates the global state accordingly.
+ * This function is responsible for monitoring the database.json file for any changes,
+ * and then updating the global state variables like `handlers`, `commands`, and `database`
+ * to reflect the changes. It also attempts to reload the modules in the `./modules` directory.
+ */
 function watchDatabase() {
   try {
     fs.watch("./database.json", function (event, filename) {
@@ -32,13 +38,22 @@ function addCommand(commandInfo, callback) {
   commands.push({ commandInfo, callback });  
 }  
   
-/**  
- * Handles the execution of a command received in a message.  
- *  
- * @param {Object} msg - The message object containing the command.  
- * @param {import('../index').Socket} sock  
- * @returns {Promise<void>} - A Promise that resolves when the command has been executed.  
-*/  
+ 
+/**
+ * Processes a message to determine if it matches any registered command patterns,
+ * and executes the corresponding callback if a match is found. The function first
+ * checks whether the message starts with a valid prefix and then verifies if it 
+ * matches any command patterns. It handles permission checks for commands based 
+ * on the user's access level and the bot's operational mode (e.g., private, group).
+ * If the command is associated with a plugin, it ensures the plugin is installed
+ * and up-to-date before executing the callback.
+ *
+ * @param {object} msg - The message object received from the WhatsApp socket.
+ * @param {object} sock - The WhatsApp socket connection.
+ * @param {object} rawMessage - The raw message object.
+ * @returns {Promise<void>} - A promise that resolves when the command has been processed.
+ */
+
 async function start_command(msg, sock, rawMessage) {  
   const text =  
     msg?.message?.conversation || msg?.message?.extendedTextMessage?.text;  
@@ -54,8 +69,9 @@ async function start_command(msg, sock, rawMessage) {
     }  
   }  
   
-  let isCommand = false;  
-  for (const { commandInfo } of commands) {  
+  let isCommand = false;
+  var sortedCommands = commands.sort((a, b) => b.commandInfo.pattern.length - a.commandInfo.pattern.length);
+  for (const { commandInfo } of sortedCommands) {  
     if (validText?.match(new RegExp(commandInfo.pattern, "im"))) {  
       isCommand = true;  
       break;  
@@ -72,7 +88,7 @@ async function start_command(msg, sock, rawMessage) {
     return;  
   }  
   
-  for (const { commandInfo, callback } of commands) {  
+  for (const { commandInfo, callback } of sortedCommands) {  
     const match = validText?.match(new RegExp(commandInfo.pattern, "im"));  
     if (match && matchedPrefix) {  
       const groupCheck = msg.key.remoteJid.endsWith('@g.us');  
@@ -86,16 +102,31 @@ async function start_command(msg, sock, rawMessage) {
             break;  
           } 
         } 
-      } 
+      }
+      
       if (!commandInfo.access && commandInfo.fromMe !== msg.key.fromMe) return;  
       if (!permission && database.worktype === "private") return;  
       if (commandInfo.access === "sudo" && !permission) return;  
       if (commandInfo.notAvaliablePersonelChat && msg.key.remoteJid === sock.user.id.split(':')[0] + "@s.whatsapp.net") return;  
       if (commandInfo.onlyInGroups && !groupCheck) return;  
         
+      if (commandInfo.pluginId && (global.database.plugins.findIndex(plugin => plugin.id === commandInfo.pluginId) === -1)) {
+        var getExitingPluginData = await axios.get("https://create.thena.workers.dev/pluginMarket?id=" + commandInfo.pluginId);
+        getExitingPluginData = getExitingPluginData.data;
+        global.database.plugins.push({
+          name: getExitingPluginData.pluginName,
+          version: commandInfo.pluginVersion,
+          description: getExitingPluginData.description,
+          author: getExitingPluginData.author,
+          id: getExitingPluginData.pluginId,
+          path: "./modules/" + getExitingPluginData.pluginFileName
+        });
+      }
+
       if (commandInfo.pluginVersion && commandInfo.pluginId) {
         var getPluginUpdate = await axios.get("https://create.thena.workers.dev/pluginMarket?id=" + commandInfo.pluginId);
         if (getPluginUpdate.data.pluginVersion !== commandInfo.pluginVersion) {
+          global.database.plugins[global.database.plugins.findIndex(plugin => plugin.id === commandInfo.pluginId)] = getPluginUpdate.data;
           fs.writeFileSync("./modules/" + getPluginUpdate.data.pluginFileName, getPluginUpdate.data.context);
           if (msg.key.fromMe) {
             await sock.sendMessage(msg.key.remoteJid, { text: "_🆕 " + getPluginUpdate.data.pluginName + " Plugin Updated To " + getPluginUpdate.data.pluginVersion + "._\n\n_Please try again._", edit: msg.key });

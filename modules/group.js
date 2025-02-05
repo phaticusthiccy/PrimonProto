@@ -9,7 +9,8 @@
 async function replaceUserPosition(sock, groupJid, userJid, argm) {
     try {
         var result = await sock.groupParticipantsUpdate(groupJid, [userJid], argm);
-        if (result[0].status == "408") return null
+        if (result[0].status == "200") return true
+        else return false
     } catch (error) {
         return false
     }
@@ -43,6 +44,8 @@ addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the gro
         
     }
 
+    var result;
+
     if (!await global.checkAdmin(msg, sock, groupId)) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_❌ Sorry, I am not an admin in this group!_", edit: msg.key})
@@ -61,7 +64,7 @@ addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the gro
             }
         }
         var quotedMessage = msg.message.extendedTextMessage.contextInfo.participant;
-        var result = await replaceUserPosition(sock, groupId, quotedMessage, "remove");
+        result = await replaceUserPosition(sock, groupId, quotedMessage, "remove");
     } else if (match[1]) {
         if (preventOwner(sock, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net") == true) {
             if (msg.key.fromMe) {
@@ -70,7 +73,7 @@ addCommand({pattern: "^ban ?(.*)", desc:"Allows you to ban a person from the gro
                 return await sock.sendMessage(groupId, {text: "_❌ Sorry, I can't ban myself!_"}, { quoted: rawMessage.messages[0] })
             }
         }
-        var result = await replaceUserPosition(sock, groupId, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net", "remove")
+        result = await replaceUserPosition(sock, groupId, match[1].replace("@", "").replace("+", "").replace(/ /gmi, "") + "@s.whatsapp.net", "remove")
     } else {
         if (msg.key.fromMe) {
             return await sock.sendMessage(groupId, {text: "_Please reply to someone or mention them!_", edit: msg.key});

@@ -29,7 +29,7 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
         }
     }
 
-    if (!msg.quotedMessage) {
+    if (!msg.quotedMessage && !match[1].includes("del")) {
         if (msg.key.fromMe) {
             return await sock.sendMessage(grupId, { text: "_Please reply to a message or media to edit._", edit: msg.key });
         } else {
@@ -71,14 +71,19 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
                 config.content = content;
             }
         }
+
+        let toDelMessage = ""
+        if (configType == "welcome") toDelMessage = "\n\n_To delete welcome meessage, use_ ```" + global.handlers[0] + "edit del welcome```";
+        if (configType == "goodbye") toDelMessage = "\n\n_To delete goodbye meessage, use_ ```" + global.handlers[0] + "edit del goodbye```";
+
         if (msg.key.fromMe) {
-            return await sock.sendMessage(grupId, { text: `_✅ ${configType.charAt(0).toUpperCase() + configType.slice(1)} message updated successfully._`, edit: msg.key });
+            return await sock.sendMessage(grupId, { text: `_✅ ${configType.charAt(0).toUpperCase() + configType.slice(1)} message updated successfully._` + toDelMessage, edit: msg.key });
         } else {
-            return await sock.sendMessage(grupId, { text: `_✅ ${configType.charAt(0).toUpperCase() + configType.slice(1)} message updated successfully._`}, { quoted: rawMessage.messages[0] });
+            return await sock.sendMessage(grupId, { text: `_✅ ${configType.charAt(0).toUpperCase() + configType.slice(1)} message updated successfully._` + toDelMessage}, { quoted: rawMessage.messages[0] });
         }
     };
 
-    const { imageMessage, videoMessage, extendedTextMessage, conversation } = msg.quotedMessage;
+    const { imageMessage, videoMessage, extendedTextMessage, conversation } = msg.quotedMessage || {};
     const configType = match[1];
 
     if (configType === "alive" || configType === "welcome" || configType === "goodbye") {
@@ -102,5 +107,26 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
             }
         }
     }
-    
+
+    if (configType == "del welcome" || configType == "del goodbye") {
+        let config = configType === "del welcome" ? global.database.welcomeMessage.find(x => x.chat === grupId) : global.database.goodbyeMessage.find(x => x.chat === grupId);
+        if (!config) {
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(grupId, { text: "_❌ No " + (configType === "del welcome" ? "welcome" : "goodbye") + " message found._", edit: msg.key });
+            } else {
+                return await sock.sendMessage(grupId, { text: "_❌ No " + (configType === "del welcome" ? "welcome" : "goodbye") + " message found._"}, { quoted: rawMessage.messages[0] });
+            }
+        } else {
+            if (configType === "del welcome") {
+                global.database.welcomeMessage = global.database.welcomeMessage.filter(x => x.chat !== grupId);
+            } else {
+                global.database.goodbyeMessage = global.database.goodbyeMessage.filter(x => x.chat !== grupId);
+            }
+            if (msg.key.fromMe) {
+                return await sock.sendMessage(grupId, { text: "_✅ Welcome " + (configType === "del welcome" ? "goodbye" : "welcome") + " messages deleted successfully._", edit: msg.key });
+            } else {
+                return await sock.sendMessage(grupId, { text: "_✅ Welcome " + (configType === "del welcome" ? "goodbye" : "welcome") + " messages deleted successfully._"}, { quoted: rawMessage.messages[0] });
+            }
+        }
+    }
 })

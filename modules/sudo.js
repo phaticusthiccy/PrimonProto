@@ -12,7 +12,7 @@ addCommand({ pattern: "^sudo ?(.*)", access: "sudo", desc: "_Add or remove sudo 
         } else {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_The number has been added to the sudoers list._"}, { quoted: rawMessage.messages[0] });
         }
-    } else if (action.includes("delete")) {
+    } else if (action.includes("delete") || action.includes("del")) {
         global.database.sudo = global.database.sudo.filter(x => x !== number);
         if (msg.key.fromMe) {
             return await sock.sendMessage(msg.key.remoteJid, { text: "_The number has been removed from the sudoers list._", edit: msg.key });

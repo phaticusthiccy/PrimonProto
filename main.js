@@ -4,26 +4,32 @@ const execSync = require('child_process').execSync;
 const fs = require('fs');
 
 const installedPackages = new Set();
-Module.prototype.require = function(packageName) {
-    try {
-        return originalRequire.apply(this, arguments);
-    } catch (err) {
-        if (err.code === 'MODULE_NOT_FOUND' && !packageName.startsWith('.')) {
-            if (!installedPackages.has(packageName)) {
-                console.log(`Package ${packageName} not found. Installing...`);
-                
-                try {                  
-                  execSync(`npm install ${packageName}`, { stdio: 'inherit' });
-                  installedPackages.add(packageName);
-                  
-                  return originalRequire.apply(this, arguments);
-                } catch (installError) {
-                  console.error(`Package installation error: ${installError.message}`);
-                }
-            }
+Module.prototype.require = function (packageName) {
+  try {
+    return originalRequire.apply(this, arguments);
+  } catch (err) {
+    if (err.code === 'MODULE_NOT_FOUND' && !packageName.startsWith('.')) {
+      if (!installedPackages.has(packageName)) {
+        console.log(`Package ${packageName} not found. Installing...`);
+
+        const isTermux = process?.env?.PREFIX === '/data/data/com.termux/files/usr';
+
+        try {
+          execSync(`npm install ${packageName}`, { stdio: 'ignore' });
+          installedPackages.add(packageName);
+
+          return originalRequire.apply(this, arguments);
+        } catch (installError) {
+          if (isTermux) {
+            console.log('⚠️ Termux detected. Skipping installation of unsupported ' + packageName + ' module. Some features may not work.');
+          } else {
+            console.error(`Package installation error: ${installError.message}`);
+          }
         }
-        throw err;
+      }
     }
+    throw err;
+  }
 };
 
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, downloadContentFromMessage } = require('@whiskeysockets/baileys');
@@ -45,8 +51,8 @@ setInterval(async () => {
     } else {
       if (getLatestCommit.data[0].sha != currentVersion) {
         currentVersion = getLatestCommit.data[0].sha
-        await sock.sendMessage(sock.user.id, { image: {url: "./src/new_version.png"}, caption: "*🆕 New Version Available!*\n\n_Please update your bot via_ ```.update```"});
-      }  
+        await sock.sendMessage(sock.user.id, { image: { url: "./src/new_version.png" }, caption: "*🆕 New Version Available!*\n\n_Please update your bot via_ ```.update```" });
+      }
     }
     versionCheckInterval = 180
   }
@@ -214,25 +220,25 @@ global.downloadMedia = async (message, type, filepath) => {
 
 global.checkAdmin = async function (msg, sock, groupId, number = false) {
   try {
-      const groupMetadata = await sock.groupMetadata(groupId);
-      let Number = number ? number : sock.user.id.split(":")[0] + "@s.whatsapp.net";
-      return groupMetadata.participants.some(participant => 
-          participant.id === Number && participant.admin
-      );
+    const groupMetadata = await sock.groupMetadata(groupId);
+    let Number = number ? number : sock.user.id.split(":")[0] + "@s.whatsapp.net";
+    return groupMetadata.participants.some(participant =>
+      participant.id === Number && participant.admin
+    );
   } catch (error) {
-      console.error("An error occurred while checking admin status: ", error);
-      return false;
+    console.error("An error occurred while checking admin status: ", error);
+    return false;
   }
 };
 
 global.getAdmins = async function (groupId) {
   try {
-      const groupMetadata = await sock.groupMetadata(groupId);
-      const admins = groupMetadata.participants.filter(p => p.admin === 'admin' || p.admin === 'superadmin').map(p => p.id);
-      return admins
+    const groupMetadata = await sock.groupMetadata(groupId);
+    const admins = groupMetadata.participants.filter(p => p.admin === 'admin' || p.admin === 'superadmin').map(p => p.id);
+    return admins
   } catch (error) {
-      console.error("An error occurred while getting admin list: ", error);
-      return [];
+    console.error("An error occurred while getting admin list: ", error);
+    return [];
   }
 };
 /**
