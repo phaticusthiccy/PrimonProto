@@ -43,7 +43,7 @@ var sock;
 setInterval(async () => {
   fs.writeFileSync("./database.json", JSON.stringify(global.database, null, 2));
   versionCheckInterval--
-  if (versionCheckInterval == 0) {
+  if (versionCheckInterval <= 0) {
     var getLatestCommit = await axios.get("https://api.github.com/repos/phaticusthiccy/PrimonProto/commits")
 
     if (currentVersion == "") {
@@ -117,6 +117,10 @@ async function Primon() {
       if ((msg.key && msg.key.remoteJid === "status@broadcast")) return;
       if (global.database.blacklist.includes(msg.key.remoteJid) && !msg.key.fromMe) return;
 
+      if (!msg.key.remoteJid.includes("@g.us")) {
+        msg.key.participant = msg.key.remoteJid
+      }
+      
       await start_command(msg, sock, rawMessage);
 
     } catch (error) {

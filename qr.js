@@ -20,23 +20,12 @@ const logger = pino({
   },
 });
 
-// ask and get answer if user have anaother active device. use rl.question
 
 const rl = require('readline').createInterface({
   input: process.stdin,
   output: process.stdout
 });
-// THERE IS AN ERROR IN THE RL QUESTION PARAMETER 
 
-// rl.question('Do you have another active device in whatsapp? (y/n) ', (answer) => {
-//   if (answer.toLowerCase() === 'y') {
-//     console.clear();
-//     console.log("Please close any other active devices found in WhatsApp.");  } else {
-//     process.exit(1);
-//   }
-//   console.clear();
-//   rl.close();
-// });
 console.clear();
 rl.question("Login with QR code (1) or Phone Number (2)\n\n⚠️  Logging with phone number is not recommend! :: ", async (answer) => {
   console.clear();
