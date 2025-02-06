@@ -117,10 +117,14 @@ async function Primon() {
       if ((msg.key && msg.key.remoteJid === "status@broadcast")) return;
       if (global.database.blacklist.includes(msg.key.remoteJid) && !msg.key.fromMe) return;
 
-      if (!msg.key.remoteJid.includes("@g.us")) {
-        msg.key.participant = msg.key.remoteJid
+      if (msg.key.participant == undefined) {
+        if (msg.key.fromMe == false) {
+          msg.key.participant = msg.key.remoteJid
+        } else {
+          msg.key.participant = sock.user.id.split(':')[0] + `@s.whatsapp.net` 
+        }
       }
-      
+
       await start_command(msg, sock, rawMessage);
 
     } catch (error) {
