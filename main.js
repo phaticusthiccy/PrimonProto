@@ -75,7 +75,7 @@ const logger = pino({
 
 async function Primon() {
   const { version } = await fetchLatestBaileysVersion();
-  const { state } = await useMultiFileAuthState(__dirname + "/session/");
+  const { state, saveCreds  } = await useMultiFileAuthState(__dirname + "/session/");
 
   sock = makeWASocket({
     logger,
@@ -161,6 +161,8 @@ async function Primon() {
       }
     }
   })
+
+  sock.ev.on('creds.update', saveCreds)
 
   loadModules(__dirname + "/modules");
 }

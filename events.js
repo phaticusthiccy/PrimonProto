@@ -111,6 +111,7 @@ async function start_command(msg, sock, rawMessage) {
       if (commandInfo.onlyInGroups && !groupCheck) return;  
         
       if (commandInfo.pluginId && (global.database.plugins.findIndex(plugin => plugin.id === commandInfo.pluginId) === -1)) {
+        global.loadModules(__dirname + "/modules", false, true);
         var getExitingPluginData = await axios.get("https://create.thena.workers.dev/pluginMarket?id=" + commandInfo.pluginId);
         getExitingPluginData = getExitingPluginData.data;
         global.database.plugins.push({
@@ -126,8 +127,17 @@ async function start_command(msg, sock, rawMessage) {
       if (commandInfo.pluginVersion && commandInfo.pluginId) {
         var getPluginUpdate = await axios.get("https://create.thena.workers.dev/pluginMarket?id=" + commandInfo.pluginId);
         if (getPluginUpdate.data.pluginVersion !== commandInfo.pluginVersion) {
-          global.database.plugins[global.database.plugins.findIndex(plugin => plugin.id === commandInfo.pluginId)] = getPluginUpdate.data;
+          const editedPl = {
+            name: getPluginUpdate.data.pluginName,
+            version: getPluginUpdate.data.pluginVersion,
+            description: getPluginUpdate.data.description,
+            author: getPluginUpdate.data.author,
+            id: getPluginUpdate.data.pluginId,
+            path: "./modules/" + getPluginUpdate.data.pluginFileName
+          }
+          global.database.plugins[global.database.plugins.findIndex(plugin => plugin.id === commandInfo.pluginId)] = editedPl;
           fs.writeFileSync("./modules/" + getPluginUpdate.data.pluginFileName, getPluginUpdate.data.context);
+          global.loadModules(__dirname + "/modules", false, true);
           if (msg.key.fromMe) {
             await sock.sendMessage(msg.key.remoteJid, { text: "_🆕 " + getPluginUpdate.data.pluginName + " Plugin Updated To " + getPluginUpdate.data.pluginVersion + "._\n\n_Please try again._", edit: msg.key });
           } else {
