@@ -81,6 +81,7 @@ async function Primon() {
     logger,
     printQRInTerminal: true,
     markOnlineOnConnect: false,
+    syncFullHistory : false,
     browser: ["Ubuntu", "Chrome", "20.0.04"],
     auth: state,
     version: version,
