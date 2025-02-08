@@ -125,7 +125,13 @@ async function start_command(msg, sock, rawMessage) {
       }
 
       if (commandInfo.pluginVersion && commandInfo.pluginId) {
-        var getPluginUpdate = await axios.get("https://create.thena.workers.dev/pluginMarket?id=" + commandInfo.pluginId);
+        var getPluginUpdate = await axios.get("https://create.thena.workers.dev/pluginMarket");
+        getPluginUpdate = getPluginUpdate.data;
+        getPluginUpdate = getPluginUpdate.find(plugin => plugin.pluginId === commandInfo.pluginId);
+        if (!getPluginUpdate) {
+          return; // Don't run if plugin not found.
+        }
+        getPluginUpdate = { data: getPluginUpdate };
         if (getPluginUpdate.data.pluginVersion !== commandInfo.pluginVersion) {
           const editedPl = {
             name: getPluginUpdate.data.pluginName,

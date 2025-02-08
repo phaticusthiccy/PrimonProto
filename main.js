@@ -265,3 +265,13 @@ global.downloadarraybuffer = async function (url) {
     return ""
   }
 }
+
+Object.defineProperty(global, "sock", {
+  get: function () {
+    return sock;
+  },
+  set: function (newSock) {
+    sock = newSock;
+  },
+  configurable: true
+});
