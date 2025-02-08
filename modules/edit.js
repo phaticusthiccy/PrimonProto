@@ -18,14 +18,14 @@
 */
 const fs = require('fs');
 
-addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: true, desc: "_Edit configurations._", usage: global.handlers[0] + "edit <alive || welcome || goodbye>"}, async (msg, match, sock, rawMessage) => {
+addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: true, desc: "_Edit configurations._", usage: global.handlers[0] + "edit <alive || afk || welcome || goodbye>"}, async (msg, match, sock, rawMessage) => {
 
     const grupId = msg.key.remoteJid;
     if (!match[1]) {
         if (msg.key.fromMe) {
-            return await sock.sendMessage(grupId, { text: "_Please enter the configuration to edit._\n\n_Avaliable Configurations ::_ ```alive, welcome, goodbye```", edit: msg.key });
+            return await sock.sendMessage(grupId, { text: "_Please enter the configuration to edit._\n\n_Avaliable Configurations ::_ ```alive, welcome, goodbye, afk```", edit: msg.key });
         } else {
-            return await sock.sendMessage(grupId, { text: "_Please enter the configuration to edit._\n\n_Avaliable Configurations ::_ ```alive, welcome, goodbye```"}, { quoted: rawMessage.messages[0] });
+            return await sock.sendMessage(grupId, { text: "_Please enter the configuration to edit._\n\n_Avaliable Configurations ::_ ```alive, welcome, goodbye, afk```"}, { quoted: rawMessage.messages[0] });
         }
     }
 
@@ -56,11 +56,14 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
         const configMap = {
             alive: 'aliveMessage',
             welcome: 'welcomeMessage',
-            goodbye: 'goodbyeMessage'
+            goodbye: 'goodbyeMessage',
+            afk: 'afkMessage'
         };
         const configKey = configMap[configType];
         if (configType === 'alive') {
             global.database[configKey] = { type, media: mediaPath ? fs.readFileSync(mediaPath, "base64").toString() : "", content };
+        } else if (configType === "afk") {
+            global.database[configKey] = { type, media: mediaPath ? fs.readFileSync(mediaPath, "base64").toString() : "", content, active: false };
         } else {
             let config = global.database[configKey].find(x => x.chat === grupId);
             if (!config) {
@@ -75,6 +78,7 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
         let toDelMessage = ""
         if (configType == "welcome") toDelMessage = "\n\n_To delete welcome meessage, use_ ```" + global.handlers[0] + "edit del welcome```";
         if (configType == "goodbye") toDelMessage = "\n\n_To delete goodbye meessage, use_ ```" + global.handlers[0] + "edit del goodbye```";
+        if (configType == "afk") toDelMessage = "\n\n_To delete afk meessage, use_ ```" + global.handlers[0] + "edit del afk```";
 
         if (msg.key.fromMe) {
             return await sock.sendMessage(grupId, { text: `_✅ ${configType.charAt(0).toUpperCase() + configType.slice(1)} message updated successfully._` + toDelMessage, edit: msg.key });
@@ -86,7 +90,7 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
     const { imageMessage, videoMessage, extendedTextMessage, conversation } = msg.quotedMessage || {};
     const configType = match[1];
 
-    if (configType === "alive" || configType === "welcome" || configType === "goodbye") {
+    if (configType === "alive" || configType === "welcome" || configType === "goodbye" || configType === "afk") {
         if (imageMessage) {
             const mediaPath = `./${configType}.png`;
             await global.downloadMedia(imageMessage, "image", mediaPath);
@@ -108,24 +112,35 @@ addCommand( {pattern: "^edit ?(.*)", access: "sudo", notAvaliablePersonelChat: t
         }
     }
 
-    if (configType == "del welcome" || configType == "del goodbye") {
-        let config = configType === "del welcome" ? global.database.welcomeMessage.find(x => x.chat === grupId) : global.database.goodbyeMessage.find(x => x.chat === grupId);
+    if (configType == "del welcome" || configType == "del goodbye" || configType == "del afk") {
+        let config = configType === "del welcome" ? global.database.welcomeMessage.find(x => x.chat === grupId) : configType === "del afk" ? (global.database.afkMessage.active == false ? false : global.database.afkMessage) : global.database.goodbyeMessage.find(x => x.chat === grupId);
         if (!config) {
             if (msg.key.fromMe) {
-                return await sock.sendMessage(grupId, { text: "_❌ No " + (configType === "del welcome" ? "welcome" : "goodbye") + " message found._", edit: msg.key });
+                return await sock.sendMessage(grupId, { text: "_❌ No " + (configType === "del welcome" ? "welcome" : configType === "del afk" ? "afk" : "goodbye") + " message found._", edit: msg.key });
             } else {
-                return await sock.sendMessage(grupId, { text: "_❌ No " + (configType === "del welcome" ? "welcome" : "goodbye") + " message found._"}, { quoted: rawMessage.messages[0] });
+                return await sock.sendMessage(grupId, { text: "_❌ No " + (configType === "del welcome" ? "welcome" : configType === "del afk" ? "afk" : "goodbye") + " message found._"}, { quoted: rawMessage.messages[0] });
             }
         } else {
             if (configType === "del welcome") {
                 global.database.welcomeMessage = global.database.welcomeMessage.filter(x => x.chat !== grupId);
+            } else if (configType === "del afk") {
+                global.database.afkMessage.active = false;
+                global.database.afkMessage.content = "";
+                global.database.afkMessage.media = "";
+                global.database.afkMessage.type = "text";
+
+                if (msg.key.fromMe) {
+                    return await sock.sendMessage(grupId, { text: "_✅ AFK message deleted successfully._", edit: msg.key });
+                } else {
+                    return await sock.sendMessage(grupId, { text: "_✅ AFK message deleted successfully._"}, { quoted: rawMessage.messages[0] });
+                }
             } else {
                 global.database.goodbyeMessage = global.database.goodbyeMessage.filter(x => x.chat !== grupId);
             }
             if (msg.key.fromMe) {
-                return await sock.sendMessage(grupId, { text: "_✅ Welcome " + (configType === "del welcome" ? "goodbye" : "welcome") + " messages deleted successfully._", edit: msg.key });
+                return await sock.sendMessage(grupId, { text: "_✅ " + (configType === "del welcome" ? "Goodbye" : "Welcome") + " message deleted successfully._", edit: msg.key });
             } else {
-                return await sock.sendMessage(grupId, { text: "_✅ Welcome " + (configType === "del welcome" ? "goodbye" : "welcome") + " messages deleted successfully._"}, { quoted: rawMessage.messages[0] });
+                return await sock.sendMessage(grupId, { text: "_✅ " + (configType === "del welcome" ? "Goodbye" : "Welcome") + " message deleted successfully._"}, { quoted: rawMessage.messages[0] });
             }
         }
     }

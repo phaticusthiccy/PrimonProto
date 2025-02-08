@@ -29,13 +29,24 @@ const rl = require('readline').createInterface({
 console.clear();
 rl.question("Login with QR code (1) or Phone Number (2)\n\n⚠️  Logging with phone number is not recommend! :: ", async (answer) => {
   console.clear();
-  if (answer == "2") {
-    rl.question("Enter your phone number. Example: 905123456789 ", async (number) => {
-      await loginWithPhone(number);
-    }); 
-  } else if (answer == "1") {
-    genQR(true);
-  }
+  rl.question("Is there any other device in WhatsApp? (y/n)\n\n >> ", async (answer2) => {
+    console.clear();
+    if (answer2 == "y") {
+      console.clear();
+      console.log("Please logout from all devices before logging in.");
+      process.exit(1);
+    } else if (answer2 == "n") {
+      console.clear();
+      if (answer == "2") {
+        rl.question("Enter your phone number. Example: 905123456789\n\n >> ", async (number) => {
+          await loginWithPhone(number);
+        }); 
+      } else if (answer == "1") {
+        genQR(true);
+      }
+    }
+  });
+  
 });
 
 async function genQR(qr) {

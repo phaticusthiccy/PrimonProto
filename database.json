@@ -4,7 +4,7 @@
     "/",
     "!"
   ],
-  "version": "0.6.4",
+  "version": "0.6.6",
   "filters": [
     {
       "chat": "0000000@g.us",
@@ -49,5 +49,11 @@
     }
   ],
   "blacklist": [],
-  "plugins": []
+  "plugins": [],
+  "afkMessage": {
+    "type": "text",
+    "media": "",
+    "content": "_I'am currently AFK! Please contact me later._",
+    "active": false
+  }
 }

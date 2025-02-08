@@ -125,6 +125,56 @@ async function Primon() {
         }
       }
 
+      if (global.database.afkMessage.active && (!msg.key.fromMe && !global.database.sudo.includes(msg.key.participant.split('@')[0]))) {
+        if (msg.key.remoteJid.includes("@s.whatsapp.net")) {
+          if (global.database.afkMessage.type == "text") {
+            await sock.sendMessage(msg.key.remoteJid, { text: global.database.afkMessage.content });
+          } else {
+            var mediaPath = `./src/afk.${global.database.afkMessage.type}`;
+            fs.writeFileSync(mediaPath, global.database.afkMessage.media, "base64");
+            if (global.database.afkMessage.type == "video") {
+              await sock.sendMessage(msg.key.remoteJid, { video: { url: mediaPath }, caption: global.database.afkMessage.content == "" ? undefined : global.database.afkMessage.content }, { quoted: rawMessage.messages[0] });
+            } else {
+              await sock.sendMessage(msg.key.remoteJid, { image: { url: mediaPath }, caption: global.database.afkMessage.content == "" ? undefined : global.database.afkMessage.content }, { quoted: rawMessage.messages[0] });
+            }
+            try { fs.unlinkSync(mediaPath) } catch {}
+            return;
+          }
+        } else {
+          if (rawMessage.messages[0]?.message?.extendedTextMessage?.contextInfo?.mentionedJid?.includes(sock.user.id.split(':')[0] + `@s.whatsapp.net`)) {
+            if (global.database.afkMessage.type == "text") {
+              await sock.sendMessage(msg.key.remoteJid, { text: global.database.afkMessage.content }, { quoted: rawMessage.messages[0] });
+            } else {
+              var mediaPath = `./src/afk.${global.database.afkMessage.type}`;
+              fs.writeFileSync(mediaPath, global.database.afkMessage.media, "base64");
+              if (global.database.afkMessage.type == "video") {
+                await sock.sendMessage(msg.key.remoteJid, { video: { url: mediaPath }, caption: global.database.afkMessage.content == "" ? undefined : global.database.afkMessage.content }, { quoted: rawMessage.messages[0] });
+              } else {
+                await sock.sendMessage(msg.key.remoteJid, { image: { url: mediaPath }, caption: global.database.afkMessage.content == "" ? undefined : global.database.afkMessage.content }, { quoted: rawMessage.messages[0] });
+              }
+              try { fs.unlinkSync(mediaPath) } catch {}
+              return;
+            }
+          }
+          if (rawMessage.messages[0]?.message?.extendedTextMessage?.contextInfo?.participant == sock.user.id.split(':')[0] + `@s.whatsapp.net`) {
+            if (global.database.afkMessage.type == "text") {
+              await sock.sendMessage(msg.key.remoteJid, { text: global.database.afkMessage.content });
+            } else {
+              var mediaPath = `./src/afk.${global.database.afkMessage.type}`;
+              fs.writeFileSync(mediaPath, global.database.afkMessage.media, "base64");
+              if (global.database.afkMessage.type == "video") {
+                await sock.sendMessage(msg.key.remoteJid, { video: { url: mediaPath }, caption: global.database.afkMessage.content == "" ? undefined : global.database.afkMessage.content });
+              } else {
+                await sock.sendMessage(msg.key.remoteJid, { image: { url: mediaPath }, caption: global.database.afkMessage.content == "" ? undefined : global.database.afkMessage.content });
+              }
+              try { fs.unlinkSync(mediaPath) } catch {}
+              return;
+            }
+          }
+        }
+        return;
+      }
+
       await start_command(msg, sock, rawMessage);
 
     } catch (error) {
