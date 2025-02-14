@@ -3,13 +3,59 @@ const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 ffmpeg.setFfmpegPath(ffmpegPath);
+const axios = require('axios');
+const formData = require('form-data');
+
+/**
+ * Converts an animated WebP file to MP4 format.
+ * 
+ * This function uploads an animated WebP file to an online converter service
+ * and converts it to MP4 format. It polls the conversion status until
+ * the conversion is complete, then downloads the converted MP4 file as a buffer.
+ * 
+ * @param {string} file - The path to the animated WebP file to convert.
+ * @returns {Promise<Buffer|string>} - A Promise that resolves to the MP4 file data as a buffer if successful, or an empty string if the conversion fails.
+ */
+async function animatedWebpToMp4(file) {
+    var form = new formData();
+    form.append("file", fs.createReadStream(file));
+    form.append("from", "webp");
+    form.append("to", "mp4");
+    form.append("class", "video");
+    form.append("source", "online");
+    var job = await axios({
+        url: "https://host40.onlineconverter.com/file/send",
+        method: "POST",
+        headers: form.getHeaders(),
+        data: form
+    })
+    var status = "c"
+    while (status == "c" ||  status == "s") {
+        var status = await axios({
+            url: "https://host40.onlineconverter.com/file/" + job.data.split("convert/")[1],
+            method: "GET"
+        })
+        status = status.data.trim()
+        await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+    if (status == "d") {
+        var getFile = await axios({
+            url: "https://host40.onlineconverter.com/file/" + job.data.split("convert/")[1] + "/download",
+            method: "GET",
+            responseType: "arraybuffer"
+        })
+        return getFile.data
+    } else {
+        return ""
+    }
+}
 
 addCommand({ pattern: "^sticker$", access: "all", desc: "_Convert an media to a sticker or both._" }, async (msg, match, sock, rawMessage) => {
     if (!msg.quotedMessage) {
         if (msg.key.fromMe) {
-            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image or sticker!_", edit: msg.key });
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image, video or sticker!_", edit: msg.key });
         } else {
-            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image or sticker!_" }, { quoted: rawMessage.messages[0] });
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image, video or sticker!_" }, { quoted: rawMessage.messages[0] });
         }
     }
     if (msg.key.fromMe) {
@@ -56,22 +102,49 @@ addCommand({ pattern: "^sticker$", access: "all", desc: "_Convert an media to a 
             })
         } else {
             if (msg.key.fromMe) {
-                await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image or sticker!_", edit: msg.key });
+                await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image, video or sticker!_", edit: msg.key });
             } else {
-                await sock.sendMessage(msg.key.remoteJid, { delete: publicMessage.key });
-                await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image or sticker!_" }, { quoted: rawMessage.messages[0] });
+                await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image, video or sticker!_", edit: publicMessage.key });
             }
             return
         }
     } else if (msg.quotedMessage?.stickerMessage) {
-        if (msg.quotedMessage.stickerMessage.isAnimated || (msg.quotedMessage.stickerMessage.stickerSentTs.low == 0 && msg.quotedMessage.stickerMessage.stickerSentTs.high == 0)) {
+        if (msg.quotedMessage.stickerMessage.isAnimated) {
             if (msg.key.fromMe) {
-                await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Animated stickers are not supported!_", edit: msg.key });
+                await sock.sendMessage(msg.key.remoteJid, { text: "_Please use_ ```" + global.handlers[0] + "vsticker``` _to convert animated stickers!_" , edit: msg.key });
             } else {
-                await sock.sendMessage(msg.key.remoteJid, { delete: publicMessage.key });
-                await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Animated stickers are not supported!_" }, { quoted: rawMessage.messages[0] });
+                await sock.sendMessage(msg.key.remoteJid, { text: "_Please use_ ```" + global.handlers[0] + "vsticker``` _to convert animated stickers!_", edit: publicMessage.key });
             }
             return;
+
+            const stickerPath = "./src/sticker" + Math.floor(Math.random() * 100) + ".webp";
+            const stickerPath2 = "./src/sticker" + Math.floor(Math.random() * 100) + ".mp4";
+            await global.downloadMedia(msg.quotedMessage.stickerMessage, "sticker", stickerPath);
+            await animatedWebpToMp4(stickerPath)
+            fs.writeFileSync(stickerPath2, data)
+
+            if (animatedWebpToMp4 == "") {
+                if (msg.key.fromMe) {
+                    await sock.sendMessage(msg.key.remoteJid, { delete: msg.key });
+                    await sock.sendMessage(msg.key.remoteJid, { text: "_❌ There is a error while converting animated sticker!_", edit: msg.key });
+                } else {
+                    await sock.sendMessage(msg.key.remoteJid, { delete: publicMessage.key });
+                    await sock.sendMessage(msg.key.remoteJid, { text: "_❌ There is a error while converting animated sticker!_" }, { quoted: rawMessage.messages[0] });
+                }
+            } else {
+                if (msg.key.fromMe) {
+                    await sock.sendMessage(msg.key.remoteJid, { delete: msg.key });
+                    await sock.sendMessage(msg.key.remoteJid, { video: { url: stickerPath2 } });
+                } else {
+                    await sock.sendMessage(msg.key.remoteJid, { delete: publicMessage.key });
+                    await sock.sendMessage(msg.key.remoteJid, { video: { url: stickerPath2 } }, { quoted: rawMessage.messages[0] });
+                }
+            }
+            [stickerPath, stickerPath2].forEach(file => {
+                if (fs.existsSync(file)) try { fs.unlinkSync(file) } catch { }
+            });
+            return;
+
         } else {
             const stickerPath = "./src/sticker" + Math.floor(Math.random() * 100) + ".webp";
             await global.downloadMedia(msg.quotedMessage.stickerMessage, "sticker", stickerPath);
@@ -125,8 +198,60 @@ addCommand({ pattern: "^sticker$", access: "all", desc: "_Convert an media to a 
         if (msg.key.fromMe) {
             await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image or sticker!_", edit: msg.key });
         } else {
-            await sock.sendMessage(msg.key.remoteJid, { delete: publicMessage.key });
-            await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image or sticker!_" }, { quoted: rawMessage.messages[0] });
+            await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image or sticker!_", edit: publicMessage.key });
+        }
+        return;
+    }
+})
+
+addCommand({ pattern: "^vsticker$", access: "all", desc: "_Convert animated stickers to video._"}, async (msg, match, sock, rawMessage) => {
+    
+    if (!msg.quotedMessage) {
+        if (msg.key.fromMe) {
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an video!_", edit: msg.key });
+        } else {
+            return await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an video!_" }, { quoted: rawMessage.messages[0] });
+        }
+    }
+
+    if (msg.key.fromMe) {
+        await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Converting.._", edit: msg.key });
+    } else {
+        var publicMessage = await sock.sendMessage(msg.key.remoteJid, { text: "_⏳ Converting.._" }, { quoted: rawMessage.messages[0] });
+    }
+  
+    if (msg.quotedMessage?.stickerMessage) {
+        const stickerPath = "./src/sticker" + Math.floor(Math.random() * 100) + ".webp";
+        const stickerPath2 = "./src/sticker" + Math.floor(Math.random() * 100) + ".mp4";
+        await global.downloadMedia(msg.quotedMessage.stickerMessage, "sticker", stickerPath);
+        var mp4Data = await animatedWebpToMp4(stickerPath)
+        fs.writeFileSync(stickerPath2, mp4Data)
+
+        if (animatedWebpToMp4 == "") {
+            if (msg.key.fromMe) {
+                await sock.sendMessage(msg.key.remoteJid, { text: "_❌ There is a error while converting animated sticker!_", edit: msg.key });
+            } else {
+                await sock.sendMessage(msg.key.remoteJid, { text: "_❌ There is a error while converting animated sticker!_", edit: publicMessage.key });
+            }
+        } else {
+            if (msg.key.fromMe) {
+                await sock.sendMessage(msg.key.remoteJid, { delete: msg.key });
+                await sock.sendMessage(msg.key.remoteJid, { video: { url: stickerPath2 } });
+            } else {
+                await sock.sendMessage(msg.key.remoteJid, { delete: publicMessage.key });
+                await sock.sendMessage(msg.key.remoteJid, { video: { url: stickerPath2 } }, { quoted: rawMessage.messages[0] });
+            }
+        }
+        [stickerPath, stickerPath2].forEach(file => {
+            if (fs.existsSync(file)) try { fs.unlinkSync(file) } catch { }
+        });
+        return;
+
+    } else {
+        if (msg.key.fromMe) {
+            await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image or sticker!_", edit: msg.key });
+        } else {
+            await sock.sendMessage(msg.key.remoteJid, { text: "_❌ Please reply an image or sticker!_", edit: publicMessage.key });
         }
         return;
     }
