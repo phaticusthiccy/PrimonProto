@@ -109,6 +109,13 @@ async function Primon() {
     try {
       if (!msg.hasOwnProperty("messages") || msg.messages.length === 0) return;
 
+      for (let {pushName, key} of msg.messages) {
+        if (pushName) {
+          const sender = key.participant ||(key.fromMe? sock.user.id.split(":")[0] + "@s.whatsapp.net": key.remoteJid);
+          global.database.users[sender] = pushName;
+        }
+      }
+
       const rawMessage = structuredClone(msg);
       msg = msg.messages[0];
       const quotedMessage = msg?.message?.extendedTextMessage?.contextInfo?.quotedMessage;

@@ -55,5 +55,8 @@
     "media": "",
     "content": "_I'am currently AFK! Please contact me later._",
     "active": false
+  },
+  "users": {
+    "0000000@s.whatsapp.net": "Primon"
   }
 }
