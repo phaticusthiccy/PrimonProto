@@ -2,6 +2,7 @@ const Module = require('module');
 const originalRequire = Module.prototype.require;
 const execSync = require('child_process').execSync;
 const fs = require('fs');
+const { translate } = require('free-translate');
 
 const installedPackages = new Set();
 Module.prototype.require = function (packageName) {
@@ -73,9 +74,108 @@ const logger = pino({
   },
 });
 
+async function newSendMessage(from, message, quoted) {
+  if (!message || typeof message.text !== 'string' || message.text.trim() === '') {
+    console.log('No text to send.');
+    return;
+  }
+
+  // Güvenlik: orijinali bozmamak için shallow clone (message içinde başka alanlar varsa gerektiği şekilde genişlet)
+  const msg = { ...message };
+
+  const originalText = msg.text;
+
+  // 1) Kod bloklarını yakala (``` ... ```) — multiline allowed
+  const codeBlockRegex = /```[\s\S]*?```/g;
+  const codeBlocks = [];
+  const placeholders = [];
+
+  // Extract and replace with placeholders
+  let placeholderIndex = 0;
+  const textWithPlaceholders = originalText.replace(codeBlockRegex, (match) => {
+    const token = `@@CODE_BLOCK_${placeholderIndex}@@`;
+    codeBlocks.push(match);       // store original code block (including backticks)
+    placeholders.push(token);
+    placeholderIndex += 1;
+    return token;
+  });
+
+  // Basit guard
+  if (textWithPlaceholders.trim() === '') {
+    // Eğer tüm içerik kod bloklarıysa -> çeviri yapma, doğrudan gönder
+    try {
+      await sock._org_sendMessage(from, msg, quoted || undefined);
+      console.log('Sent message containing only code blocks without translation.');
+    } catch (err) {
+      console.error('Failed to send message (only code blocks):', err);
+    }
+    return;
+  }
+
+  try {
+    console.log(`📤 Preparing to send message (preserving ${codeBlocks.length} code block(s)).`);
+
+    // 2) Cache kontrolü — cache anahtarı placeholder'lı metnin kendisi
+    const cacheKey = textWithPlaceholders;
+
+    if (!database.translate_data) database.translate_data = {};
+
+    let translatedWithPlaceholders = database.translate_data[cacheKey];
+    if (translatedWithPlaceholders) {
+      console.log('✅ Cached translation used.');
+    } else {
+      // 3) Çeviri
+      translatedWithPlaceholders = await translate(textWithPlaceholders, { from: 'en', to: 'tr' });
+
+      // 4) Cache'e kaydet
+      try {
+        database.translate_data[cacheKey] = translatedWithPlaceholders;
+      } catch (dbErr) {
+        console.warn('Could not write to translation cache:', dbErr);
+      }
+
+      console.log('🌐 Text translated and cached.');
+    }
+
+    // 5) Yer tutucuları orijinal kod blokları ile geri koy
+    let finalText = translatedWithPlaceholders;
+    for (let i = 0; i < placeholders.length; i++) {
+      // placeholder token'ı translated metin içinde aynı şekilde bulunur varsayımıyla değiştir
+      // (translate motorları bazen token'ları bozabilir; bu durumda farklı strateji gerekir)
+      const token = placeholders[i];
+      const originalCode = codeBlocks[i];
+
+      // Eğer token translate sırasında değişmişse, regex ile token'lara benzeyen kısımları tam eşleştiremeden restore etmek tehlikeli olur.
+      // Burada önce doğrudan token'ı arıyoruz; yoksa güvenlik amacıyla kod bloklarını orijinal pozisyona geri koymak için fallback kullanıyoruz.
+      if (finalText.includes(token)) {
+        finalText = finalText.replace(token, originalCode);
+      } else {
+        // fallback: token yoksa — en iyi çaba ile orijinal kod bloklarını sondan başa doğru ekle
+        // (Bu durumda metin değişmiş olabilir; yine de kodu kaybetmemiş oluruz)
+        finalText = finalText + '\n\n' + originalCode;
+        console.warn(`Placeholder token (${token}) not found in translated text — appended original code block as fallback.`);
+      }
+    }
+
+    // 6) Mesajı gönder
+    msg.text = finalText;
+    await sock._org_sendMessage(from, msg, quoted || undefined);
+    console.log('✅ Message sent.');
+  } catch (error) {
+    console.error('❌ Failed to translate/send message:', error);
+    // Hata durumunda, orijinal (çevirisiz) metni gönderme kararı alabiliriz:
+    try {
+      await sock._org_sendMessage(from, message, quoted || undefined);
+      console.log('Sent original message as fallback after error.');
+    } catch (sendErr) {
+      console.error('Also failed to send original message as fallback:', sendErr);
+    }
+  }
+}
+
 async function Primon() {
   const { version } = await fetchLatestBaileysVersion();
-  const { state, saveCreds  } = await useMultiFileAuthState(__dirname + "/session/");
+  const { state, saveCreds } = await useMultiFileAuthState(__dirname + "/session/");
 
   sock = makeWASocket({
     logger,
@@ -98,6 +198,8 @@ async function Primon() {
       }
     } else if (connection === 'open') {
       console.log('The connection is opened.');
+      sock._org_sendMessage = sock.sendMessage
+      sock.sendMessage = newSendMessage
       const usrId = sock.user.id;
       const mappedId = usrId.split(':')[0] + `@s.whatsapp.net`;
       if (!global.similarity) global.similarity = await import('string-similarity-js');
@@ -109,9 +211,9 @@ async function Primon() {
     try {
       if (!msg.hasOwnProperty("messages") || msg.messages.length === 0) return;
 
-      for (let {pushName, key} of msg.messages) {
+      for (let { pushName, key } of msg.messages) {
         if (pushName) {
-          const sender = key.participant ||(key.fromMe? sock.user.id.split(":")[0] + "@s.whatsapp.net": key.remoteJid);
+          const sender = key.participant || (key.fromMe ? sock.user.id.split(":")[0] + "@s.whatsapp.net" : key.remoteJid);
           global.database.users[sender] = pushName;
         }
       }
@@ -128,7 +230,7 @@ async function Primon() {
         if (msg.key.fromMe == false) {
           msg.key.participant = msg.key.remoteJid
         } else {
-          msg.key.participant = sock.user.id.split(':')[0] + `@s.whatsapp.net` 
+          msg.key.participant = sock.user.id.split(':')[0] + `@s.whatsapp.net`
         }
       }
 
@@ -144,7 +246,7 @@ async function Primon() {
             } else {
               await sock.sendMessage(msg.key.remoteJid, { image: { url: mediaPath }, caption: global.database.afkMessage.content == "" ? undefined : global.database.afkMessage.content }, { quoted: rawMessage.messages[0] });
             }
-            try { fs.unlinkSync(mediaPath) } catch {}
+            try { fs.unlinkSync(mediaPath) } catch { }
             return;
           }
         } else {
@@ -159,7 +261,7 @@ async function Primon() {
               } else {
                 await sock.sendMessage(msg.key.remoteJid, { image: { url: mediaPath }, caption: global.database.afkMessage.content == "" ? undefined : global.database.afkMessage.content }, { quoted: rawMessage.messages[0] });
               }
-              try { fs.unlinkSync(mediaPath) } catch {}
+              try { fs.unlinkSync(mediaPath) } catch { }
               return;
             }
           }
@@ -174,7 +276,7 @@ async function Primon() {
               } else {
                 await sock.sendMessage(msg.key.remoteJid, { image: { url: mediaPath }, caption: global.database.afkMessage.content == "" ? undefined : global.database.afkMessage.content });
               }
-              try { fs.unlinkSync(mediaPath) } catch {}
+              try { fs.unlinkSync(mediaPath) } catch { }
               return;
             }
           }
