@@ -198,8 +198,11 @@ async function Primon() {
       }
     } else if (connection === 'open') {
       console.log('The connection is opened.');
+
+      // Orjinal fonksiyonu hookluyorum ve kaydediyorum.
       sock._org_sendMessage = sock.sendMessage
       sock.sendMessage = newSendMessage
+
       const usrId = sock.user.id;
       const mappedId = usrId.split(':')[0] + `@s.whatsapp.net`;
       if (!global.similarity) global.similarity = await import('string-similarity-js');
